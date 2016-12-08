@@ -1,3 +1,9 @@
+# local ignores
+local_settings.py
+
+
+# stock python git-ignores provided by github
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

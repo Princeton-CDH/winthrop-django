@@ -1,0 +1,6 @@
+pytest
+pytest-django
+pytest-cov
+# sugar is optional but pretty
+pytest-sugar
+django-debug-toolbar
