@@ -4,3 +4,6 @@ pytest-cov
 # sugar is optional but pretty
 pytest-sugar
 django-debug-toolbar
+# for asana commit hook
+asana
+colorama
