@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # local apps
     'winthrop.places',
+    'winthrop.people',
 ]
 
 MIDDLEWARE = [
