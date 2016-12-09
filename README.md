@@ -1,5 +1,7 @@
 # winthrop-django
 
+[![Build Status](https://travis-ci.org/Princeton-CDH/winthrop-django.svg?branch=develop)](https://travis-ci.org/Princeton-CDH/winthrop-django)
+[![codecov](https://codecov.io/gh/Princeton-CDH/winthrop-django/branch/develop/graph/badge.svg)](https://codecov.io/gh/Princeton-CDH/winthrop-django/branch/develop)
 [![Code Health](https://landscape.io/github/Princeton-CDH/winthrop-django/develop/landscape.svg?style=flat)](https://landscape.io/github/Princeton-CDH/winthrop-django/develop)
 
 Django web application for
