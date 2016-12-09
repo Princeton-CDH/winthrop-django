@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'winthrop.places',
     'winthrop.people',
     'winthrop.books',
+    'winthrop.footnotes',
 ]
 
 MIDDLEWARE = [

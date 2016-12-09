@@ -1,7 +1,9 @@
 from django.db import models
+from django.contrib.contenttypes.fields import GenericRelation
 
 from winthrop.places.models import Place
 from winthrop.people.models import Person
+from winthrop.footnotes.models import Footnote
 
 
 class Subject(models.Model):
@@ -72,6 +74,10 @@ class Book(models.Model):
     # model in case we want to access owning instutions directly
     owning_institutions = models.ManyToManyField(OwningInstitution,
         through='Catalogue')
+
+    # proof-of-concept generic relation to footnotes
+    # (actual models that need this still TBD)
+    footnotes = GenericRelation(Footnote)
 
     def __str__(self):
         return '%s (%s)' % (self.short_title, self.pub_year)
