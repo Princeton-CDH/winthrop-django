@@ -34,16 +34,24 @@ class Residence(models.Model):
 
     @property
     def dates(self):
-        # FIXME: not quite right; display start- or -end if only one is present
-        # or just year if they are the same
-        # (also in books; make re-usable?)
-        return '-'.join([str(year) for year in [self.start_year, self.end_year] if year])
+        '''Date or date range as a string for display'''
+
+        # if no dates are set, return an empty string
+        if not self.start_year and not self.end_year:
+            return ''
+
+        # if start and end year are the same just return one year
+        if self.start_year == self.end_year:
+            return self.start_year
+
+        date_parts = [self.start_year, '-', self.end_year]
+        return ''.join([str(dp) for dp in date_parts if dp is not None])
 
     def __str__(self):
         dates = ''
         if self.dates:
             dates = ' (%s)' % self.dates
-        return '%s  %s%s' % (self.person, self.place, dates)
+        return '%s %s%s' % (self.person, self.place, dates)
 
 
 class RelationshipType(models.Model):
