@@ -1,5 +1,7 @@
 # winthrop-django
 
+[![Code Health](https://landscape.io/github/Princeton-CDH/winthrop-django/develop/landscape.svg?style=flat)](https://landscape.io/github/Princeton-CDH/winthrop-django/develop)
+
 Django web application for
 [The Winthrop Family on the Page](https://digitalhumanities.princeton.edu/projects/TheWinthropFamilyonthePage/)
 project.
