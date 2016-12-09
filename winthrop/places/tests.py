@@ -1,3 +1,12 @@
 from django.test import TestCase
+import pytest
 
-# Create your tests here.
+from .models import Place
+
+
+@pytest.mark.django_db
+class TestPlace(TestCase):
+
+    def test_str(self):
+        pl = Place(name='New York', geonames_id='12345')
+        assert str(pl) == 'New York'
