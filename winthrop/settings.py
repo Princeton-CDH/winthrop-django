@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     # local apps
     'winthrop.places',
     'winthrop.people',
+    'winthrop.books',
 ]
 
 MIDDLEWARE = [
