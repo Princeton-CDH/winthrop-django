@@ -15,7 +15,7 @@ class Subject(models.Model):
         return self.name
 
 class Language(models.Model):
-    '''Language that a book is written in or included in a book'''
+    '''Language that a book is written in or a language included in a book'''
     name = models.CharField(max_length=255)
     notes = models.TextField(blank=True)
 
@@ -53,6 +53,7 @@ class Book(models.Model):
     # do we want any limit on short titles?
     original_pub_info = models.TextField()
     publisher = models.ForeignKey(Publisher)
+    # rename to pub_place ?
     place = models.ForeignKey(Place)
     pub_year = models.PositiveIntegerField('Publication Year')
     # is positive integer enough, or do we need more validation here?
