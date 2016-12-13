@@ -1,51 +1,36 @@
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
 
+from winthrop.common.models import Named, Notable
 from winthrop.places.models import Place
 from winthrop.people.models import Person
 from winthrop.footnotes.models import Footnote
 
 
-class Subject(models.Model):
+class Subject(Named, Notable):
     '''Subject categorization for books'''
-    name = models.CharField(max_length=255)
-    notes = models.TextField(blank=True)
+    pass
 
-    def __str__(self):
-        return self.name
-
-class Language(models.Model):
+class Language(Named, Notable):
     '''Language that a book is written in or a language included in a book'''
-    name = models.CharField(max_length=255)
-    notes = models.TextField(blank=True)
+    pass
 
-    def __str__(self):
-        return self.name
-
-
-class Publisher(models.Model):
+class Publisher(Named, Notable):
     '''Publisher of a book'''
-    name = models.CharField(max_length=255)
-    notes = models.TextField(blank=True)
+    pass
 
-    def __str__(self):
-        return self.name
-
-
-class OwningInstitution(models.Model):
+class OwningInstitution(Named, Notable):
     '''Institution that owns the extant copy of a book'''
-    name = models.CharField(max_length=255)
-    # added short name so we can include full name: good/bad ?
-    short_name = models.CharField(max_length=255, blank=True)
+    short_name = models.CharField(max_length=255, blank=True,
+        help_text='Optional short name for admin display')
     contact_info = models.TextField()
     place = models.ForeignKey(Place)
-    notes = models.TextField(blank=True)
 
     def __str__(self):
         return self.short_name or self.name
 
 
-class Book(models.Model):
+class Book(Notable):
     '''An individual book or volume'''
     title = models.CharField(max_length=255)
     # how long are full titles? is this long enough?
@@ -65,7 +50,6 @@ class Book(models.Model):
     pencil_catalog_number = models.CharField(max_length=255, blank=True)
     dimensions = models.CharField(max_length=255, blank=True)
     # expected length? is char sufficient or do we need text?
-    notes = models.TextField(blank=True)
 
     subjects = models.ManyToManyField(Subject, through='BookSubject')
     languages = models.ManyToManyField(Language, through='BookLanguage')
@@ -84,7 +68,7 @@ class Book(models.Model):
         return '%s (%s)' % (self.short_title, self.pub_year)
 
 
-class Catalogue(models.Model):
+class Catalogue(Notable):
     '''Location of a book in the real world, associating it with an
     owning instutition and also handling books that are bound together.'''
     institution = models.ForeignKey(OwningInstitution)
@@ -96,7 +80,6 @@ class Catalogue(models.Model):
     call_number = models.CharField(max_length=255, blank=True)
     is_sammelband = models.BooleanField()
     bound_order = models.PositiveIntegerField(null=True, blank=True)
-    notes = models.TextField(blank=True)
 
     @property
     def dates(self):
@@ -109,53 +92,46 @@ class Catalogue(models.Model):
         return '%s / %s%s' % (self.book, self.institution, dates)
 
 
-class BookSubject(models.Model):
+class BookSubject(Notable):
     '''Through-model for book-subject relationship, to allow designating
     a particular subject as primary or adding notes.'''
     subject = models.ForeignKey(Subject)
     book = models.ForeignKey(Book)
     is_primary = models.BooleanField()
-    notes = models.TextField(blank=True)
 
     def __str__(self):
         return '%s %s%s' % (self.book, self.subject,
             ' (primary)' if self.is_primary else '')
 
 
-class BookLanguage(models.Model):
+class BookLanguage(Notable):
     '''Through-model for book-language relationship, to allow designating
     one language as primary or adding notes.'''
     language = models.ForeignKey(Language)
     book = models.ForeignKey(Book)
     is_primary = models.BooleanField()
-    notes = models.TextField(blank=True)
 
     def __str__(self):
         return '%s %s%s' % (self.book, self.language,
             ' (primary)' if self.is_primary else '')
 
 
-class CreatorType(models.Model):
+class CreatorType(Named, Notable):
     '''Type of creator role a person can have to a book - author,
     editor, translator, etc.'''
-    name = models.CharField(max_length=255)
-    notes = models.TextField(blank=True)
-
-    def __str__(self):
-        return self.name
+    pass
 
 
-class Creator(models.Model):
+class Creator(Notable):
     creator_type = models.ForeignKey(CreatorType)
     person = models.ForeignKey(Person)
     book = models.ForeignKey(Book)
-    notes = models.TextField(blank=True)
 
     def __str__(self):
         return '%s %s %s' % (self.person, self.creator_type, self.book)
 
 
-class PersonBook(models.Model):
+class PersonBook(Notable):
     '''Interactions or connections between books and people other than
     annotation.'''
     # FIXME: better name? concept/thing/model

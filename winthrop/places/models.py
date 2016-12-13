@@ -1,11 +1,9 @@
 from django.db import models
 
+from winthrop.common.models import Named, Notable
 
-class Place(models.Model):
-    name = models.CharField(max_length=255)
+
+class Place(Named, Notable):
     # do we want to store id only or geonames uri?
     geonames_id = models.PositiveIntegerField()
-    notes = models.TextField(blank=True)
 
-    def __str__(self):
-        return self.name

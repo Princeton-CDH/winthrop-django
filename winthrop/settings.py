@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # local apps
+    'winthrop.common',
     'winthrop.places',
     'winthrop.people',
     'winthrop.books',
