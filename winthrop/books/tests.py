@@ -51,8 +51,10 @@ class TestCatalogue(TestCase):
         cat = Catalogue(institution=inst, book=bk)
         assert '%s / %s' % (bk, inst) == str(cat)
 
-        # TODO: test str with dates set after
-        # dates abstract model has been refactored
+        # with no date set
+        cat.start_year = 1891
+        assert '%s / %s (1891-)' % (bk, inst) == str(cat)
+
 
 
 # TODO: do we want/need tests for through models?

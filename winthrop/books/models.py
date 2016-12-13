@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
 
-from winthrop.common.models import Named, Notable
+from winthrop.common.models import Named, Notable, DateRange
 from winthrop.places.models import Place
 from winthrop.people.models import Person
 from winthrop.footnotes.models import Footnote
@@ -68,22 +68,16 @@ class Book(Notable):
         return '%s (%s)' % (self.short_title, self.pub_year)
 
 
-class Catalogue(Notable):
+class Catalogue(Notable, DateRange):
     '''Location of a book in the real world, associating it with an
     owning instutition and also handling books that are bound together.'''
     institution = models.ForeignKey(OwningInstitution)
     book = models.ForeignKey(Book)
-    start_year = models.PositiveIntegerField(null=True, blank=True)
-    end_year = models.PositiveIntegerField(null=True, blank=True)
     is_current = models.BooleanField()
     # using char instead of int because assuming "number" is not strictly required
     call_number = models.CharField(max_length=255, blank=True)
     is_sammelband = models.BooleanField()
     bound_order = models.PositiveIntegerField(null=True, blank=True)
-
-    @property
-    def dates(self):
-        return '-'.join([year for year in [self.start_year, self.end_year] if year])
 
     def __str__(self):
         dates = ''
@@ -131,23 +125,12 @@ class Creator(Notable):
         return '%s %s %s' % (self.person, self.creator_type, self.book)
 
 
-class PersonBook(Notable):
+class PersonBook(Notable, DateRange):
     '''Interactions or connections between books and people other than
     annotation.'''
     # FIXME: better name? concept/thing/model
     person = models.ForeignKey(Person)
     book = models.ForeignKey(Book)
-    start_year = models.PositiveIntegerField(null=True, blank=True)
-    end_year = models.PositiveIntegerField(null=True, blank=True)
-    notes = models.TextField(blank=True)
-
-    @property
-    def dates(self):
-        # FIXME: not quite right; display start- or -end if only one is present
-        # or just year if they are the same
-        # (also in books; make re-usable?)
-        # DEFINITELY make re-usable as an abstract model
-        return '-'.join([str(year) for year in [self.start_year, self.end_year] if year])
 
     def __str__(self):
         dates = ''

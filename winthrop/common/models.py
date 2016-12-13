@@ -23,4 +23,31 @@ class Notable(models.Model):
         abstract = True
 
 
+class DateRange(models.Model):
+    '''Abstract model with optional start and end years, and a
+    custom dates property to display the date range nicely.'''
+    start_year = models.PositiveIntegerField(null=True, blank=True)
+    end_year = models.PositiveIntegerField(null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+    @property
+    def dates(self):
+        '''Date or date range as a string for display'''
+
+        # if no dates are set, return an empty string
+        if not self.start_year and not self.end_year:
+            return ''
+
+        # if start and end year are the same just return one year
+        if self.start_year == self.end_year:
+            return self.start_year
+
+        date_parts = [self.start_year, '-', self.end_year]
+        return ''.join([str(dp) for dp in date_parts if dp is not None])
+
+
+
+
 

@@ -1,6 +1,6 @@
 from django.db import models
 
-from winthrop.common.models import Named, Notable
+from winthrop.common.models import Named, Notable, DateRange
 from winthrop.places.models import Place
 
 # Create your models here.
@@ -25,26 +25,9 @@ class Person(Notable):
         return self.authorized_name
 
 
-class Residence(Notable):
+class Residence(Notable, DateRange):
     person = models.ForeignKey(Person)
     place = models.ForeignKey(Place)
-    start_year = models.PositiveIntegerField(null=True, blank=True)
-    end_year = models.PositiveIntegerField(null=True, blank=True)
-
-    @property
-    def dates(self):
-        '''Date or date range as a string for display'''
-
-        # if no dates are set, return an empty string
-        if not self.start_year and not self.end_year:
-            return ''
-
-        # if start and end year are the same just return one year
-        if self.start_year == self.end_year:
-            return self.start_year
-
-        date_parts = [self.start_year, '-', self.end_year]
-        return ''.join([str(dp) for dp in date_parts if dp is not None])
 
     def __str__(self):
         dates = ''
@@ -58,13 +41,11 @@ class RelationshipType(Named, Notable):
     pass
 
 
-class Relationship(Notable):
+class Relationship(Notable, DateRange):
     '''A specific relationship between two people.'''
     from_person = models.ForeignKey(Person, related_name='from_people')
     to_person = models.ForeignKey(Person, related_name='to_people')
     relationship_type = models.ForeignKey(RelationshipType)
-    start_year = models.PositiveIntegerField(null=True, blank=True)
-    end_year = models.PositiveIntegerField(null=True, blank=True)
 
     def __str__(self):
         return '%s %s %s' % (self.from_person, self.relationship_type,
