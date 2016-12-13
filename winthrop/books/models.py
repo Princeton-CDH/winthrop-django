@@ -38,8 +38,7 @@ class Book(Notable):
     # do we want any limit on short titles?
     original_pub_info = models.TextField()
     publisher = models.ForeignKey(Publisher)
-    # rename to pub_place ?
-    place = models.ForeignKey(Place)
+    pub_place = models.ForeignKey(Place)
     pub_year = models.PositiveIntegerField('Publication Year')
     # is positive integer enough, or do we need more validation here?
     is_extant = models.BooleanField()
@@ -124,6 +123,11 @@ class Creator(Notable):
     def __str__(self):
         return '%s %s %s' % (self.person, self.creator_type, self.book)
 
+class PersonBookRelationshipType(Named, Notable):
+    '''Type of non-annotation relationship assocating a person
+    with a book.'''
+    pass
+
 
 class PersonBook(Notable, DateRange):
     '''Interactions or connections between books and people other than
@@ -131,6 +135,7 @@ class PersonBook(Notable, DateRange):
     # FIXME: better name? concept/thing/model
     person = models.ForeignKey(Person)
     book = models.ForeignKey(Book)
+    relationship_type = models.ForeignKey(PersonBookRelationshipType)
 
     def __str__(self):
         dates = ''

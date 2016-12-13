@@ -3,14 +3,10 @@ from django.db import models
 from winthrop.common.models import Named, Notable, DateRange
 from winthrop.places.models import Place
 
-# Create your models here.
- # - people, residences, relationships, relationship types
- # - people_books (how people relate to books they didn't write)
 
 class Person(Notable):
     authorized_name = models.CharField(max_length=255)
-    # do we want to store bare id or URI here?
-    viaf_id = models.PositiveIntegerField(null=True, blank=True)
+    viaf_id = models.URLField(null=True, blank=True)
     sort_name = models.CharField(max_length=255, blank=True)
     family_group = models.CharField(max_length=255, blank=True)
     relationships = models.ManyToManyField('self', through='Relationship',

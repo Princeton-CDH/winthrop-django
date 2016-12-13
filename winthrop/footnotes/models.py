@@ -23,16 +23,21 @@ class Bibliography(Notable):  # would citation be a better singular?
 
 
 class Footnote(Notable):
+    '''Footnote that can be associated with any other model via
+    generic relationship.  Used to provide supporting documentation
+    for or against information in the system.
+    '''
     bibliography = models.ForeignKey(Bibliography)
-    # location ?
+    location = models.TextField(blank=True,
+        help_text='Page number for a book, URL for part of a website,' +
+        ' or other location inside of a larger work.')
     snippet_text = models.TextField(blank=True)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
-    is_agree = models.BooleanField()
+    is_agree = models.BooleanField(help_text='True if the evidence ' +
+        'supports the information in the system, False if it contradicts.')
 
-    # is there a meaningful short display for a footnote
-    # to use for __str__ ?
     def __str__(self):
         'Footnote on %s' % (self.content_object)
 

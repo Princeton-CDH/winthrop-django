@@ -27,7 +27,7 @@ class TestBook(TestCase):
             short_title='Some rambling',
             original_pub_info='foo',
             publisher=pub,
-            place=pub_place,
+            pub_place=pub_place,
             pub_year=1823)
 
         assert 'Some rambling (1823)' == str(bk)
@@ -45,7 +45,7 @@ class TestCatalogue(TestCase):
             short_title='Some rambling',
             original_pub_info='foo',
             publisher=pub,
-            place=pub_place,
+            pub_place=pub_place,
             pub_year=1823)
 
         cat = Catalogue(institution=inst, book=bk)
