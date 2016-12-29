@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
+from django.core.exceptions import ValidationError
 
 from winthrop.common.models import Named, Notable, DateRange
 from winthrop.places.models import Place
@@ -84,6 +85,7 @@ class Catalogue(Notable, DateRange):
             dates = ' (%s)' % self.dates
         return '%s / %s%s' % (self.book, self.institution, dates)
 
+    '''Validator to see if two foreign keys are the same, if so raise error'''
 
 class BookSubject(Notable):
     '''Through-model for book-subject relationship, to allow designating
@@ -96,6 +98,13 @@ class BookSubject(Notable):
         return '%s %s%s' % (self.book, self.subject,
             ' (primary)' if self.is_primary else '')
 
+    def validate_unique(self, *args, **kwargs):
+        '''Custom validator to check that book-subject combination does not exist'''
+        super(BookSubject, self).validate_unique(*args, **kwargs)
+        q = BookSubject.objects.filter(subject=self.subject).filter(book=self.book)
+        if q.exists():
+            raise ValidationError('Book and Subject combination already exists')
+
 
 class BookLanguage(Notable):
     '''Through-model for book-language relationship, to allow designating
@@ -107,6 +116,13 @@ class BookLanguage(Notable):
     def __str__(self):
         return '%s %s%s' % (self.book, self.language,
             ' (primary)' if self.is_primary else '')
+
+    def validate_unique(self, *args, **kwargs):
+        '''Custom validator to check that book-language combination does not exist'''
+        super(BookLanguage, self).validate_unique(*args, **kwargs)
+        q = BookLanguage.objects.filter(language=self.language).filter(book=self.book)
+        if q.exists():
+            raise ValidationError('Book and Language combination already exists.')
 
 
 class CreatorType(Named, Notable):
