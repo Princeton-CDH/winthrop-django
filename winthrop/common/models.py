@@ -6,7 +6,7 @@ from django.db import models
 class Named(models.Model):
     '''Abstract model with a 'name' field; by default, name is used as
     the string display.'''
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     class Meta:
         abstract = True
