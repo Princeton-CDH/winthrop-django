@@ -34,8 +34,7 @@ class Residence(Notable, DateRange):
 
 class RelationshipType(Named, Notable):
     '''Types of relationships between people'''
-    pass
-
+    is_symmetric = models.BooleanField(default=False)
 
 class Relationship(Notable, DateRange):
     '''A specific relationship between two people.'''
