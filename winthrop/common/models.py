@@ -10,6 +10,7 @@ class Named(models.Model):
 
     class Meta:
         abstract = True
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -46,8 +47,3 @@ class DateRange(models.Model):
 
         date_parts = [self.start_year, '-', self.end_year]
         return ''.join([str(dp) for dp in date_parts if dp is not None])
-
-
-
-
-
