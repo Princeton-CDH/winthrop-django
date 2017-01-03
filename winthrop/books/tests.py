@@ -16,6 +16,28 @@ class TestOwningInstitution(TestCase):
         inst.short_name = short_name
         assert str(inst) == short_name
 
+    def test_book_count(self):
+        # test abstract book count mix-in via owning institution model
+
+        pl = Place.objects.create(name='Printington', geonames_id=4567)
+        inst = OwningInstitution.objects.create(name='NYSL',
+            place=pl)
+        # new institution has no books associated
+        assert 0 == inst.book_count()
+
+        # create a book and associated it with the institution
+        pub = Publisher.objects.create(name='Pub Lee')
+        bk = Book.objects.create(title='Some rambling long old title',
+            short_title='Some rambling',
+            original_pub_info='foo',
+            publisher=pub, pub_place=pl, pub_year=1823,
+            is_extant=False, is_annotated=False, is_digitized=False)
+
+        cat = Catalogue.objects.create(institution=inst, book=bk,
+            is_current=False, is_sammelband=False)
+
+        assert 1 == inst.book_count()
+
 
 class TestBook(TestCase):
 

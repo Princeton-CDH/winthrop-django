@@ -8,19 +8,31 @@ from winthrop.people.models import Person
 from winthrop.footnotes.models import Footnote
 
 
-class Subject(Named, Notable):
+class BookCount(models.Model):
+    '''Mix-in for models related to books; adds book count property'''
+
+    class Meta:
+        abstract = True
+
+    def book_count(self):
+        '''number of associated books'''
+        return self.book_set.count()
+    book_count.short_description = '# books'
+
+
+class Subject(Named, Notable, BookCount):
     '''Subject categorization for books'''
     pass
 
-class Language(Named, Notable):
+class Language(Named, Notable, BookCount):
     '''Language that a book is written in or a language included in a book'''
     pass
 
-class Publisher(Named, Notable):
+class Publisher(Named, Notable, BookCount):
     '''Publisher of a book'''
     pass
 
-class OwningInstitution(Named, Notable):
+class OwningInstitution(Named, Notable, BookCount):
     '''Institution that owns the extant copy of a book'''
     short_name = models.CharField(max_length=255, blank=True,
         help_text='Optional short name for admin display')

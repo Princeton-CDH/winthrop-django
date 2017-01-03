@@ -5,8 +5,13 @@ from .models import Subject, Language, Publisher, OwningInstitution, \
     Book, Catalogue, BookSubject, BookLanguage, CreatorType, Creator, \
     PersonBook, PersonBookRelationshipType
 
+
+class NamedNotableBookCount(NamedNotableAdmin):
+    list_display = NamedNotableAdmin.list_display + ('book_count', )
+
+
 class OwningInstitutionAdmin(admin.ModelAdmin):
-    list_display = ('short_name', 'name', 'place', 'has_notes')
+    list_display = ('short_name', 'name', 'place', 'has_notes', 'book_count')
     fields = ('name', 'short_name', 'contact_info', 'place', 'notes')
     search_fields = ('name', 'short_name', 'contact_info', 'notes')
 
@@ -23,9 +28,9 @@ class BookAdmin(admin.ModelAdmin):
     list_filter = ('subjects', 'languages')
 
 
-admin.site.register(Subject,  NamedNotableAdmin)
-admin.site.register(Language, NamedNotableAdmin)
-admin.site.register(Publisher, NamedNotableAdmin)
+admin.site.register(Subject,  NamedNotableBookCount)
+admin.site.register(Language, NamedNotableBookCount)
+admin.site.register(Publisher, NamedNotableBookCount)
 admin.site.register(OwningInstitution, OwningInstitutionAdmin)
 admin.site.register(Book, BookAdmin)
 admin.site.register(Catalogue)
