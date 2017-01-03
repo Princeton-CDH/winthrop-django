@@ -73,6 +73,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'winthrop.wsgi.application'
 
+GRAPPELLI_ADMIN_TITLE = 'Winthrop Admin'
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
