@@ -8,7 +8,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('books', '0003_auto_20161229_1704'),
+        ('books', '0003_initial_subjects_languages_creatortypes'),
     ]
 
     operations = [
