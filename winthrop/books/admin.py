@@ -5,6 +5,12 @@ from .models import Subject, Language, Publisher, OwningInstitution, \
     Book, Catalogue, BookSubject, BookLanguage, CreatorType, Creator, \
     PersonBook, PersonBookRelationshipType
 
+class OwningInstitutionAdmin(admin.ModelAdmin):
+    list_display = ('short_name', 'name', 'place', 'has_notes')
+    fields = ('name', 'short_name', 'contact_info', 'place', 'notes')
+    search_fields = ('name', 'short_name', 'contact_info', 'notes')
+
+
 class SubjectInline(admin.TabularInline):
     model = BookSubject
 
@@ -20,7 +26,7 @@ class BookAdmin(admin.ModelAdmin):
 admin.site.register(Subject,  NamedNotableAdmin)
 admin.site.register(Language, NamedNotableAdmin)
 admin.site.register(Publisher, NamedNotableAdmin)
-admin.site.register(OwningInstitution)
+admin.site.register(OwningInstitution, OwningInstitutionAdmin)
 admin.site.register(Book, BookAdmin)
 admin.site.register(Catalogue)
 admin.site.register(CreatorType)
