@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from winthrop.common.admin import NamedNotableAdmin
 from .models import Subject, Language, Publisher, OwningInstitution, \
     Book, Catalogue, BookSubject, BookLanguage, CreatorType, Creator, \
     PersonBook, PersonBookRelationshipType
@@ -16,9 +17,9 @@ class BookAdmin(admin.ModelAdmin):
     list_filter = ('subjects', 'languages')
 
 
-admin.site.register(Subject)
-admin.site.register(Language)
-admin.site.register(Publisher)
+admin.site.register(Subject,  NamedNotableAdmin)
+admin.site.register(Language, NamedNotableAdmin)
+admin.site.register(Publisher, NamedNotableAdmin)
 admin.site.register(OwningInstitution)
 admin.site.register(Book, BookAdmin)
 admin.site.register(Catalogue)
