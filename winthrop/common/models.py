@@ -23,6 +23,12 @@ class Notable(models.Model):
     class Meta:
         abstract = True
 
+    def has_notes(self):
+        '''boolean flag indicating if notes are present, for display
+        in admin lists'''
+        return bool(self.notes)
+    has_notes.boolean = True
+
 
 class DateRange(models.Model):
     '''Abstract model with optional start and end years, and a
