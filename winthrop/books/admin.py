@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from .models import Subject, Language, Publisher, OwningInstitution, \
     Book, Catalogue, BookSubject, BookLanguage, CreatorType, Creator, \
-    PersonBook
+    PersonBook, PersonBookRelationshipType
 
 class SubjectInline(admin.TabularInline):
     model = BookSubject
@@ -28,3 +28,4 @@ admin.site.register(BookSubject)
 admin.site.register(BookLanguage)
 admin.site.register(Creator)
 admin.site.register(PersonBook)
+admin.site.register(PersonBookRelationshipType)
