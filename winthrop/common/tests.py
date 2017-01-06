@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from .models import Named, DateRange
+from .models import Named, Notable, DateRange
 
 class TestNamed(TestCase):
 
@@ -9,7 +9,17 @@ class TestNamed(TestCase):
         assert str(named_obj) == 'foo'
 
 
-# currently no custom logic for Notable model to test here
+class TestNotable(TestCase):
+
+    def test_has_notes(self):
+        noted = Notable()
+        assert False == noted.has_notes()
+        noted.notes = 'some text'
+        assert True == noted.has_notes()
+        noted.notes = ''
+        assert False == noted.has_notes()
+        noted.notes = None
+        assert False == noted.has_notes()
 
 class TestDateRange(TestCase):
 

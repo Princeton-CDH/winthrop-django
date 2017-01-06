@@ -1,8 +1,20 @@
 from django.contrib import admin
 
+from winthrop.common.admin import NamedNotableAdmin
 from .models import Subject, Language, Publisher, OwningInstitution, \
     Book, Catalogue, BookSubject, BookLanguage, CreatorType, Creator, \
     PersonBook, PersonBookRelationshipType
+
+
+class NamedNotableBookCount(NamedNotableAdmin):
+    list_display = NamedNotableAdmin.list_display + ('book_count', )
+
+
+class OwningInstitutionAdmin(admin.ModelAdmin):
+    list_display = ('short_name', 'name', 'place', 'has_notes', 'book_count')
+    fields = ('name', 'short_name', 'contact_info', 'place', 'notes')
+    search_fields = ('name', 'short_name', 'contact_info', 'notes')
+
 
 class SubjectInline(admin.TabularInline):
     model = BookSubject
@@ -16,10 +28,10 @@ class BookAdmin(admin.ModelAdmin):
     list_filter = ('subjects', 'languages')
 
 
-admin.site.register(Subject)
-admin.site.register(Language)
-admin.site.register(Publisher)
-admin.site.register(OwningInstitution)
+admin.site.register(Subject,  NamedNotableBookCount)
+admin.site.register(Language, NamedNotableBookCount)
+admin.site.register(Publisher, NamedNotableBookCount)
+admin.site.register(OwningInstitution, OwningInstitutionAdmin)
 admin.site.register(Book, BookAdmin)
 admin.site.register(Catalogue)
 admin.site.register(CreatorType)
