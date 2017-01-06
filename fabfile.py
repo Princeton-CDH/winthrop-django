@@ -35,6 +35,10 @@ def deploy_qa(build=None, rebuild=False):
     kwargs:
     build -- git hash or overall branch name ('develop', 'master')
     rebuild -- Boolean, if True removes commit dir and rebuilds
+    
+    syntax:
+    fab deploy_qa:build=<hash>
+
     '''
 
     if build is not None:
