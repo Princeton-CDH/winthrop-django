@@ -53,7 +53,8 @@ class BookAdmin(admin.ModelAdmin):
         'dimensions', 'notes')
 
     inlines = [CreatorInline, LanguageInline, SubjectInline, CatalogueInline]
-    list_filter = ('subjects', 'languages')
+    list_filter = ('subjects', 'languages', 'is_extant',
+        'is_annotated', 'is_digitized')
 
 
 admin.site.register(Subject,  NamedNotableBookCount)
