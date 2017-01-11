@@ -49,14 +49,15 @@ class Book(Notable):
     # how long are full titles? is this long enough?
     short_title = models.CharField(max_length=255)
     # do we want any limit on short titles?
-    original_pub_info = models.TextField()
+    original_pub_info = models.TextField(
+        verbose_name='Original Publication Information')
     publisher = models.ForeignKey(Publisher)
-    pub_place = models.ForeignKey(Place)
+    pub_place = models.ForeignKey(Place, verbose_name='Place of Publication')
     pub_year = models.PositiveIntegerField('Publication Year')
     # is positive integer enough, or do we need more validation here?
-    is_extant = models.BooleanField()
-    is_annotated = models.BooleanField()
-    is_digitized = models.BooleanField()
+    is_extant = models.BooleanField(default=False)
+    is_annotated = models.BooleanField(default=False)
+    is_digitized = models.BooleanField(default=False)
     red_catalog_number = models.CharField(max_length=255, blank=True)
     ink_catalog_number = models.CharField(max_length=255, blank=True)
     pencil_catalog_number = models.CharField(max_length=255, blank=True)
@@ -79,6 +80,20 @@ class Book(Notable):
     def __str__(self):
         return '%s (%s)' % (self.short_title, self.pub_year)
 
+    def catalogue_call_numbers(self):
+        'Convenience access to catalogue call numbers, for display in admin'
+        return ', '.join([c.call_number for c in self.catalogue_set.all()])
+    catalogue_call_numbers.short_description = 'Call Numbers'
+
+    def authors(self):
+        return self.creator_set.filter(creator_type__name='Author')
+
+    def author_names(self):
+        'Display author names; convenience access for display in admin'
+        # NOTE: possibly might want to use last names here
+        return ', '.join(str(auth.person) for auth in self.authors())
+    author_names.short_description = 'Authors'
+
 
 class Catalogue(Notable, DateRange):
     '''Location of a book in the real world, associating it with an
@@ -88,7 +103,7 @@ class Catalogue(Notable, DateRange):
     is_current = models.BooleanField()
     # using char instead of int because assuming "number" is not strictly required
     call_number = models.CharField(max_length=255, blank=True)
-    is_sammelband = models.BooleanField()
+    is_sammelband = models.BooleanField(default=False)
     bound_order = models.PositiveIntegerField(null=True, blank=True)
 
     def __str__(self):

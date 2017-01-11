@@ -2,7 +2,9 @@ from django.test import TestCase
 import pytest
 
 from winthrop.places.models import Place
-from .models import OwningInstitution, Book, Publisher, Catalogue
+from winthrop.people.models import Person
+from .models import OwningInstitution, Book, Publisher, Catalogue, \
+    Creator, CreatorType
 
 
 class TestOwningInstitution(TestCase):
@@ -40,19 +42,50 @@ class TestOwningInstitution(TestCase):
 
 
 class TestBook(TestCase):
+    fixtures = ['sample_book_data.json']
 
     def test_str(self):
-        pub = Publisher(name='Pub Lee')
-        pub_place = Place(name='Printington', geonames_id=4567)
+        de_christelicke = Book.objects.get(short_title__contains="De Christelicke")
 
-        bk = Book(title='Some rambling long old title',
-            short_title='Some rambling',
-            original_pub_info='foo',
-            publisher=pub,
-            pub_place=pub_place,
-            pub_year=1823)
+        assert '%s (%s)' % (de_christelicke.short_title, de_christelicke.pub_year) \
+            == str(de_christelicke)
 
-        assert 'Some rambling (1823)' == str(bk)
+    def test_catalogue_call_numbers(self):
+        de_christelicke = Book.objects.get(short_title__contains="De Christelicke")
+
+        # fixture has one call number
+        assert de_christelicke.catalogue_call_numbers() == 'Win 60'
+
+        # add a second catalogue record
+        owning_inst = OwningInstitution.objects.first()
+        cat = Catalogue.objects.create(institution=owning_inst,
+            book=de_christelicke, call_number='NY789', is_current=True)
+
+        assert de_christelicke.catalogue_call_numbers() == \
+            'Win 60, NY789'
+
+    def test_authors(self):
+        de_christelicke = Book.objects.get(short_title__contains="De Christelicke")
+
+        laski = 'Łaski, Jan'
+        assert de_christelicke.authors().count() == 1
+        assert de_christelicke.authors().first().person.authorized_name == \
+            laski
+        assert de_christelicke.author_names() == laski
+
+        # modify fixture data to test two authors
+        abelin_jp = "Abelin, Johann Philipp"
+        abelin = Person.objects.get(authorized_name=abelin_jp)
+        creator_author = CreatorType.objects.get(name='Author')
+        creator = Creator.objects.create(creator_type=creator_author,
+            person=abelin, book=de_christelicke)
+        assert de_christelicke.authors().count() == 2
+
+        assert de_christelicke.author_names() == '%s, %s' % (laski, abelin_jp)
+
+        # and no authors
+        de_christelicke.creator_set.all().delete()
+        assert de_christelicke.authors().count() == 0
 
 
 class TestCatalogue(TestCase):
