@@ -51,7 +51,8 @@ class BookAdmin(admin.ModelAdmin):
         'pub_place', 'pub_year', 'is_extant', 'is_annotated', 'is_digitized',
         'red_catalog_number', 'ink_catalog_number', 'pencil_catalog_number',
         'dimensions', 'notes')
-
+    search_fields = ('title', 'creator__person__authorized_name',
+        'catalogue__call_number', 'notes')
     inlines = [CreatorInline, LanguageInline, SubjectInline, CatalogueInline]
     list_filter = ('subjects', 'languages', 'is_extant',
         'is_annotated', 'is_digitized')
