@@ -94,6 +94,26 @@ class Book(Notable):
         return ', '.join(str(auth.person) for auth in self.authors())
     author_names.short_description = 'Authors'
 
+    def add_author(self, person):
+        '''Add the specified person as an author of this book'''
+        self.add_creator(person, 'Author')
+
+    def add_editor(self, person):
+        '''Add the specified person as an editor of this book'''
+        self.add_creator(person, 'Editor')
+
+    def add_translator(self, person):
+        '''Add the specified person as an translator of this book'''
+        self.add_creator(person, 'Translator')
+
+    def add_creator(self, person, creator_type):
+        '''Associate the specified person as a creator of this book
+        using the specified type (e.g., author, editor, etc.).
+        Will throw an exception if creator type is not valid.'''
+        creator_type = CreatorType.objects.get(name=creator_type)
+        Creator.objects.create(person=person, creator_type=creator_type,
+            book=self)
+
 
 class Catalogue(Notable, DateRange):
     '''Location of a book in the real world, associating it with an
@@ -101,7 +121,8 @@ class Catalogue(Notable, DateRange):
     institution = models.ForeignKey(OwningInstitution)
     book = models.ForeignKey(Book)
     is_current = models.BooleanField()
-    # using char instead of int because assuming "number" is not strictly required
+    # using char instead of int because assuming  call numbers may contain
+    # strings as well as numbers
     call_number = models.CharField(max_length=255, blank=True)
     is_sammelband = models.BooleanField(default=False)
     bound_order = models.PositiveIntegerField(null=True, blank=True)

@@ -38,7 +38,7 @@ class TestOwningInstitution(TestCase):
         cat = Catalogue.objects.create(institution=inst, book=bk,
             is_current=False, is_sammelband=False)
 
-        assert 1 == inst.book_count()
+        assert inst.book_count() == 1
 
 
 class TestBook(TestCase):
@@ -61,8 +61,7 @@ class TestBook(TestCase):
         cat = Catalogue.objects.create(institution=owning_inst,
             book=de_christelicke, call_number='NY789', is_current=True)
 
-        assert de_christelicke.catalogue_call_numbers() == \
-            'Win 60, NY789'
+        assert de_christelicke.catalogue_call_numbers() == 'Win 60, NY789'
 
     def test_authors(self):
         de_christelicke = Book.objects.get(short_title__contains="De Christelicke")
@@ -77,7 +76,7 @@ class TestBook(TestCase):
         abelin_jp = "Abelin, Johann Philipp"
         abelin = Person.objects.get(authorized_name=abelin_jp)
         creator_author = CreatorType.objects.get(name='Author')
-        creator = Creator.objects.create(creator_type=creator_author,
+        Creator.objects.create(creator_type=creator_author,
             person=abelin, book=de_christelicke)
         assert de_christelicke.authors().count() == 2
 
@@ -86,6 +85,31 @@ class TestBook(TestCase):
         # and no authors
         de_christelicke.creator_set.all().delete()
         assert de_christelicke.authors().count() == 0
+
+    def test_add_author(self):
+        de_christelicke = Book.objects.get(short_title__contains="De Christelicke")
+        abelin = Person.objects.get(authorized_name="Abelin, Johann Philipp")
+        de_christelicke.add_author(abelin)
+        # check that appropriate creator model was created
+        assert Creator.objects.filter(creator_type__name='Author',
+            person=abelin, book=de_christelicke).count() == 1
+        assert de_christelicke.authors().count() == 2
+
+    def test_add_editor(self):
+        de_christelicke = Book.objects.get(short_title__contains="De Christelicke")
+        abelin = Person.objects.get(authorized_name="Abelin, Johann Philipp")
+        de_christelicke.add_editor(abelin)
+        # check that appropriate creator model was created
+        assert Creator.objects.filter(creator_type__name='Editor',
+            person=abelin, book=de_christelicke).count() == 1
+
+    def test_add_translator(self):
+        de_christelicke = Book.objects.get(short_title__contains="De Christelicke")
+        abelin = Person.objects.get(authorized_name="Abelin, Johann Philipp")
+        de_christelicke.add_translator(abelin)
+        # check that appropriate creator model was created
+        assert Creator.objects.filter(creator_type__name='Translator',
+            person=abelin, book=de_christelicke).count() == 1
 
 
 class TestCatalogue(TestCase):
