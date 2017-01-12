@@ -1,3 +1,4 @@
+from collections import defaultdict
 import csv
 from django.core.management.base import BaseCommand, CommandError
 
@@ -48,10 +49,9 @@ class Command(BaseCommand):
         'Editor': 'Editor',
     }
 
+    # currently unused
     other_fields = [
         'Number of Pages',
-        'NYSL -- NOTES',
-        'NYSL CALL NUMBER',
         'Type of Volume',
         'Subject Tagging (separate with semicolons)',
         'EDITION',
@@ -59,7 +59,6 @@ class Command(BaseCommand):
         'NYSL DESCRIPTION',
         'Other documents that demonstrate this relationship (separate with semicolon)',
         'Provenance',
-        'Annotated?',
         'Physical Size'
     ]
 
@@ -74,82 +73,98 @@ class Command(BaseCommand):
         # all books will be catalogued with NYSL, so look for
         # owning instution object first
         try:
-            nysl = OwningInstitution.objects.get(short_name='NYSL')
+            self.nysl = OwningInstitution.objects.get(short_name='NYSL')
         except OwningInstitution.DoesNotExist:
             raise CommandError("Owning institution NYSL was not found")
 
-        # TODO: add stats, report on number of books, people,
-        # publishers, places added
+        self.stats = defaultdict(int)
 
         with open(input_file) as csvfile:
             csvreader = csv.DictReader(csvfile)
 
-            count = 0
             # each row in the CSV corresponds to a book record
             for row in csvreader:
-                # nysl books, therefore assuming all are extant
-                newbook = Book(is_extant=True)
-                # set fields that can be mapped directly from the spreadsheet
-                for model_field, csv_field in self.fields_exact.items():
-                    value = row[csv_field]
-                    # special case: some of the catalog numbers have
-                    # been entered as "NA" in the spreadsheet; skip those
-                    print('field %s value %s' % (model_field, value))
-                    if model_field.endswith('catalog_number') and \
-                        value == 'NA':
-                        continue
+                self.create_book(row)
 
-                    setattr(newbook, model_field, value)
+                # TEMPORARY: bail out for testing
+                if self.stats['book'] > 3:
+                    break
 
-                # handle book fields that require some logic
-                # - publication year might have brackets, e.g. [1566],
-                #   but model stores it as an integer
-                pub_year = row[self.fields['pub_year']]
-                newbook.pub_year = pub_year.strip('[]')
-                # - is annotated; spreadsheet has variants in upper/lower case
-                # and trailing periods; in some cases there are notes;
-                # for now, assuming that anything ambiguous should be false here
-                annotated = row[self.fields['is_annotated']].lower().strip('.')
-                newbook.is_annotated = (annotated == 'yes')
+            # summarize what content was imported/created
+            print('''Imported content:
+    %(book)d books
+    %(place)d places
+    %(person)d people
+    %(publisher)d publishers''' % self.stats)
 
-                # add required relationships before saving the new book
-                # - place
-                placename = row[self.fields['pub_place']]
+    def create_book(self, data):
+        # create a new book and all related models from
+        # a row of data in the spreadsheet
+
+        # nysl books, therefore assuming all are extant
+        newbook = Book(is_extant=True)
+        # set fields that can be mapped directly from the spreadsheet
+        for model_field, csv_field in self.fields_exact.items():
+            value = data[csv_field]
+            # special case: some of the catalog numbers have
+            # been entered as "NA" in the spreadsheet; skip those
+            if model_field.endswith('catalog_number') and \
+                value == 'NA':
+                continue
+
+            setattr(newbook, model_field, value)
+
+        # handle book fields that require some logic
+        # - publication year might have brackets, e.g. [1566],
+        #   but model stores it as an integer
+        pub_year = data[self.fields['pub_year']]
+        newbook.pub_year = pub_year.strip('[]')
+        # - is annotated; spreadsheet has variants in upper/lower case
+        # and trailing periods; in some cases there are notes;
+        # for now, assuming that anything ambiguous should be false here
+        annotated = data[self.fields['is_annotated']].lower().strip('.')
+        newbook.is_annotated = (annotated == 'yes')
+
+        # add required relationships before saving the new book
+        # - place
+        placename = data[self.fields['pub_place']]
+        try:
+            place = Place.objects.get(name=placename)
+        except Place.DoesNotExist:
+            place = Place.objects.create(name=placename)
+            # TODO: geonames lookup?
+            self.stats['place'] += 1
+        newbook.pub_place = place
+
+        # - publisher
+        publisher_name = data[self.fields['publisher']]
+        try:
+            publisher = Publisher.objects.get(name=publisher_name)
+        except Publisher.DoesNotExist:
+            publisher = Publisher.objects.create(name=publisher_name)
+            self.stats['publisher'] += 1
+        newbook.publisher = publisher
+
+        newbook.save()
+
+        # TODO: do we need to handle multiple creators here?
+        for creator_type, csv_field in self.creators.items():
+            # name could be empty (e.g. for translator, editor)
+            name = data[csv_field]
+            if name:
                 try:
-                    place = Place.objects.get(name=placename)
-                except Place.DoesNotExist:
-                    place = Place.objects.create(name=placename)
-                newbook.pub_place = place
+                    person = Person.objects.get(authorized_name=name)
+                except Person.DoesNotExist:
+                    person = Person.objects.create(authorized_name=name)
+                    self.stats['person'] += 1
+                newbook.add_creator(person, creator_type)
 
-                # - publisher
-                publisher_name = row[self.fields['publisher']]
-                try:
-                    publisher = Publisher.objects.get(name=publisher_name)
-                except Publisher.DoesNotExist:
-                    publisher = Publisher.objects.create(name=publisher_name)
-                newbook.publisher = publisher
+        # catalogue as a current NYSL book
+        Catalogue.objects.create(institution=self.nysl, book=newbook,
+            is_current=True,
+            call_number=data[self.fields['nysl_call_number']],
+            notes=data[self.fields['nysl_notes']])
 
-                newbook.save()
+        self.stats['book'] += 1
 
-                # TODO: do we need to handle multiple creators here?
-                for creator_type, csv_field in self.creators.items():
-                    # name could be empty (e.g. for translator, editor)
-                    name = row[csv_field]
-                    if name:
-                        try:
-                            person = Person.objects.get(authorized_name=name)
-                        except Person.DoesNotExist:
-                            person = Person.objects.create(authorized_name=name)
-                        newbook.add_creator(person, creator_type)
-
-                # catalogue as a current NYSL book
-                Catalogue.objects.create(institution=nysl, book=newbook,
-                    is_current=True,
-                    call_number=row[self.fields['nysl_call_number']],
-                    notes=row[self.fields['nysl_notes']])
-
-                count += 1
-                # bail out for testing
-                if count > 3:
-                    return
 
