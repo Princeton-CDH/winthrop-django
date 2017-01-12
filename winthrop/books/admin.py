@@ -42,6 +42,11 @@ class CreatorInline(CollapsibleTabularInline):
     fields = ('creator_type', 'person', 'notes')
 
 
+class PersonBookInline(CollapsibleTabularInline):
+    model = PersonBook
+    fields = ('person', 'relationship_type', 'start_year', 'end_year')
+
+
 class BookAdmin(admin.ModelAdmin):
     list_display = ('short_title', 'author_names', 'pub_year',
         'catalogue_call_numbers', 'is_extant', 'is_annotated',
@@ -53,7 +58,8 @@ class BookAdmin(admin.ModelAdmin):
         'dimensions', 'notes')
     search_fields = ('title', 'creator__person__authorized_name',
         'catalogue__call_number', 'notes')
-    inlines = [CreatorInline, LanguageInline, SubjectInline, CatalogueInline]
+    inlines = [CreatorInline, LanguageInline, SubjectInline, CatalogueInline,
+        PersonBookInline]
     list_filter = ('subjects', 'languages', 'is_extant',
         'is_annotated', 'is_digitized')
 
@@ -64,6 +70,4 @@ admin.site.register(Publisher, NamedNotableBookCount)
 admin.site.register(OwningInstitution, OwningInstitutionAdmin)
 admin.site.register(Book, BookAdmin)
 admin.site.register(CreatorType, NamedNotableAdmin)
-# NOTE: these will probably be inlines, but register for testing for now
-admin.site.register(PersonBook)
-admin.site.register(PersonBookRelationshipType)
+admin.site.register(PersonBookRelationshipType, NamedNotableAdmin)

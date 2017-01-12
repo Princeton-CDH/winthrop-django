@@ -175,6 +175,9 @@ class PersonBook(Notable, DateRange):
     book = models.ForeignKey(Book)
     relationship_type = models.ForeignKey(PersonBookRelationshipType)
 
+    class Meta:
+        verbose_name = 'Person/Book Interaction'
+
     def __str__(self):
         dates = ''
         if self.dates:
