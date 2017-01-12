@@ -7,7 +7,7 @@ from django.db import migrations
 
 
 def load_fixture(apps, schema_editor):
-        call_command('loaddata', 'initial_relationshiptypes', app_label='people')
+    call_command('loaddata', 'initial_relationshiptypes', app_label='people')
 
 
 class Migration(migrations.Migration):

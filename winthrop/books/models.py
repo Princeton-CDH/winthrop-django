@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
-from django.core.exceptions import ValidationError
 
 from winthrop.common.models import Named, Notable, DateRange
 from winthrop.places.models import Place
@@ -133,7 +132,6 @@ class Catalogue(Notable, DateRange):
             dates = ' (%s)' % self.dates
         return '%s / %s%s' % (self.book, self.institution, dates)
 
-    '''Validator to see if two foreign keys are the same, if so raise error'''
 
 class BookSubject(Notable):
     '''Through-model for book-subject relationship, to allow designating

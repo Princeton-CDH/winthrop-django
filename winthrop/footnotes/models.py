@@ -39,7 +39,7 @@ class Footnote(Notable):
         'supports the information in the system, False if it contradicts.')
 
     def __str__(self):
-        'Footnote on %s' % (self.content_object)
+        return 'Footnote on %s' % (self.content_object)
 
     # NOTE: for convenient access from other models, add a
     # reverse generic relation

@@ -7,11 +7,11 @@ from django.db import migrations
 
 
 def load_fixture(apps, schema_editor):
-        call_command(
-                'loaddata',
-                'initial_sourcetypes',
-                app_label='footnotes'
-        )
+    call_command(
+        'loaddata',
+        'initial_sourcetypes',
+        app_label='footnotes'
+    )
 
 
 class Migration(migrations.Migration):
