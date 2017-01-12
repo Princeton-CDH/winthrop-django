@@ -1,10 +1,19 @@
+from collections import defaultdict
+import csv
+from django.core.management import call_command
 from django.test import TestCase
-import pytest
+import os
+from io import StringIO
 
 from winthrop.places.models import Place
 from winthrop.people.models import Person
 from .models import OwningInstitution, Book, Publisher, Catalogue, \
     Creator, CreatorType
+from .management.commands import import_nysl
+
+
+FIXTURE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+    'fixtures')
 
 
 class TestOwningInstitution(TestCase):
@@ -140,3 +149,67 @@ class TestCatalogue(TestCase):
 # book-subject, book-language, creator, person-book
 # Expect to have more sophisticated/meaningful things to test
 # as we add functionality.
+
+class TestImportNysl(TestCase):
+
+    test_csv = os.path.join(FIXTURE_DIR, 'test_nysl_data.csv')
+
+    def setUp(self):
+        self.cmd = import_nysl.Command()
+        self.cmd.stdout = StringIO()
+        # setup normally done in handle()
+        self.cmd.stats = defaultdict(int)
+        self.cmd.nysl = OwningInstitution.objects.get(short_name='NYSL')
+
+    def test_run(self):
+        out = StringIO()
+        call_command('import_nysl', self.test_csv, stdout=out)
+        output = out.getvalue()
+        assert 'Imported content' in output
+        assert '2 books' in output
+        assert '2 places' in output
+        assert '2 people' in output
+        assert '2 publishers' in output
+
+    def test_create_book(self):
+        # load data from fixture to test book creation more directly
+        with open(self.test_csv) as csvfile:
+            csvreader = csv.DictReader(csvfile)
+            de_christelicke = next(csvreader)
+            mercurii = next(csvreader)
+
+        # test against first row of fixture data
+        data = de_christelicke
+        self.cmd.create_book(data)
+        # find book object by short title and compare data
+        book = Book.objects.get(short_title=data['Short Title'])
+        assert book.title == data['Title']
+        assert book.pub_year == int(data['Year of Publication'])
+        assert book.is_extant
+        assert book.original_pub_info == data['PUB INFO - Original']
+        assert not book.is_annotated
+        assert book.notes == data['Notes']
+        # test fields on related models
+        assert book.pub_place.name == data['Modern Place of Publication']
+        assert book.publisher.name == data['Standardized Name of Publisher']
+        # - first row has author, no editor or translator
+        assert book.authors().first().person.authorized_name == \
+            data['AUTHOR, Standarized']
+        book_creators = book.creator_set.all()
+        assert book_creators.filter(creator_type__name='Editor').count() == 0
+        assert book_creators.filter(creator_type__name='Translator').count() == 0
+        # check that NYSL cataloguing information created correctly
+        nysl_catalogue = book.catalogue_set.get(institution__short_name='NYSL')
+        assert nysl_catalogue.call_number == data['NYSL CALL NUMBER']
+        assert nysl_catalogue.is_current
+        assert nysl_catalogue.notes == data['NYSL -- NOTES']
+
+        # test variations in second row of fixture data
+        data = mercurii
+        self.cmd.create_book(data)
+        # find book object by short title and compare data
+        book = Book.objects.get(short_title=data['Short Title'])
+        assert book.red_catalog_number == data['RED catalogue number at the front']
+        # ink and pencil are 'NA' in fixture; should be empty
+        assert book.ink_catalog_number == ''
+        assert book.pencil_catalog_number == ''
