@@ -7,19 +7,6 @@ from winthrop.books.models import Book, Publisher, OwningInstitution, \
 from winthrop.people.models import Person
 from winthrop.places.models import Place
 
-# questions and notes:
-# - am I correct to assume all books in the spreadsheet are extant?
-# - am I correct to assume NYSL catalogue information should be marked
-#   as current for all books?
-# - are there any cases with multiple authors, editors, or translators?
-# - in some cases 'annotated' column has notes; preserve these somewhere?
-# - I don't see any subjects in the spreadsheet, is that correct?
-# - which field or fields should be used for physical description? Physical
-#   size? Number of Pages? Type of Volume?
-# - need to link to NYSL, so I'm going to create an initial "Owning Institution"
-#   record for NYSL.  When you see it in test, let me know if you want it
-#   modified in some way.
-
 
 class Command(BaseCommand):
     help = 'Import NYSL book data into the database from a CSV file'
