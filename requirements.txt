@@ -2,3 +2,4 @@ django
 mysqlclient
 django-grappelli
 django-autocomplete-light
+requests
