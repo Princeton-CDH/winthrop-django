@@ -16,5 +16,5 @@ urlpatterns = [
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/', admin.site.urls),
 
-    url(r'^places/', include('winthrop.places.urls')),
+    url(r'^places/', include('winthrop.places.urls', namespace='places')),
 ]

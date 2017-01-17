@@ -30,7 +30,7 @@ class PlaceAdminForm(forms.ModelForm):
         model = Place
         exclude = []
         widgets = {
-            'geonames_id': GeonamesLookupWidget(url='geonames-autocomplete',
+            'geonames_id': GeonamesLookupWidget(url='places:geonames-autocomplete',
                 attrs={'data-placeholder': 'Type location name to search...',
                        'data-minimum-input-length': 3})
         }
