@@ -1,4 +1,6 @@
+from django import forms
 from django.contrib import admin
+from dal import autocomplete
 
 from winthrop.common.admin import NamedNotableAdmin
 from .models import Subject, Language, Publisher, OwningInstitution, \
@@ -47,7 +49,21 @@ class PersonBookInline(CollapsibleTabularInline):
     fields = ('person', 'relationship_type', 'start_year', 'end_year')
 
 
+class BookAdminForm(forms.ModelForm):
+    '''Custom model form for Book editing, used to add autocomplete
+    for place lookup.'''
+    class Meta:
+        model = Book
+        exclude = []
+        widgets = {
+            'pub_place': autocomplete.ModelSelect2(url='place-autocomplete',
+                attrs={'data-placeholder': 'Start typing location to search...'})
+        }
+
+
 class BookAdmin(admin.ModelAdmin):
+    form = BookAdminForm
+
     list_display = ('short_title', 'author_names', 'pub_year',
         'catalogue_call_numbers', 'is_extant', 'is_annotated',
         'is_digitized', 'has_notes')

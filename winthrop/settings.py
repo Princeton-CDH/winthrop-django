@@ -28,6 +28,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'dal',   # django-autocomplete-light (must be before grappelli)
+    'dal_select2',
     'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',

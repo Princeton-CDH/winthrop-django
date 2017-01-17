@@ -7,6 +7,7 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.generic.base import RedirectView
 
+
 urlpatterns = [
     # for now, since there is not yet any public-facing site,
     # redirect base url to admin index page
@@ -14,4 +15,6 @@ urlpatterns = [
     # # grappelli URLS for admin related lookups & autocompletes
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/', admin.site.urls),
+
+    url(r'^places/', include('winthrop.places.urls')),
 ]
