@@ -81,7 +81,9 @@
   "fields": {
     "name": "Emden",
     "notes": "",
-    "geonames_id": "http://sws.geonames.org/2930597/"
+    "geonames_id": "http://sws.geonames.org/2930597/",
+    "latitude": 53.36745,
+    "longitude": 7.20778
   }
 },
 {
@@ -90,7 +92,9 @@
   "fields": {
     "name": "Frankfurt",
     "notes": "",
-    "geonames_id": "http://sws.geonames.org/2925533/"
+    "geonames_id": "http://sws.geonames.org/2925533/",
+    "latitude": 50.11552,
+    "longitude": 8.68417
   }
 },
 {
@@ -99,7 +103,9 @@
   "fields": {
     "name": "New York City",
     "notes": "",
-    "geonames_id": "http://sws.geonames.org/5128581/"
+    "geonames_id": "http://sws.geonames.org/5128581/",
+    "latitude": 40.71427,
+    "longitude": -74.00597
   }
 },
 {

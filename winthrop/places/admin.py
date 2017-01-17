@@ -32,8 +32,7 @@ class PlaceAdminForm(forms.ModelForm):
         widgets = {
             'geonames_id': GeonamesLookupWidget(url='geonames-autocomplete',
                 attrs={'data-placeholder': 'Type location name to search...',
-                       'data-minimum-input-length': 3,
-                      'data-html': 'true'})
+                       'data-minimum-input-length': 3})
         }
 
 

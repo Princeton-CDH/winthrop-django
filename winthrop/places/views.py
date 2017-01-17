@@ -32,5 +32,8 @@ class GeonamesLookup(autocomplete.Select2ListView):
         }))
 
     def get_label(self, item):
-        return '''%(name)s, %(countryName)s''' % item
+        # display country for context, if available
+        if 'countryName' in item:
+            return '''%(name)s, %(countryName)s''' % item
+        return item['name']
 

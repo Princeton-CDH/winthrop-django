@@ -17,6 +17,7 @@ FIXTURE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 
 
 class TestOwningInstitution(TestCase):
+    fixtures = ['sample_book_data.json']
 
     def test_str(self):
         long_name = 'New York Society Library'
@@ -30,11 +31,11 @@ class TestOwningInstitution(TestCase):
     def test_book_count(self):
         # test abstract book count mix-in via owning institution model
 
-        pl = Place.objects.create(name='Printington', geonames_id=4567)
+        pl = Place.objects.first()
         inst = OwningInstitution.objects.create(name='NYSL',
             place=pl)
         # new institution has no books associated
-        assert 0 == inst.book_count()
+        assert inst.book_count() == 0
 
         # create a book and associated it with the institution
         pub = Publisher.objects.create(name='Pub Lee')

@@ -13,6 +13,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('books', '0005_initial_personbookrelationshiptypes'),
+        ('places', '0003_add_lat_long'),
     ]
 
     operations = [

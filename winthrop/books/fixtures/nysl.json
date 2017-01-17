@@ -16,7 +16,9 @@
   "fields": {
     "name": "New York City",
     "notes": "",
-    "geonames_id": "http://sws.geonames.org/5128581/"
+    "geonames_id": "http://sws.geonames.org/5128581/",
+    "latitude": 40.71427,
+    "longitude": -74.00597
   }
 }
 ]

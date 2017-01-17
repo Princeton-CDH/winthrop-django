@@ -126,7 +126,8 @@ class Command(BaseCommand):
         try:
             place = Place.objects.get(name=placename)
         except Place.DoesNotExist:
-            place = Place.objects.create(name=placename)
+            place = Place.objects.create(name=placename,
+                latitude=0.0, longitude=0.0)
             # TODO: geonames lookup?
             self.stats['place'] += 1
         newbook.pub_place = place
