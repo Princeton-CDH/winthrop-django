@@ -76,18 +76,21 @@ class Command(BaseCommand):
 
             # each row in the CSV corresponds to a book record
             for row in csvreader:
-                self.create_book(row)
-
-                # TEMPORARY: bail out for testing
-                if self.stats['book'] > 3:
-                    break
+                try:
+                    self.create_book(row)
+                except Exception as err:
+                    print('Error on import for %s: %s' %
+                        (row['Short Title'][:30], err))
+                    self.stats['err'] += 1
 
             # summarize what content was imported/created
             self.stdout.write('''Imported content:
     %(book)d books
     %(place)d places
     %(person)d people
-    %(publisher)d publishers''' % self.stats)
+    %(publisher)d publishers
+
+%(err)d errors''' % self.stats)
 
     def create_book(self, data):
         # create a new book and all related models from
@@ -110,7 +113,7 @@ class Command(BaseCommand):
         # - publication year might have brackets, e.g. [1566],
         #   but model stores it as an integer
         pub_year = data[self.fields['pub_year']]
-        newbook.pub_year = pub_year.strip('[]')
+        newbook.pub_year = pub_year.strip('[]?')
         # - is annotated; spreadsheet has variants in upper/lower case
         # and trailing periods; in some cases there are notes;
         # for now, assuming that anything ambiguous should be false here
