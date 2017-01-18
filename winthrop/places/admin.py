@@ -13,7 +13,7 @@ class GeonamesLookupWidget(autocomplete.Select2):
     # (inspired by )
 
     def render(self, name, value, attrs=None):
-        widget = super(autocomplete.Select2, self).render(name, value, attrs)
+        widget = super(GeonamesLookupWidget, self).render(name, value, attrs)
         return mark_safe((u'<div id="geonames_map"></div>' +
             u'%s<p><a id="geonames_uri" target="_blank" href="%s">%s</a></p>') % \
             (widget, value or '', value or ''))
