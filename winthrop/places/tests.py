@@ -36,12 +36,12 @@ class TestGeonamesApi(TestCase):
         result = geo_api.search('amsterdam')
         assert result == []
         mockrequests.get.assert_called_with('http://api.geonames.org/searchJSON',
-            params={'username': 'test_geonames_user', 'name': 'amsterdam'})
+            params={'username': 'test_geonames_user', 'q': 'amsterdam'})
 
         # with max specified
         result = geo_api.search('london', max_rows=20)
         mockrequests.get.assert_called_with('http://api.geonames.org/searchJSON',
-            params={'username': 'test_geonames_user', 'name': 'london',
+            params={'username': 'test_geonames_user', 'q': 'london',
                     'maxRows': 20})
 
     def test_uri_from_id(self):

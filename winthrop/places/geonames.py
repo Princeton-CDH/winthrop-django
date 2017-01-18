@@ -14,7 +14,7 @@ class GeoNamesAPI(object):
 
     def search(self, query, max_rows=None):
         api_url = '%s/%s' % (self.api_base, 'searchJSON')
-        params = {'username': self.username, 'name': query}
+        params = {'username': self.username, 'q': query}
         if max_rows is not None:
             params['maxRows'] = max_rows
         response = requests.get(api_url, params=params)
