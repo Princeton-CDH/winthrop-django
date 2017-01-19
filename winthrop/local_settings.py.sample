@@ -29,4 +29,13 @@ DATABASES = {
 }
 
 
+# CAS login configuration
+CAS_SERVER_URL = ''
+
+PUCAS_LDAP.update({
+    'SERVERS': [],
+    'SEARCH_BASE': '',
+    'SEARCH_FILTER': "(uid=%(user)s)",
+})
+
 
