@@ -11,6 +11,12 @@ ALLOWED_HOSTS = []
 # http://www.miniwebtool.com/django-secret-key-generator/
 SECRET_KEY = ''
 
+# username for accessing GeoNames API
+GEONAMES_USERNAME = ''
+
+# mapbox access token
+MAPBOX_ACCESS_TOKEN = ''
+
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases

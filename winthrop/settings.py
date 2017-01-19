@@ -28,6 +28,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'dal',   # django-autocomplete-light (must be before grappelli)
+    'dal_select2',
     'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -113,7 +115,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+# Additional locations of static files
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'sitemedia'),
+]
 
 ##################
 # LOCAL SETTINGS #

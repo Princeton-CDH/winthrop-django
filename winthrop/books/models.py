@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
-from django.core.exceptions import ValidationError
 
 from winthrop.common.models import Named, Notable, DateRange
 from winthrop.places.models import Place
@@ -49,14 +48,15 @@ class Book(Notable):
     # how long are full titles? is this long enough?
     short_title = models.CharField(max_length=255)
     # do we want any limit on short titles?
-    original_pub_info = models.TextField()
+    original_pub_info = models.TextField(
+        verbose_name='Original Publication Information')
     publisher = models.ForeignKey(Publisher)
-    pub_place = models.ForeignKey(Place)
+    pub_place = models.ForeignKey(Place, verbose_name='Place of Publication')
     pub_year = models.PositiveIntegerField('Publication Year')
     # is positive integer enough, or do we need more validation here?
-    is_extant = models.BooleanField()
-    is_annotated = models.BooleanField()
-    is_digitized = models.BooleanField()
+    is_extant = models.BooleanField(default=False)
+    is_annotated = models.BooleanField(default=False)
+    is_digitized = models.BooleanField(default=False)
     red_catalog_number = models.CharField(max_length=255, blank=True)
     ink_catalog_number = models.CharField(max_length=255, blank=True)
     pencil_catalog_number = models.CharField(max_length=255, blank=True)
@@ -79,6 +79,40 @@ class Book(Notable):
     def __str__(self):
         return '%s (%s)' % (self.short_title, self.pub_year)
 
+    def catalogue_call_numbers(self):
+        'Convenience access to catalogue call numbers, for display in admin'
+        return ', '.join([c.call_number for c in self.catalogue_set.all()])
+    catalogue_call_numbers.short_description = 'Call Numbers'
+
+    def authors(self):
+        return self.creator_set.filter(creator_type__name='Author')
+
+    def author_names(self):
+        'Display author names; convenience access for display in admin'
+        # NOTE: possibly might want to use last names here
+        return ', '.join(str(auth.person) for auth in self.authors())
+    author_names.short_description = 'Authors'
+
+    def add_author(self, person):
+        '''Add the specified person as an author of this book'''
+        self.add_creator(person, 'Author')
+
+    def add_editor(self, person):
+        '''Add the specified person as an editor of this book'''
+        self.add_creator(person, 'Editor')
+
+    def add_translator(self, person):
+        '''Add the specified person as an translator of this book'''
+        self.add_creator(person, 'Translator')
+
+    def add_creator(self, person, creator_type):
+        '''Associate the specified person as a creator of this book
+        using the specified type (e.g., author, editor, etc.).
+        Will throw an exception if creator type is not valid.'''
+        creator_type = CreatorType.objects.get(name=creator_type)
+        Creator.objects.create(person=person, creator_type=creator_type,
+            book=self)
+
 
 class Catalogue(Notable, DateRange):
     '''Location of a book in the real world, associating it with an
@@ -86,9 +120,10 @@ class Catalogue(Notable, DateRange):
     institution = models.ForeignKey(OwningInstitution)
     book = models.ForeignKey(Book)
     is_current = models.BooleanField()
-    # using char instead of int because assuming "number" is not strictly required
+    # using char instead of int because assuming  call numbers may contain
+    # strings as well as numbers
     call_number = models.CharField(max_length=255, blank=True)
-    is_sammelband = models.BooleanField()
+    is_sammelband = models.BooleanField(default=False)
     bound_order = models.PositiveIntegerField(null=True, blank=True)
 
     def __str__(self):
@@ -97,7 +132,6 @@ class Catalogue(Notable, DateRange):
             dates = ' (%s)' % self.dates
         return '%s / %s%s' % (self.book, self.institution, dates)
 
-    '''Validator to see if two foreign keys are the same, if so raise error'''
 
 class BookSubject(Notable):
     '''Through-model for book-subject relationship, to allow designating
@@ -159,6 +193,9 @@ class PersonBook(Notable, DateRange):
     person = models.ForeignKey(Person)
     book = models.ForeignKey(Book)
     relationship_type = models.ForeignKey(PersonBookRelationshipType)
+
+    class Meta:
+        verbose_name = 'Person/Book Interaction'
 
     def __str__(self):
         dates = ''

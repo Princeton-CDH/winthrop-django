@@ -4,6 +4,9 @@ from winthrop.common.models import Named, Notable
 
 
 class Place(Named, Notable):
-    # do we want to store id only or geonames uri?
+    # store full geonames uri
     geonames_id = models.URLField()
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+
 

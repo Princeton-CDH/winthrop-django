@@ -7,11 +7,11 @@ from django.db import migrations
 
 
 def load_fixture(apps, schema_editor):
-        call_command(
-                'loaddata',
-                'initial_subjects_languages_creatortypes',
-                app_label='books'
-        )
+    call_command(
+        'loaddata',
+        'initial_subjects_languages_creatortypes',
+        app_label='books'
+    )
 
 
 class Migration(migrations.Migration):
