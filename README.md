@@ -10,6 +10,11 @@ project.
 
 Python 3.5 / Django 1.10
 
+## Current development status
+
+[![In Progress](https://badge.waffle.io/Princeton-CDH/winthrop-django.svg?label=development+in+progress&title=In+Progress)](http://waffle.io/Princeton-CDH/winthrop-django)
+[![Development Complete](https://badge.waffle.io/Princeton-CDH/winthrop-django.svg?label=development+complete&title=Development+Complete)](http://waffle.io/Princeton-CDH/winthrop-django)
+[![Awaiting Testing](https://badge.waffle.io/Princeton-CDH/winthrop-django.svg?label=awaiting+testing&title=Awaiting+Testing)](http://waffle.io/Princeton-CDH/winthrop-django)
 
 ## Development instructions
 
