@@ -1,6 +1,5 @@
-from django.http import HttpResponse
+from django.http import JsonResponse
 from dal import autocomplete
-import json
 
 from .models import Place
 from .geonames import GeoNamesAPI
@@ -21,7 +20,7 @@ class GeonamesLookup(autocomplete.Select2ListView):
         """"Return option list json response."""
         geo_api = GeoNamesAPI()
         results = geo_api.search(self.q, max_rows=50)
-        return HttpResponse(json.dumps({
+        return JsonResponse({
             'results': [dict(
                 id=geo_api.uri_from_id(item['geonameId']),
                 text=self.get_label(item),
@@ -31,7 +30,7 @@ class GeonamesLookup(autocomplete.Select2ListView):
                 lat=item['lat'],
                 lng=item['lng']
             ) for item in results],
-        }))
+        })
 
     def get_label(self, item):
         # display country for context, if available
