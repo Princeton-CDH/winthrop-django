@@ -83,22 +83,7 @@ def deploy_qa(build=None, rebuild=False):
             sudo('../make_dump.sh')
             sudo('../migrate_collect.sh')
 
-            # Add wsgi virtualenv setting - REPO SPECIFIC SETTINGS
-            with cd('winthrop/'):
-                sudo('/var/deploy/prep_wsgi.py %(deploy_commit_dir)s %(deploy_commit_dir)s/env/lib/python3.5/site-packages' % env)
-
-            # Put up a denying robots.txt
-            if exists('static/robots.txt'):
-                sudo('rm static/robots.txt && ln -s ../../robots.txt static/robots.txt')
-            else:
-                sudo('ln -s ../../robots.txt static/robots.txt')
-
-            # NOTE: If you install pucas, uncomment these lines to install the templates as part of deploy
-            # Copy pucas templates
-            # sudo('cp -Rf /var/deploy/django-pucas/pucas/templates/pucas templates/')  
-            # sudo('cp templates/pucas/sample-admin-login.html templates/admin/login.html')
-        
-        # Redo symlinks for apache
+# Redo symlinks for apache
         with cd('/var/www/'):
             if exists('%(repo)s' % env):
                 sudo('rm -f %(repo)s' % env)
@@ -110,7 +95,5 @@ def deploy_qa(build=None, rebuild=False):
         # Clean up deploy
         sudo('rm -f %(deploy_dir)s*.tar.gz' % env) 
 
-        # Restart apache
-        sudo('systemctl restart httpd24-httpd')
-
-
+        # touch wsgi.py to trigger a reload 
+        sudo('touch %(web_prefix)s/%(repo)s/winthrop/wsgi.py' % env) 
