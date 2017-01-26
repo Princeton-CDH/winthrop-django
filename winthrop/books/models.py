@@ -44,8 +44,7 @@ class OwningInstitution(Named, Notable, BookCount):
 
 class Book(Notable):
     '''An individual book or volume'''
-    title = models.CharField(max_length=255)
-    # how long are full titles? is this long enough?
+    title = models.TextField()
     short_title = models.CharField(max_length=255)
     # do we want any limit on short titles?
     original_pub_info = models.TextField(
