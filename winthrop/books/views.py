@@ -1,3 +1,12 @@
-from django.shortcuts import render
+from dal import autocomplete
 
-# Create your views here.
+from .models import Publisher
+
+
+class PublisherAutocomplete(autocomplete.Select2QuerySetView):
+    # basic publisher autocomplete lookup, based on
+    # django-autocomplete-light tutorial
+    # restricted to staff only in url config
+
+    def get_queryset(self):
+        return Publisher.objects.filter(name__contains=self.q)

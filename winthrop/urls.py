@@ -18,6 +18,6 @@ urlpatterns = [
     url(r'^accounts/', include('pucas.cas_urls')),
 
     url(r'^places/', include('winthrop.places.urls', namespace='places')),
-
+    url(r'^books/', include('winthrop.books.urls', namespace='books')),
 
 ]

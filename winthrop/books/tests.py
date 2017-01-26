@@ -1,7 +1,10 @@
 from collections import defaultdict
 import csv
+from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.test import TestCase
+from django.urls import reverse
+import json
 import os
 from io import StringIO
 
@@ -214,3 +217,31 @@ class TestImportNysl(TestCase):
         # ink and pencil are 'NA' in fixture; should be empty
         assert book.ink_catalog_number == ''
         assert book.pencil_catalog_number == ''
+
+
+class TestBookViews(TestCase):
+    fixtures = ['sample_book_data.json']
+
+    def setUp(self):
+        # create an admin user to test autocomplete views
+        self.password = 'pass!@#$'
+        self.admin = get_user_model().objects.create_superuser('testadmin',
+            'test@example.com', self.password)
+
+    def test_publisher_autocomplete(self):
+        pub_autocomplete_url = reverse('books:publisher-autocomplete')
+        result = self.client.get(pub_autocomplete_url,
+            params={'q': 'van der'})
+        # not allowed to anonymous user
+        assert result.status_code == 302
+
+        # login as an admin user
+        self.client.login(username=self.admin.username, password=self.password)
+
+        result = self.client.get(pub_autocomplete_url, {'q': 'van der'})
+        assert result.status_code == 200
+        # decode response to inspect
+        data = json.loads(result.content.decode('utf-8'))
+        assert data['results'][0]['text'] == 'E. van der Erve'
+
+

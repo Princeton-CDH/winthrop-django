@@ -57,7 +57,9 @@ class BookAdminForm(forms.ModelForm):
         exclude = []
         widgets = {
             'pub_place': autocomplete.ModelSelect2(url='places:autocomplete',
-                attrs={'data-placeholder': 'Start typing location to search...'})
+                attrs={'data-placeholder': 'Start typing location to search...'}),
+           'publisher': autocomplete.ModelSelect2(url='books:publisher-autocomplete',
+                attrs={'data-placeholder': 'Start typing publisher name to search...'})
         }
 
 
