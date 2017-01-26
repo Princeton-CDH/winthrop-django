@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 # abstract models with common fields to be
 # used as mix-ins
@@ -53,3 +54,15 @@ class DateRange(models.Model):
 
         date_parts = [self.start_year, '-', self.end_year]
         return ''.join([str(dp) for dp in date_parts if dp is not None])
+
+    def clean_fields(self, exclude=None):
+        if exclude is None:
+            exclude = []
+        if 'start_year' in exclude or 'end_year' in exclude:
+            return
+        # require end year to be greater than or equal to start year
+        # (allowing equal to support single-year ranges)
+        if self.start_year and self.end_year and \
+                not self.end_year >= self.start_year:
+           raise ValidationError('End year must be after start year')
+

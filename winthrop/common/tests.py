@@ -1,4 +1,6 @@
 from django.test import TestCase
+from django.core.exceptions import ValidationError
+import pytest
 
 from .models import Named, Notable, DateRange
 
@@ -42,3 +44,18 @@ class TestDateRange(TestCase):
         span.start_year = None
         assert '-1950' == span.dates
 
+    def test_clean_fields(self):
+        with pytest.raises(ValidationError):
+            DateRange(start_year=1901, end_year=1900).clean_fields()
+
+        # should not raise exception
+        # - same year is ok (single year range)
+        DateRange(start_year=1901, end_year=1901).clean_fields()
+        # - end after start
+        DateRange(start_year=1901, end_year=1905).clean_fields()
+        # - only one date set
+        DateRange(start_year=1901).clean_fields()
+        DateRange(end_year=1901).clean_fields()
+        # exclude set
+        DateRange(start_year=1901, end_year=1900).clean_fields(exclude=['start_year'])
+        DateRange(start_year=1901, end_year=1900).clean_fields(exclude=['end_year'])
