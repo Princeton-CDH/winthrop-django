@@ -75,6 +75,10 @@ class Book(Notable):
     # (actual models that need this still TBD)
     footnotes = GenericRelation(Footnote)
 
+    class Meta:
+        ordering = ['title']
+
+
     def __str__(self):
         return '%s (%s)' % (self.short_title, self.pub_year)
 
