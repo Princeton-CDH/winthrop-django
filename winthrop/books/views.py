@@ -9,4 +9,4 @@ class PublisherAutocomplete(autocomplete.Select2QuerySetView):
     # restricted to staff only in url config
 
     def get_queryset(self):
-        return Publisher.objects.filter(name__contains=self.q)
+        return Publisher.objects.filter(name__icontains=self.q)
