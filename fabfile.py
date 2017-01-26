@@ -96,4 +96,7 @@ def deploy_qa(build=None, rebuild=False):
         sudo('rm -f %(deploy_dir)s*.tar.gz' % env) 
 
         # touch wsgi.py to trigger a reload 
-        sudo('touch %(web_prefix)s/%(repo)s/winthrop/wsgi.py' % env) 
+        # sudo('touch %(web_prefix)s/%(repo)s/winthrop/wsgi.py' % env) 
+
+        # Re-add apache restart for safety's sake
+        sudo('systemctl restart httpd24-httpd')
