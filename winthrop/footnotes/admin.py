@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from winthrop.common.admin import NamedNotableAdmin
 from .models import SourceType, Bibliography, Footnote
 
 class FootnoteAdmin(admin.ModelAdmin):
@@ -8,10 +9,16 @@ class FootnoteAdmin(admin.ModelAdmin):
     }
 
 
-class SourceTypeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'item_count', 'has_notes')
+class SourceTypeAdmin(NamedNotableAdmin):
+    list_display = NamedNotableAdmin.list_display + ('item_count', )
+
+
+class BibliographyAdmin(admin.ModelAdmin):
+    list_display = ('bibliographic_note', 'source_type', 'has_notes',
+        'footnote_count')
+    search_fields = ('bibliographic_note', 'notes')
 
 
 admin.site.register(SourceType, SourceTypeAdmin)
-admin.site.register(Bibliography)
+admin.site.register(Bibliography, BibliographyAdmin)
 admin.site.register(Footnote, FootnoteAdmin)

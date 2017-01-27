@@ -25,6 +25,11 @@ class Bibliography(Notable):  # would citation be a better singular?
     def __str__(self):
         return self.bibliographic_note
 
+    def footnote_count(self):
+        '''number of footnotes this item is referenced in'''
+        return self.footnote_set.count()
+    footnote_count.short_description = '# footnotes'
+
 
 class Footnote(Notable):
     '''Footnote that can be associated with any other model via
