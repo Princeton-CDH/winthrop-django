@@ -63,10 +63,13 @@ def deploy_qa(build=None, rebuild=False):
             sudo('git clone %(gitbase)s%(repo)s.git' % env)
 
     with cd(env.repo_dir):
-        sudo('git fetch origin && git checkout %(build)s' % env)
+        output = sudo('git fetch origin && git checkout %(build)s' % env)
         # Check to make sure there are no untracked files
         sudo('git ls-files --other --directory --exclude-standard | sed q1')
-        # Get the short hash
+        # Get the short hash and fast forward if we're on a branch 
+        # TODO: Better way for future deploys
+        if 'fast-forwarded' in output:
+            sudo('git pull origin %(build)s' % env)
         env.hash = sudo('git rev-parse --short HEAD')
     env.deploy_commit_dir = '%(deploy_dir)s%(repo)s-%(hash)s' % env
 
