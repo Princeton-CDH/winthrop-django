@@ -4,6 +4,19 @@ from winthrop.common.admin import NamedNotableAdmin
 from .models import SourceType, Bibliography, Footnote
 
 class FootnoteAdmin(admin.ModelAdmin):
+    CONTENT_LOOKUP_HELP = '''Select the kind of record you want to attach
+    a footnote to, and then use the object id search button to select an item.'''
+    fieldsets = [
+        (None, {
+            'fields':('content_type', 'object_id'),
+            'description': '<div class="help">%s</div>' % CONTENT_LOOKUP_HELP
+        }),
+        (None, {
+            'fields': ('bibliography', 'location', 'snippet_text', 'is_agree',
+                'notes')
+        })
+    ]
+
     related_lookup_fields = {
         'generic': [['content_type', 'object_id']]
     }

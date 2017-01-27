@@ -41,7 +41,11 @@ class Footnote(Notable):
         help_text='Page number for a book, URL for part of a website,' +
         ' or other location inside of a larger work.')
     snippet_text = models.TextField(blank=True)
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE,
+        # restrict choices to "content" models (exclude django/admin models)
+        limit_choices_to=models.Q(app_label='places') |
+                         models.Q(app_label='people') |
+                         models.Q(app_label='books'))
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
     is_agree = models.BooleanField(help_text='True if the evidence ' +
