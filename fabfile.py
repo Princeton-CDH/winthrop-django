@@ -1,7 +1,10 @@
+import os
+
 from fabric.api import env, run, sudo
 from fabric.context_managers import cd
 from fabric.contrib.files import exists, sed
 from fabric.network import ssh
+
 
 env.user = 'fabric-user'
 env.hosts = ['libservdhc7.princeton.edu']
@@ -10,8 +13,8 @@ env.gitbase = 'https://www.github.com/Princeton-CDH/'
 env.build = 'develop'
 env.deploy_prefix = '/var/deploy/'
 env.web_prefix = '/var/www/'
-
 env.deploy_dir = '%(deploy_prefix)s%(repo)s/' % env
+
 
 # Requires the ***local*** location for the SSH key for the fabric user
 # You can also load your key into an ssh-agent and bypass this step
@@ -20,22 +23,24 @@ env.deploy_dir = '%(deploy_prefix)s%(repo)s/' % env
 
 # TODO: Break up the mile long command strings to something more legible.
 
-# Add a private key file here or load it in your ssh-agent
-user_key = None
+# Add a private key file location to OS environment or load it in your ssh-agent
+user_key = os.environ.get('FABRIC_KEY')
 
 if user_key is not None:
     env.key_filename = user_key
 
+
 # Use me to test your SSH and server settings!
 def host_type():
     run('uname -s')
+
 
 def deploy_qa(build=None, rebuild=False):
     '''Runs qa build using env dict
     kwargs:
     build -- git hash or overall branch name ('develop', 'master')
     rebuild -- Boolean, if True removes commit dir and rebuilds
-    
+
     syntax:
     fab deploy_qa:build=<hash>
 
@@ -44,9 +49,26 @@ def deploy_qa(build=None, rebuild=False):
     if build is not None:
         env.build = build
 
-    env.deploy_commit_dir = '%(deploy_dir)s%(repo)s-%(build)s' % env
-    print(env.deploy_dir)
-    print(env.deploy_commit_dir)
+    env.source_dir = '%(deploy_dir)ssource/' % env
+
+    # Clone the git repo to a directory
+    if not exists(env.deploy_prefix):
+        sudo('mdkir %s' % env.deploy_prefix)
+    if not exists(env.source_dir):
+        sudo('mkdir %s' % env.source_dir)
+
+    env.repo_dir = '%(source_dir)s%(repo)s' % env
+    if not exists(env.repo_dir):
+        with cd(env.source_dir):
+            sudo('git clone %(gitbase)s%(repo)s.git' % env)
+
+    with cd(env.repo_dir):
+        sudo('git fetch origin && git checkout %(build)s' % env)
+        # Check to make sure there are no untracked files
+        sudo('git ls-files --other --directory --exclude-standard | sed q1')
+        # Get the short hash
+        env.hash = sudo('git rev-parse --short HEAD')
+    env.deploy_commit_dir = '%(deploy_dir)s%(repo)s-%(hash)s' % env
 
     if exists(env.deploy_commit_dir) and rebuild is False:
         # Reset symlinks for apache
@@ -58,11 +80,9 @@ def deploy_qa(build=None, rebuild=False):
     else:
         if exists(env.deploy_commit_dir):
             sudo('rm -rf %(deploy_commit_dir)s' % env)
-        
-        with cd(env.deploy_dir):
-            sudo('rm -f %(build)s.tar.gz' % env)
-            sudo('wget %(gitbase)s%(repo)s/archive/%(build)s.tar.gz' % env)
-            sudo('tar xzvf %(build)s.tar.gz' % env)
+
+        sudo('mkdir %(deploy_commit_dir)s' % env)
+        sudo('cp -r %(repo_dir)s/* %(deploy_commit_dir)s/' % env)
 
         with cd(env.deploy_commit_dir):
 
@@ -76,14 +96,13 @@ def deploy_qa(build=None, rebuild=False):
             sudo('rm -f winthrop/local_settings.py')
             sudo('ln -s /var/deploy/%(repo)s/local_settings.py winthrop/local_settings.py' % env)
 
-
             # Backup mySQL and migrate+collectstatic
             # Uses two scripts deployed server-side per application
             # Avaiable in server scripts repo
             sudo('../make_dump.sh')
             sudo('../migrate_collect.sh')
 
-# Redo symlinks for apache
+        # Redo symlinks for apache
         with cd('/var/www/'):
             if exists('%(repo)s' % env):
                 sudo('rm -f %(repo)s' % env)
@@ -92,11 +111,11 @@ def deploy_qa(build=None, rebuild=False):
         # Set permissions and SELinux
         sudo('chown root:apache -R /var/deploy/ && chmod g+rwx -R /var/deploy')
 
-        # Clean up deploy
-        sudo('rm -f %(deploy_dir)s*.tar.gz' % env) 
+        if rebuild is not False:
+            # Do a restart because we had to rebuild a directory
+            sudo('systemctl restart httpd24-httpd')
+        else:
+            # touch wsgi.py to trigger a reload
+            sudo('touch %(web_prefix)s/%(repo)s/winthrop/wsgi.py' % env)
 
-        # touch wsgi.py to trigger a reload 
-        # sudo('touch %(web_prefix)s/%(repo)s/winthrop/wsgi.py' % env) 
 
-        # Re-add apache restart for safety's sake
-        sudo('systemctl restart httpd24-httpd')
