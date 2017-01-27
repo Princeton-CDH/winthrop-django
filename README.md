@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/Princeton-CDH/winthrop-django.svg?branch=develop)](https://travis-ci.org/Princeton-CDH/winthrop-django)
 [![codecov](https://codecov.io/gh/Princeton-CDH/winthrop-django/branch/develop/graph/badge.svg)](https://codecov.io/gh/Princeton-CDH/winthrop-django/branch/develop)
 [![Code Health](https://landscape.io/github/Princeton-CDH/winthrop-django/develop/landscape.svg?style=flat)](https://landscape.io/github/Princeton-CDH/winthrop-django/develop)
+[![Requirements Status](https://requires.io/github/Princeton-CDH/winthrop-django/requirements.svg?branch=develop)](https://requires.io/github/Princeton-CDH/winthrop-django/requirements/?branch=develop)
 
 Django web application for
 [The Winthrop Family on the Page](https://digitalhumanities.princeton.edu/projects/TheWinthropFamilyonthePage/)
