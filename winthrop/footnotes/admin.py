@@ -8,6 +8,10 @@ class FootnoteAdmin(admin.ModelAdmin):
     }
 
 
-admin.site.register(SourceType)
+class SourceTypeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'item_count', 'has_notes')
+
+
+admin.site.register(SourceType, SourceTypeAdmin)
 admin.site.register(Bibliography)
 admin.site.register(Footnote, FootnoteAdmin)

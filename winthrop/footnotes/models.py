@@ -7,7 +7,11 @@ from winthrop.common.models import Named, Notable
 
 class SourceType(Named, Notable):
     '''Type of source document.'''
-    pass
+
+    def item_count(self):
+        '''number of associated bibliographic items'''
+        return self.bibliography_set.count()
+    item_count.short_description = '# items'
 
 
 class Bibliography(Notable):  # would citation be a better singular?
