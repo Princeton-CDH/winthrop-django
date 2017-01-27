@@ -18,8 +18,12 @@ class PersonAdmin(admin.ModelAdmin):
     inlines = [
         ResidenceInline, RelationshipInline
     ]
-    list_display = ('authorized_name', 'sort_name', 'viaf_id', 'family_group')
+    list_display = ('authorized_name', 'sort_name', 'birth', 'death',
+        'viaf_id', 'family_group')
     list_filter = ('family_group',)
+    fields = ('authorized_name', 'sort_name', 'viaf_id', ('birth', 'death'),
+        'family_group')
+
 
 
 admin.site.register(Person, PersonAdmin)

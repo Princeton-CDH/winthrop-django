@@ -9,9 +9,20 @@ from .models import Person, Residence, RelationshipType, Relationship
 class TestPerson(TestCase):
 
     def test_str(self):
-        p = Person(authorized_name='Mr. So and So')
-        assert str(p) == 'Mr. So and So'
+        pers = Person(authorized_name='Mr. So and So')
+        assert str(pers) == 'Mr. So and So'
 
+    def test_dates(self):
+        pers = Person.objects.create(authorized_name='Mr. So', birth=1800,
+            death=1845)
+        # alias fields and actual date range fields should both be set
+        assert pers.birth == 1800
+        assert pers.start_year == 1800
+        assert pers.death == 1845
+        assert pers.end_year == 1845
+
+        # queryset filters on alias fields should also work
+        assert Person.objects.get(birth=1800) == pers
 
 class TestResidence(TestCase):
 
