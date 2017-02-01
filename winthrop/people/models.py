@@ -4,9 +4,9 @@ from winthrop.common.models import Named, Notable, DateRange
 from winthrop.places.models import Place
 
 # alias field adapted from https://djangosnippets.org/snippets/10440/
-class AliasField(models.Field):
+class AliasIntegerField(models.IntegerField):
     def contribute_to_class(self, cls, name, virtual_only=False):
-        super(AliasField, self).contribute_to_class(cls, name, virtual_only=True)
+        super(AliasIntegerField, self).contribute_to_class(cls, name, virtual_only=True)
         setattr(cls, name, self)
 
     def __get__(self, instance, instance_type=None):
@@ -20,14 +20,14 @@ class Order(models.Model):
     """
     The main order model
     """
-    number = AliasField(db_column='id')
+    number = AliasIntegerField(db_column='id')
 
 class Person(Notable, DateRange):
     authorized_name = models.CharField(max_length=255)
     viaf_id = models.URLField(null=True, blank=True)
     # alias start/end year from DateRange to be more readable and semantic
-    birth = AliasField(db_column='start_year', null=True, blank=True)
-    death = AliasField(db_column='end_year', null=True, blank=True)
+    birth = AliasIntegerField(db_column='start_year', null=True, blank=True)
+    death = AliasIntegerField(db_column='end_year', null=True, blank=True)
     sort_name = models.CharField(max_length=255, blank=True)
     family_group = models.CharField(max_length=255, blank=True)
     relationships = models.ManyToManyField('self', through='Relationship',
