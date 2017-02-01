@@ -60,8 +60,8 @@ class RelationshipType(Named, Notable):
 
 class Relationship(Notable, DateRange):
     '''A specific relationship between two people.'''
-    from_person = models.ForeignKey(Person, related_name='from_people')
-    to_person = models.ForeignKey(Person, related_name='to_people')
+    from_person = models.ForeignKey(Person, related_name='to_relationships')
+    to_person = models.ForeignKey(Person, related_name='from_relationships')
     relationship_type = models.ForeignKey(RelationshipType)
 
     def __str__(self):
