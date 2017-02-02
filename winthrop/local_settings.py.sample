@@ -4,6 +4,9 @@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Turn this on in test/QA site to show test banner
+SHOW_TEST_WARNING = True
+
 ALLOWED_HOSTS = []
 
 
