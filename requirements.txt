@@ -5,3 +5,7 @@ django-autocomplete-light
 requests
 # use develop branch of pucas until we have an initial release
 git+https://github.com/Princeton-CDH/django-pucas.git@develop#egg=pucas
+# for now, djiffy needs unreleased version of piffle for py3
+git+https://github.com/Princeton-CDH/piffle.git@feature/python3-compatibility#egg=piffle
+# ditty for develop branch of djiffy
+git+https://github.com/Princeton-CDH/djiffy.git@develop#egg=djiffy
