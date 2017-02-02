@@ -3,6 +3,7 @@
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.10/topics/http/urls/
 """
+from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.generic.base import RedirectView
@@ -11,7 +12,7 @@ from django.views.generic.base import RedirectView
 urlpatterns = [
     # for now, since there is not yet any public-facing site,
     # redirect base url to admin index page
-    url(r'^$', RedirectView.as_view(pattern_name='admin:index')),
+    url(r'^$', RedirectView.as_view(pattern_name='admin:index'), name='site-index'),
     # # grappelli URLS for admin related lookups & autocompletes
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/', admin.site.urls),
@@ -19,5 +20,13 @@ urlpatterns = [
 
     url(r'^places/', include('winthrop.places.urls', namespace='places')),
     url(r'^books/', include('winthrop.books.urls', namespace='books')),
-
+    url(r'^iiif-books/', include('djiffy.urls', namespace='djiffy')),
 ]
+
+
+if settings.DEBUG:
+    try:
+        import debug_toolbar
+        urlpatterns += url(r'^__debug__/', include(debug_toolbar.urls)),
+    except ImportError:
+        pass
