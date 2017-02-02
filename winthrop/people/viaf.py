@@ -16,6 +16,8 @@ class ViafAPI(object):
         if 200 <= r.status_code < 300:
             return r.json()
         else:
-            return None 
+            return None
 
-
+    @classmethod
+    def uri_from_id(cls, viaf_id):
+        return 'https://viaf.org/viaf/%s/' % viaf_id
