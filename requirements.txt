@@ -1,4 +1,6 @@
-django
+#django
+# NOTE: restricting to django pre-1.10 for annotator-store limitation (temporary)
+django<1.10
 mysqlclient
 django-grappelli
 django-autocomplete-light
@@ -9,4 +11,4 @@ git+https://github.com/Princeton-CDH/django-pucas.git@develop#egg=pucas
 git+https://github.com/Princeton-CDH/piffle.git@feature/python3-compatibility#egg=piffle
 # ditty for develop branch of djiffy
 git+https://github.com/Princeton-CDH/djiffy.git@develop#egg=djiffy
-git+https://github.com/Princeton-CDH/django-annotator-store.git@develop#egg=annotator_store
+git+https://github.com/Princeton-CDH/django-annotator-store.git@feature/extract-annotator-store#egg=annotator_store
