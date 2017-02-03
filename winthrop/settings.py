@@ -38,9 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'django.contrib.sites',
     'django_cas_ng',
     'pucas',
     'djiffy',
+    'guardian',
+    'annotator_store',
     # local apps
     'winthrop.common',
     'winthrop.places',
@@ -59,9 +62,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# for django 1.9
+MIDDLEWARE_CLASSES = MIDDLEWARE
+
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'django_cas_ng.backends.CASBackend',
+    'guardian.backends.ObjectPermissionBackend',
 )
 
 ROOT_URLCONF = 'winthrop.urls'
@@ -134,6 +141,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'sitemedia'),
 ]
+
+SITE_ID = 1
 
 # pucas configuration that is not expected to change across deploys
 # and does not reference local server configurations or fields

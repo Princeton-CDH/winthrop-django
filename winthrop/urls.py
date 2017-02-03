@@ -7,6 +7,7 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.generic.base import RedirectView
+from annotator_store import views as annotator_views
 
 
 urlpatterns = [
@@ -21,6 +22,12 @@ urlpatterns = [
     url(r'^places/', include('winthrop.places.urls', namespace='places')),
     url(r'^books/', include('winthrop.books.urls', namespace='books')),
     url(r'^iiif-books/', include('djiffy.urls', namespace='djiffy')),
+
+    # annotations
+    url(r'^annotations/api/', include('annotator_store.urls', namespace='annotation-api')),
+    # annotatorjs doesn't handle trailing slash in api prefix url
+    url(r'^annotations/api', annotator_views.AnnotationIndex.as_view(), name='annotation-api-prefix'),
+
 ]
 
 

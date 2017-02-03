@@ -3,7 +3,11 @@ import csv
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.test import TestCase
-from django.urls import reverse
+try:
+    # django 1.10
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 import json
 import os
 from io import StringIO

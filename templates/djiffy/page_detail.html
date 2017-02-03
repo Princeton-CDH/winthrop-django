@@ -1,0 +1,7 @@
+{% extends 'djiffy/page_detail.html' %}
+
+{% block javascript %}
+    {{ block.super }}
+    {% include 'annotator_store/snippets/annotator_init.html' %}
+{% endblock %}
+
