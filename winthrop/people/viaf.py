@@ -3,7 +3,7 @@ import requests
 
 
 class ViafAPI(object):
-    """Wrapper for Viaf API"""
+    """Wrapper for Viaf API, results dict options for making JSON strings"""
 
     def __init__(self):
         self.base_url = "https://www.viaf.org/"
@@ -12,11 +12,7 @@ class ViafAPI(object):
         """Do a GET request to pull in JSON"""
         url = self.base_url + "viaf/AutoSuggest?query="
         r = requests.get("%s%s" % (url, query))
-        # If result is empty, return an empty list instead of None
-        if not (r.json())['result']:
-            return json.dumps({'result': []})
-
-        return r.json()
+        return (r.json())['result']
 
     @classmethod
     def uri_from_id(cls, viaf_id):
