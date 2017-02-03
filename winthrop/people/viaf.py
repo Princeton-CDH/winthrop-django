@@ -1,23 +1,23 @@
+import json
 import requests
-from django.conf import settings
 
 
 class ViafAPI(object):
-    """Wrapper for ViafAPI"""
+    """Wrapper for Viaf API"""
 
     def __init__(self):
-        default_url = 'https://www.viaf.org/viaf/AutoSuggest?query='
-        self.base_url = getattr(settings, "VIAF_AUTOSUGGEST_URL", default_url)
+        self.base_url = "https://www.viaf.org/"
 
-    def search(self, query):
+    def suggest(self, query):
         """Do a GET request to pull in JSON"""
-        r = requests.get('%s%s' % (self.base_url, query))
-        # Check to make sure we have a sucesss (i.e. a 200 code)
-        if 200 <= r.status_code < 300:
-            return r.json()
-        else:
-            return None
+        url = self.base_url + "viaf/AutoSuggest?query="
+        r = requests.get("%s%s" % (url, query))
+        # If result is empty, return an empty list instead of None
+        if not (r.json())['result']:
+            return json.dumps({'result': []})
+
+        return r.json()
 
     @classmethod
     def uri_from_id(cls, viaf_id):
-        return 'https://viaf.org/viaf/%s/' % viaf_id
+        return "https://viaf.org/viaf/%s/" % viaf_id
