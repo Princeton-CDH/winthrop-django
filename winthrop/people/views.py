@@ -31,7 +31,9 @@ class ViafAutoSuggest(autocomplete.Select2ListView):
         # This re catches the pattern for both ca and approximately
         name_re = r"^.+?(?=$|\W\s\d|\W\sca|\W\sapproximately)"
         name = re.search(name_re, displayForm_string)
-        return name.group(0)
+        # Strip the annoying 'aus' tag that the Austrian library set
+        name = re.sub(r'aus\s', '', name.group(0))
+        return name
 
     def get(self, request, *args, **kwargs):
         """Return JSON with parsed fields for Person model."""
@@ -44,7 +46,7 @@ class ViafAutoSuggest(autocomplete.Select2ListView):
                     id=v.uri_from_id(item['viafid']),
                     birth=(self._parse_dates(item['displayForm'])[0]),
                     death=(self._parse_dates(item['displayForm'])[1]),
-                    text=item['displayForm'], 
+                    text=(self._parse_name(item['displayForm'])), 
                 ) for item in result],
             })
         else:
@@ -52,5 +54,5 @@ class ViafAutoSuggest(autocomplete.Select2ListView):
             return JsonResponse({'results': []})
    
     def get_label(self, item):
-        return item['displayForm']
+        return self._parse_name(item['displayForm'])
 

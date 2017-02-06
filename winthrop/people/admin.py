@@ -27,7 +27,7 @@ class PersonAdminForm(forms.ModelForm):
         exclude = []
         widgets = {
                 'authorized_name': autocomplete.Select2(
-                    url='people:autocomplete-suggest',
+                    url='people:viaf-autosuggest',
                     attrs={
                         'data-placeholder': 'Type a name to search VIAF',
                         'data-minimum-input-length': 3
