@@ -6,5 +6,5 @@ from winthrop.people.views import ViafAutoSuggest
 
 urlpatterns = [
     url(r'^autocomplete/viaf/suggest/$', staff_member_required(ViafAutoSuggest.as_view()),
-        name='autocomplete-suggest'),
+        name='viaf-autosuggest'),
 ]
