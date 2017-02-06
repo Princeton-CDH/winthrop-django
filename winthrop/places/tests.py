@@ -2,7 +2,11 @@ from unittest.mock import patch
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.test import TestCase, override_settings
-from django.urls import reverse
+try:
+    # django 1.10
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 import json
 
 from .models import Place
