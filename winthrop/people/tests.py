@@ -1,9 +1,10 @@
-from django.test import TestCase
-import pytest
+from django.test import TestCase, override_settings
+from django.urls import reverse
+from unittest.mock import patch
 
 from winthrop.places.models import Place
 from .models import Person, Residence, RelationshipType, Relationship
-
+from .viaf import ViafAPI
 
 
 class TestPerson(TestCase):
@@ -55,3 +56,20 @@ class TestRelationship(TestCase):
         parent = RelationshipType(name='parent')
         rel = Relationship(from_person=father, to_person=son,
             relationship_type=parent)
+
+
+class TestViafAPI(TestCase):
+
+    def test_init(self):
+        v = ViafAPI()
+        # It should know the base url
+        assert v.base_url == 'https://www.viaf.org/'
+
+    @patch('winthrop.people.viaf.requests')
+    def test_suggest(self, mockrequests):
+        v = ViafAPI()
+        # Check that query to no author works to check JSON forwarding
+        mock_result = {'query': 'notanauthor', 'result': None}
+        mockrequests.get.return_value.json.return_value = mock_result
+        result = v.suggest('notanauthor')
+        assert result == None 
