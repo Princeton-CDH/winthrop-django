@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import admin
 from django.conf import settings
+from django.utils.safestring import mark_safe
 from .models import Person, Residence, RelationshipType, Relationship
 from dal import autocomplete
 
@@ -20,13 +21,24 @@ class ResidenceInline(admin.TabularInline):
     fields = ('place', 'start_year', 'end_year', 'notes')
 
 
+class ViafWidget(autocomplete.Select2):
+    '''Customize autocomplete select widget to display VIAF id as a link'''
+    # (inspired by winthrop.places.admin.GeoNamesWidget)
+
+    def render(self, name, value, attrs=None):
+        widget = super(ViafWidget, self).render(name, value, attrs)
+        return mark_safe(
+            u'%s<p><br /><a id="viaf_uri" target="_blank" href="%s">%s</a></p>') % \
+            (widget, value or '', value or '')
+
+
 class PersonAdminForm(forms.ModelForm):
     '''Custom model form for Person editing, used to add VIAF lookup'''
     class Meta:
         model = Person
         exclude = []
         widgets = {
-                'authorized_name': autocomplete.Select2(
+                'viaf_id': ViafWidget(
                     url='people:viaf-autosuggest',
                     attrs={
                         'data-placeholder': 'Type a name to search VIAF',
