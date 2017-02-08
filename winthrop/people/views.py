@@ -24,6 +24,12 @@ class ViafAutoSuggest(autocomplete.Select2ListView):
             date_list.append('')
         return date_list
 
+    @staticmethod
+    def _strip_header(string):
+        '''Remove annoying headers for the text view'''
+        string = re.sub(r'aus\s', '', string)
+        return string
+
     @classmethod
     def _parse_name(cls, displayForm_string):
         """Parses name from displayForm field"""
@@ -32,7 +38,7 @@ class ViafAutoSuggest(autocomplete.Select2ListView):
         name_re = r"^.+?(?=$|\W\s\d|\W\sca|\W\sapproximately)"
         name = re.search(name_re, displayForm_string)
         # Strip the annoying 'aus' tag that the Austrian library set
-        name = re.sub(r'aus\s', '', name.group(0))
+        name = ViafAutoSuggest._strip_header(name.group(0))
         return name
 
     def get(self, request, *args, **kwargs):
@@ -46,13 +52,13 @@ class ViafAutoSuggest(autocomplete.Select2ListView):
                     id=v.uri_from_id(item['viafid']),
                     birth=(self._parse_dates(item['displayForm'])[0]),
                     death=(self._parse_dates(item['displayForm'])[1]),
-                    text=(self._parse_name(item['displayForm'])), 
+                    text=(self._strip_header(item['displayForm'])),
                 ) for item in result],
             })
         else:
             # Return an empty list in case the search returns null
             return JsonResponse({'results': []})
-   
+
     def get_label(self, item):
         return self._parse_name(item['displayForm'])
 
