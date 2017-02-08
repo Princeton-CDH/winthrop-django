@@ -128,8 +128,5 @@ class TestViafAutoSuggest(TestCase):
         # Now check for what needs to be in a dict to fill the autocomplete
         data = data['results'][0]
         assert data['id'] == 'https://viaf.org/viaf/102333412/'
-        assert data['authorized_name'] == 'Austen, Jane'
-        assert data['death'] == '1817'
-        assert data['birth'] == '1775'
         assert data['text'] == 'Austen, Jane, 1775-1817'
 

@@ -7,39 +7,11 @@ from .viaf import ViafAPI
 
 class ViafAutoSuggest(autocomplete.Select2ListView):
     """ View to provide DAL JSON info"""
-    @classmethod
-    def _parse_dates(cls, displayForm_string):
-        """Parses date possibilities from VIAF displayForm field"""
-        # This finds numbers for grabbing dates if they exist
-        date_re = r"\d+"
-        results = re.findall(date_re, displayForm_string)
-        date_list = []
-        try:
-            date_list.append(results[0])
-        except IndexError:
-            date_list.append('')
-        try:
-            date_list.append(results[1])
-        except IndexError:
-            date_list.append('')
-        return date_list
-
     @staticmethod
     def _strip_header(string):
         '''Remove annoying headers for the text view'''
         string = re.sub(r'aus\s', '', string)
         return string
-
-    @classmethod
-    def _parse_name(cls, displayForm_string):
-        """Parses name from displayForm field"""
-        # VIAF is inconsistent on date formatting for approx.
-        # This re catches the pattern for both ca and approximately
-        name_re = r"^.+?(?=$|\W\s\d|\W\sca|\W\sapproximately)"
-        name = re.search(name_re, displayForm_string)
-        # Strip the annoying 'aus' tag that the Austrian library set
-        name = ViafAutoSuggest._strip_header(name.group(0))
-        return name
 
     def get(self, request, *args, **kwargs):
         """Return JSON with parsed fields for Person model."""
@@ -48,10 +20,7 @@ class ViafAutoSuggest(autocomplete.Select2ListView):
         if result:
             return JsonResponse({
                 'results': [dict(
-                    authorized_name=(self._parse_name(item['displayForm'])),
                     id=v.uri_from_id(item['viafid']),
-                    birth=(self._parse_dates(item['displayForm'])[0]),
-                    death=(self._parse_dates(item['displayForm'])[1]),
                     text=(self._strip_header(item['displayForm'])),
                 ) for item in result],
             })
