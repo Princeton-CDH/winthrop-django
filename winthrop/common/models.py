@@ -64,5 +64,5 @@ class DateRange(models.Model):
         # (allowing equal to support single-year ranges)
         if self.start_year and self.end_year and \
                 not self.end_year >= self.start_year:
-           raise ValidationError('End year must be after start year')
+            raise ValidationError('End year must be after start year')
 
