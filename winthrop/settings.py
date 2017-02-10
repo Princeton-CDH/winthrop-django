@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'winthrop.people',
     'winthrop.books',
     'winthrop.footnotes',
+    'winthrop.annotation',
 ]
 
 MIDDLEWARE = [
