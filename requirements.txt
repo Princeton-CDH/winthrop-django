@@ -1,6 +1,5 @@
 #django
-# NOTE: restricting to django pre-1.10 for annotator-store limitation (temporary)
-django<1.10
+django>=1.10
 mysqlclient
 django-grappelli
 django-autocomplete-light
