@@ -18,7 +18,7 @@ urlpatterns = [
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('pucas.cas_urls')),
-
+    url(r'^people/', include('winthrop.people.urls', namespace='people')),
     url(r'^places/', include('winthrop.places.urls', namespace='places')),
     url(r'^books/', include('winthrop.books.urls', namespace='books')),
     url(r'^iiif-books/', include('djiffy.urls', namespace='djiffy')),

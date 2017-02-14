@@ -1,9 +1,15 @@
-from django.test import TestCase
-import pytest
+import json
+
+from django.test import TestCase, override_settings
+from django.contrib.auth import get_user_model
+from django.http import JsonResponse
+from django.urls import reverse
+from unittest.mock import patch
+import requests
 
 from winthrop.places.models import Place
 from .models import Person, Residence, RelationshipType, Relationship
-
+from .viaf import ViafAPI
 
 
 class TestPerson(TestCase):
@@ -55,3 +61,88 @@ class TestRelationship(TestCase):
         parent = RelationshipType(name='parent')
         rel = Relationship(from_person=father, to_person=son,
             relationship_type=parent)
+
+
+class TestViafAPI(TestCase):
+
+    @patch('winthrop.people.viaf.requests')
+    def test_suggest(self, mockrequests):
+        viaf = ViafAPI()
+        mockrequests.codes = requests.codes
+        # Check that query with no matches still returns an empty list
+        mock_result = {'query': 'notanauthor', 'result': None}
+        mockrequests.get.return_value.status_code = requests.codes.ok
+        mockrequests.get.return_value.json.return_value = mock_result
+        assert viaf.suggest('notanauthor') == []
+        mockrequests.get.assert_called_with(
+            'https://www.viaf.org/viaf/AutoSuggest',
+            params={'query': 'notanauthor'})
+
+        # valid (abbreviated) response
+        mock_result['result'] = [{
+          "term": "Austen, Jane, 1775-1817",
+          "displayForm": "Austen, Jane, 1775-1817",
+          "recordID": "102333412"
+        }]
+        mockrequests.get.return_value.json.return_value = mock_result
+        assert viaf.suggest('austen') == mock_result['result']
+
+        # bad status code on the response - should still return an empty list
+        mockrequests.get.return_value.status_code = requests.codes.forbidden
+        assert viaf.suggest('test') == []
+
+    def test_get_uri(self):
+        assert ViafAPI.uri_from_id('1234') == \
+            'https://viaf.org/viaf/1234/'
+        # numeric id should also work
+        assert ViafAPI.uri_from_id(1234) == \
+            'https://viaf.org/viaf/1234/'
+
+
+class TestViafAutoSuggest(TestCase):
+
+    def setUp(self):
+        # create an admin user to test autocomplete views
+        # based on code for winthrop.places.tests
+        self.password = 'pass!@#$'
+        self.admin = get_user_model().objects.create_superuser(
+            'testadmin',
+            'test@example.com',
+            self.password
+        )
+
+    @patch('winthrop.people.views.ViafAPI')
+    def test_viaf_autosuggest(self, mockviafapi):
+        viaf_autosuggest_url = reverse('people:viaf-autosuggest')
+        result = self.client.get(viaf_autosuggest_url,
+            params={'q': 'austen'})
+        # not allowed to anonymous user
+        assert result.status_code == 302
+
+        self.client.login(username=self.admin.username, password=self.password)
+
+        # Sample of the dict passed by the api
+        mock_response = [{
+            'displayForm': 'Austen, Jane, 1775-1817',
+            'term': 'Austen, Jane, 1775-1817',
+            'viafid': '102333412'
+        }]
+
+        mockviafapi.return_value.suggest.return_value = mock_response
+        # Get the actual URL from the API
+        mockviafapi.return_value.uri_from_id = ViafAPI.uri_from_id
+
+        # Check that a logged in user can get the page
+        result = self.client.get(viaf_autosuggest_url, {'q': 'austen'})
+        assert result.status_code == 200
+        # Pull the JSON response in and break it down
+        assert isinstance(result, JsonResponse)
+        data = json.loads(result.content.decode('utf-8'))
+        # Should be a list with at least one dictionary, if actual result
+        assert isinstance(data['results'], list)
+        assert isinstance(data['results'][0], dict)
+        # Now check for what needs to be in a dict to fill the autocomplete
+        data = data['results'][0]
+        assert data['id'] == 'https://viaf.org/viaf/102333412/'
+        assert data['text'] == 'Austen, Jane, 1775-1817'
+
