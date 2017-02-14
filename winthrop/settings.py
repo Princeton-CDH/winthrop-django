@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'django_cas_ng',
     'pucas',
     'djiffy',
-    'guardian',
     'annotator_store',
     # local apps
     'winthrop.common',
@@ -69,7 +68,6 @@ MIDDLEWARE_CLASSES = MIDDLEWARE
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'django_cas_ng.backends.CASBackend',
-    'guardian.backends.ObjectPermissionBackend',
 )
 
 ROOT_URLCONF = 'winthrop.urls'
@@ -156,6 +154,8 @@ PUCAS_LDAP = {
         'email': 'mail',
     },
 }
+
+ANNOTATOR_ANNOTATION_MODEL = 'annotation.Annotation'
 
 ##################
 # LOCAL SETTINGS #
