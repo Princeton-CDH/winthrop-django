@@ -2,8 +2,7 @@ import os
 
 from fabric.api import env, run, sudo
 from fabric.context_managers import cd
-from fabric.contrib.files import exists, sed
-from fabric.network import ssh
+from fabric.contrib.files import exists
 
 
 env.user = 'fabric-user'
@@ -66,7 +65,7 @@ def deploy_qa(build=None, rebuild=False):
         output = sudo('git fetch origin && git checkout %(build)s' % env)
         # Check to make sure there are no untracked files
         sudo('git ls-files --other --directory --exclude-standard | sed q1')
-        # Get the short hash and fast forward if we're on a branch 
+        # Get the short hash and fast forward if we're on a branch
         # TODO: Better way for future deploys
         if 'fast-forwarded' in output:
             sudo('git pull origin %(build)s' % env)

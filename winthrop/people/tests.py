@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.urls import reverse
 from unittest.mock import patch
+import requests
 
 from winthrop.places.models import Place
 from .models import Person, Residence, RelationshipType, Relationship
@@ -64,27 +65,42 @@ class TestRelationship(TestCase):
 
 class TestViafAPI(TestCase):
 
-    def test_init(self):
-        v = ViafAPI()
-        # It should know the base url
-        assert v.base_url == 'https://www.viaf.org/'
-
     @patch('winthrop.people.viaf.requests')
     def test_suggest(self, mockrequests):
-        v = ViafAPI()
-        # Check that query to no author works to check JSON forwarding
+        viaf = ViafAPI()
+        mockrequests.codes = requests.codes
+        # Check that query with no matches still returns an empty list
         mock_result = {'query': 'notanauthor', 'result': None}
+        mockrequests.get.return_value.status_code = requests.codes.ok
         mockrequests.get.return_value.json.return_value = mock_result
-        result = v.suggest('notanauthor')
-        assert result is None
+        assert viaf.suggest('notanauthor') == []
+        mockrequests.get.assert_called_with(
+            'https://www.viaf.org/viaf/AutoSuggest',
+            params={'query': 'notanauthor'})
+
+        # valid (abbreviated) response
+        mock_result['result'] = [{
+          "term": "Austen, Jane, 1775-1817",
+          "displayForm": "Austen, Jane, 1775-1817",
+          "recordID": "102333412"
+        }]
+        mockrequests.get.return_value.json.return_value = mock_result
+        assert viaf.suggest('austen') == mock_result['result']
+
+        # bad status code on the response - should still return an empty list
+        mockrequests.get.return_value.status_code = requests.codes.forbidden
+        assert viaf.suggest('test') == []
 
     def test_get_uri(self):
         assert ViafAPI.uri_from_id('1234') == \
             'https://viaf.org/viaf/1234/'
+        # numeric id should also work
+        assert ViafAPI.uri_from_id(1234) == \
+            'https://viaf.org/viaf/1234/'
 
 
 class TestViafAutoSuggest(TestCase):
-    
+
     def setUp(self):
         # create an admin user to test autocomplete views
         # based on code for winthrop.places.tests
@@ -93,7 +109,7 @@ class TestViafAutoSuggest(TestCase):
             'testadmin',
             'test@example.com',
             self.password
-        ) 
+        )
 
     @patch('winthrop.people.views.ViafAPI')
     def test_viaf_autosuggest(self, mockviafapi):
@@ -110,10 +126,10 @@ class TestViafAutoSuggest(TestCase):
             'displayForm': 'Austen, Jane, 1775-1817',
             'term': 'Austen, Jane, 1775-1817',
             'viafid': '102333412'
-        }]    
+        }]
 
         mockviafapi.return_value.suggest.return_value = mock_response
-        # Get the actual URL from the API 
+        # Get the actual URL from the API
         mockviafapi.return_value.uri_from_id = ViafAPI.uri_from_id
 
         # Check that a logged in user can get the page
