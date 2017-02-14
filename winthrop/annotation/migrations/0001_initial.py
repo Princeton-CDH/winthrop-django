@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('djiffy', '0002_auto_20170214_2146'),
+        ('djiffy', '0001_initial'),
         ('people', '0006_semantic_from_to_relationship_fields'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
