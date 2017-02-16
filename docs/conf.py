@@ -104,7 +104,18 @@ html_theme = 'alabaster'
 # documentation.
 #
 # html_theme_options = {}
+html_theme_options = {
+    'description': 'Django web application for "The Winthrop Family on the Page" CDH project',
+    'github_user': 'Princeton-CDH',
+    'github_repo': 'winthrop-django',
+    'travis_button': True,
+    'codecov_button': True,
+}
 
+html_sidebars = {
+    '**': ['about.html', 'navigation.html',
+           'localtoc.html', 'searchbox.html'],
+}
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
@@ -168,7 +179,9 @@ texinfo_documents = [
 ]
 
 
-
-
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/': None}
+intersphinx_mapping = {
+    'https://docs.python.org/': None,
+    'django': ('http://django.readthedocs.org/en/latest/', None),
+    'requests': ('http://docs.python-requests.org/en/master/', None),
+}
