@@ -71,3 +71,17 @@ Run tests using py.test::
 
     py.test
 
+Documentation
+~~~~~~~~~~~~~
+
+Documentation is generated using `sphinx <http://www.sphinx-doc.org/>`__
+To generate documentation them, first install development requirements::
+
+    pip install -r dev-requirements.txt
+
+Then build documentation using the customized make file in the `docs`
+directory::
+
+    cd docs
+    make html
+
