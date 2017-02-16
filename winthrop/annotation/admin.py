@@ -12,6 +12,11 @@ class AnnotationAdminForm(forms.ModelForm):
     class Meta:
         model = Annotation
         exclude = []
+        labels = {
+            # the quoted text in standard annotator.js parlance is the anchor
+            # text for our annotation/marginalia
+            'quote': 'Anchor text',
+        }
         widgets = {
             'author': autocomplete.ModelSelect2(
                 url='people:autocomplete',
@@ -26,6 +31,8 @@ class AnnotationAdminForm(forms.ModelForm):
 class WinthropAnnotationAdmin(AnnotationAdmin):
     form = AnnotationAdminForm
     list_display = ('text_preview', 'author', 'canvas', 'admin_thumbnail')
+    # NOTE: 'quote' == anchor text, and should be editable
+    readonly_fields = ('uri',)  #  maybe also 'extra_data' ?
 
 
 admin.site.unregister(Annotation)
