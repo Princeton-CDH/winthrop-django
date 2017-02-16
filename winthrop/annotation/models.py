@@ -19,20 +19,37 @@ class Annotation(BaseAnnotation):
         return info
 
     def save(self, *args, **kwargs):
-        # NOTE: could set the canvas uri in javascript instead
-        # of using page uri, but for now determine canvas id
-        # based on the page uri
+        # for image annotation, URI should be set to canvas URI; look up
+        # canvas by URI and associate with the record
+        self.canvas = None
         try:
-            match = resolve(urlparse(self.uri).path)
-            if match.url_name == 'page' and 'djiffy' in match.namespaces:
-                self.canvas = Canvas.objects.get(
-                    short_id=match.kwargs['id'],
-                    book__short_id=match.kwargs['book_id']
-                )
-        except Resolver404:
+            self.canvas = Canvas.objects.get(uri=self.uri)
+        except Canvas.DoesNotExist:
             pass
 
         super(Annotation, self).save()
+
+    def handle_extra_data(self, data, request):
+        '''Handle any "extra" data that is not part of the stock annotation
+        data model.  Use this method to customize the logic for updating
+        an annotation from request data.'''
+        if 'author' in data:
+            self.author = Person.objects.get(id=data['author']['id'])
+            del data['author']
+
+        return data
+
+    def info(self):
+        # extend the default info impleentation (used to generate json)
+        # to include local database fields in the output
+        info = super(Annotation, self).info()
+        if self.author:
+            info['author'] = {
+                'name': self.author.authorized_name,
+                'id': self.author.id
+            }
+        return info
+
 
 
 
