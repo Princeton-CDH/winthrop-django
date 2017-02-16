@@ -25,8 +25,7 @@ class AnnotationAdminForm(forms.ModelForm):
 
 class WinthropAnnotationAdmin(AnnotationAdmin):
     form = AnnotationAdminForm
-    list_display = ('text_preview', 'author', 'canvas', 'created',
-        'updated', 'uri_link')
+    list_display = ('text_preview', 'author', 'canvas', 'admin_thumbnail')
 
 
 admin.site.unregister(Annotation)

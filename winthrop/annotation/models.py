@@ -50,6 +50,34 @@ class Annotation(BaseAnnotation):
             }
         return info
 
+    img_info_to_iiif = {'w': 'width', 'h': 'height', 'x': 'x', 'y': 'y'}
+
+    def iiif_image_selection(self):
+        # if image selection information is present in annotation
+        # and canvas is associated, generated a IIIF image for the
+        # selected portion of the canvas
+        if 'image_selection' in self.extra_data and self.canvas:
+            # convert stored image info into the format used by
+            # piffle for generating iiif image region
+            img_selection = {
+                self.img_info_to_iiif[key]: float(val.rstrip('%'))
+                for key, val in self.extra_data['image_selection'].items()
+                if key in self.img_info_to_iiif
+            }
+            return self.canvas.image.region(percent=True, **img_selection)
+
+    def admin_thumbnail(self):
+        img_selection = self.iiif_image_selection()
+        # if image selection is available, display small thumbnail
+        if img_selection:
+            return u'<img src="%s" />' % img_selection.mini_thumbnail()
+        # otherwise, if canvas is set, display canvas small thumbnail
+        elif self.canvas:
+            return u'<img src="%s" />' % self.canvas.image.mini_thumbnail()
+    admin_thumbnail.short_description = 'Thumbnail'
+    admin_thumbnail.allow_tags = True
+
+
 
 
 
