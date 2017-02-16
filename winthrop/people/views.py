@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from dal import autocomplete
 
+from .models import Person
 from .viaf import ViafAPI
 
 
@@ -17,4 +18,13 @@ class ViafAutoSuggest(autocomplete.Select2ListView):
                 text=(item['displayForm']),
             ) for item in result],
         })
+
+
+class PersonAutocomplete(autocomplete.Select2QuerySetView):
+    # basic person autocomplete lookup, based on
+    # django-autocomplete-light tutorial
+    # restricted to staff only in url config
+
+    def get_queryset(self):
+        return Person.objects.filter(authorized_name__icontains=self.q)
 

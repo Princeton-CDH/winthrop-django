@@ -5,6 +5,12 @@
 {# tweak some djiffy/annotator styles for display #}
 .inner { display: inline-block; } {# match page image size exactly #}
 .margin-container-show aside.margin-container { right: -5px;}
+.marginalia-item > div {
+    padding-left: 20px;
+}
+.marginalia-item label {
+    padding-right: 5px;
+}
 </style>
 {% endblock %}
 
@@ -12,7 +18,7 @@
     {{ block.super }}
     {# enable annotation functionality if user has appropriate permissions #}
     {% if perms.annotation.add_annotation %}
-        {% include 'annotator_store/snippets/annotator_init.html' %}
+        {% include 'snippets/annotator_init.html' %}
     {% endif %}
 {% endblock %}
 
