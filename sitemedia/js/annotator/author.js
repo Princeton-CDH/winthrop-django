@@ -37,8 +37,10 @@ var author = {
             $(field).addClass('author-lookup');
             // initialize input value & id when annotation.author is present
             if (annotation.author) {
-                input.val(annotation.author.name);
-                input.attr('data-author-id', annotation.author.id)
+                input.val(annotation.author.name)
+                     .attr('data-author-id', annotation.author.id)
+            } else {
+                input.val('').removeAttr('data-author-id');
             }
 
             // configure autocomplete to look up authors from persons in the db
@@ -75,10 +77,15 @@ var author = {
 
         function setAuthor(field, annotation) {
             // store author info on the annotation object
-            annotation.author = {
-                name: input.val(),
-                id: input.attr('data-author-id')
-            };
+            if (input.val() != '') {
+                annotation.author = {
+                    name: input.val(),
+                    id: input.attr('data-author-id')
+                };
+            } else {
+                // clear out author if it was previously set
+                annotation.author = {};
+            }
         }
 
         field = e.addField({

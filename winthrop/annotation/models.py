@@ -33,9 +33,12 @@ class Annotation(BaseAnnotation):
         '''Handle any "extra" data that is not part of the stock annotation
         data model.  Use this method to customize the logic for updating
         an annotation from request data.'''
-        if 'author' in data:
+        if 'author' in data and 'id' in data['author']:
             self.author = Person.objects.get(id=data['author']['id'])
             del data['author']
+        else:
+            # clear out in case previously set
+            self.author = None
 
         return data
 
