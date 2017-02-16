@@ -3,6 +3,7 @@ from django.contrib import admin
 from dal import autocomplete
 
 from winthrop.common.admin import NamedNotableAdmin
+from winthrop.footnotes.admin import FootnoteInline
 from .models import Subject, Language, Publisher, OwningInstitution, \
     Book, Catalogue, BookSubject, BookLanguage, CreatorType, Creator, \
     PersonBook, PersonBookRelationshipType
@@ -46,7 +47,7 @@ class CreatorInline(CollapsibleTabularInline):
 
 class PersonBookInline(CollapsibleTabularInline):
     model = PersonBook
-    fields = ('person', 'relationship_type', 'start_year', 'end_year')
+    fields = ('person', 'relationship_type', 'start_year', 'end_year', 'notes')
 
 
 class BookAdminForm(forms.ModelForm):
@@ -79,9 +80,20 @@ class BookAdmin(admin.ModelAdmin):
     search_fields = ('title', 'creator__person__authorized_name',
         'catalogue__call_number', 'notes', 'publisher__name')
     inlines = [CreatorInline, LanguageInline, SubjectInline, CatalogueInline,
-        PersonBookInline]
+        PersonBookInline, FootnoteInline]
     list_filter = ('subjects', 'languages', 'is_extant',
         'is_annotated', 'is_digitized')
+
+
+class PersonBookAdmin(admin.ModelAdmin):
+    # NOTE: person-book is editable on the book page, but exposing as a
+    # top level as well to make it easier to associate footnotes with
+    # person-book relationships
+    list_display = ('person', 'relationship_type', 'book', 'start_year',
+                    'end_year', 'has_notes')
+    fields = ('person', 'relationship_type', 'book', 'start_year',
+              'end_year', 'notes')
+    inlines = [FootnoteInline]
 
 
 admin.site.register(Subject,  NamedNotableBookCount)
@@ -91,3 +103,4 @@ admin.site.register(OwningInstitution, OwningInstitutionAdmin)
 admin.site.register(Book, BookAdmin)
 admin.site.register(CreatorType, NamedNotableAdmin)
 admin.site.register(PersonBookRelationshipType, NamedNotableAdmin)
+admin.site.register(PersonBook, PersonBookAdmin)

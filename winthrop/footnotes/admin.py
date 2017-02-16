@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.contenttypes.admin import GenericTabularInline
 
 from winthrop.common.admin import NamedNotableAdmin
 from .models import SourceType, Bibliography, Footnote
@@ -20,6 +21,12 @@ class FootnoteAdmin(admin.ModelAdmin):
     related_lookup_fields = {
         'generic': [['content_type', 'object_id']]
     }
+
+
+class FootnoteInline(GenericTabularInline):
+    model = Footnote
+    classes = ('grp-collapse grp-open', )  # grapelli collapsible
+    fields = ('bibliography', 'location', 'snippet_text', 'is_agree', 'notes')
 
 
 class SourceTypeAdmin(NamedNotableAdmin):
