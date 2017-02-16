@@ -3,8 +3,13 @@ from django.db import models
 from winthrop.common.models import Named, Notable, DateRange
 from winthrop.places.models import Place
 
-# alias field adapted from https://djangosnippets.org/snippets/10440/
+
 class AliasIntegerField(models.IntegerField):
+    '''Alias field adapted from https://djangosnippets.org/snippets/10440/
+    to allow accessing an existing db field by a different name, both
+    for user display and in model and queryset use.
+    '''
+
     def contribute_to_class(self, cls, name, virtual_only=False):
         super(AliasIntegerField, self).contribute_to_class(cls, name, virtual_only=True)
         setattr(cls, name, self)
@@ -16,13 +21,8 @@ class AliasIntegerField(models.IntegerField):
         return setattr(instance, self.db_column, value)
 
 
-class Order(models.Model):
-    """
-    The main order model
-    """
-    number = AliasIntegerField(db_column='id')
-
 class Person(Notable, DateRange):
+    '''Person'''
     authorized_name = models.CharField(max_length=255)
     viaf_id = models.URLField(null=True, blank=True)
     # alias start/end year from DateRange to be more readable and semantic
@@ -44,6 +44,7 @@ class Person(Notable, DateRange):
 
 
 class Residence(Notable, DateRange):
+    '''A residence where a person lived at some point in time'''
     person = models.ForeignKey(Person)
     place = models.ForeignKey(Place)
 

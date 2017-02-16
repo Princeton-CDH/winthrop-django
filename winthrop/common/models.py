@@ -7,6 +7,8 @@ from django.core.exceptions import ValidationError
 class Named(models.Model):
     '''Abstract model with a 'name' field; by default, name is used as
     the string display.'''
+
+    #: unique name (required)
     name = models.CharField(max_length=255, unique=True)
 
     class Meta:
@@ -19,6 +21,8 @@ class Named(models.Model):
 
 class Notable(models.Model):
     '''Abstract model with an optional notes text field'''
+
+    #: optional notes
     notes = models.TextField(blank=True)
 
     class Meta:
@@ -33,8 +37,12 @@ class Notable(models.Model):
 
 class DateRange(models.Model):
     '''Abstract model with optional start and end years, and a
-    custom dates property to display the date range nicely.'''
+    custom dates property to display the date range nicely.  Includes
+    validation that requires end year falls after start year.'''
+
+    #: start year (optional)
     start_year = models.PositiveIntegerField(null=True, blank=True)
+    #: end year (optional)
     end_year = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:

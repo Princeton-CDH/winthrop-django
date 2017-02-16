@@ -16,7 +16,7 @@ class ViafAPI(object):
 
     def suggest(self, query):
         """Get VIAF suggestions for the specified query string.
-        For easy of processing, returns an empty list if no suggestions
+        For ease of processing, returns an empty list if no suggestions
         are found or something goes wrong."""
         url = '/'.join([self.api_base, 'AutoSuggest'])
         resp = requests.get(url, params={'query': query})

@@ -13,6 +13,7 @@ class GeoNamesAPI(object):
         self.username = getattr(settings, "GEONAMES_USERNAME", None)
 
     def search(self, query, max_rows=None):
+        '''Search for places and return the list of results'''
         api_url = '%s/%s' % (self.api_base, 'searchJSON')
         params = {'username': self.username, 'q': query}
         if max_rows is not None:
@@ -23,4 +24,5 @@ class GeoNamesAPI(object):
 
     @classmethod
     def uri_from_id(cls, geonames_id):
+        '''Convert a GeoNames id into a GeoNames URI'''
         return 'http://sws.geonames.org/%d/' % geonames_id

@@ -1,51 +1,73 @@
-# winthrop-django
+winthrop-django
+===============
 
-[![Build Status](https://travis-ci.org/Princeton-CDH/winthrop-django.svg?branch=develop)](https://travis-ci.org/Princeton-CDH/winthrop-django)
-[![codecov](https://codecov.io/gh/Princeton-CDH/winthrop-django/branch/develop/graph/badge.svg)](https://codecov.io/gh/Princeton-CDH/winthrop-django/branch/develop)
-[![Code Health](https://landscape.io/github/Princeton-CDH/winthrop-django/develop/landscape.svg?style=flat)](https://landscape.io/github/Princeton-CDH/winthrop-django/develop)
-[![Requirements Status](https://requires.io/github/Princeton-CDH/winthrop-django/requirements.svg?branch=develop)](https://requires.io/github/Princeton-CDH/winthrop-django/requirements/?branch=develop)
+.. sphinx-start-marker-do-not-remove
 
-Django web application for
-[The Winthrop Family on the Page](https://digitalhumanities.princeton.edu/projects/TheWinthropFamilyonthePage/)
+Django web application for `The Winthrop Family on the
+Page <https://digitalhumanities.princeton.edu/projects/TheWinthropFamilyonthePage/>`__
 project.
 
 Python 3.5 / Django 1.10
 
-## Current development status
+.. image:: https://travis-ci.org/Princeton-CDH/winthrop-django.svg?branch=develop
+    :target: https://travis-ci.org/Princeton-CDH/winthrop-django
+    :alt: Build status
 
-[![In Progress](https://badge.waffle.io/Princeton-CDH/winthrop-django.svg?label=development+in+progress&title=In+Progress)](http://waffle.io/Princeton-CDH/winthrop-django)
-[![Development Complete](https://badge.waffle.io/Princeton-CDH/winthrop-django.svg?label=development+complete&title=Development+Complete)](http://waffle.io/Princeton-CDH/winthrop-django)
-[![Awaiting Testing](https://badge.waffle.io/Princeton-CDH/winthrop-django.svg?label=awaiting+testing&title=Awaiting+Testing)](http://waffle.io/Princeton-CDH/winthrop-django)
+.. image:: https://codecov.io/gh/Princeton-CDH/winthrop-django/branch/develop/graph/badge.svg
+    :target: https://codecov.io/gh/Princeton-CDH/winthrop-django/branch/develop
+    :alt: Code coverage
 
-## Development instructions
+.. image:: https://landscape.io/github/Princeton-CDH/winthrop-django/develop/landscape.svg?style=flat
+    :target: https://landscape.io/github/Princeton-CDH/winthrop-django/develop
+    :alt: Code Health
+
+.. image:: https://landscape.io/github/Princeton-CDH/winthrop-django/develop/landscape.svg?style=flat
+    :target: https://requires.io/github/Princeton-CDH/winthrop-django/requirements/?branch=develop
+    :alt: Requirements Status
+
+
+Current development status
+--------------------------
+
+.. image:: https://badge.waffle.io/Princeton-CDH/winthrop-django.svg?label=development+in+progress&title=In+Progress
+   :target: http://waffle.io/Princeton-CDH/winthrop-django
+   :alt: In Progress
+.. image:: https://badge.waffle.io/Princeton-CDH/winthrop-django.svg?label=development+complete&title=Development+Complete
+   :target: http://waffle.io/Princeton-CDH/winthrop-django
+   :alt: Development Complete
+.. image:: https://badge.waffle.io/Princeton-CDH/winthrop-django.svg?label=awaiting+testing&title=Awaiting+Testing
+   :target: http://waffle.io/Princeton-CDH/winthrop-django
+   :alt: Awaiting Testing
+
+
+Development instructions
+------------------------
 
 Initial setup and installation:
 
-- recommended: create and activate a python 3.5 virtualenv
-    `virtualenv winthrop -p python3.5`
-    `source winthrop/bin/activate`
+-  recommended: create and activate a python 3.5 virtualenv
+   ``virtualenv winthrop -p python3.5`` ``source winthrop/bin/activate``
 
-- pip install required python dependencies
-    `pip install -r requirements.txt`
-    `pip install -r dev-requirements.txt`
+-  pip install required python dependencies
+   ``pip install -r requirements.txt``
+   ``pip install -r dev-requirements.txt``
 
-- copy sample local settings and configure for your environment
-    `cp winthrop/local_settings.py.sample winthrop/local_settings.py`
+-  copy sample local settings and configure for your environment
+   ``cp winthrop/local_settings.py.sample winthrop/local_settings.py``
 
-(documentation TODO)
-- install & configure git commit hook for Asana integration
+(documentation TODO) - install & configure git commit hook for Asana
+integration
 
+Unit Tests
+~~~~~~~~~~
 
-### Unit Tests
+Unit tests are written with `py.test <http://doc.pytest.org/>`__ but use
+Django fixture loading and convenience testing methods when that makes
+things easier. To run them, first install development requirements::
 
-Unit tests are written with [py.test](http://doc.pytest.org/) but use Django
-fixture loading and convenience testing methods when that makes things easier.
-To run them, first install development requirements:
-```
-pip install -r dev-requirements.txt
-```
+    pip install -r dev-requirements.txt
 
-Run tests using py.test:
-```
-py.test
-```
+Run tests using py.test::
+
+    py.test
+

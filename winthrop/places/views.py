@@ -6,15 +6,18 @@ from .geonames import GeoNamesAPI
 
 
 class PlaceAutocomplete(autocomplete.Select2QuerySetView):
-    # basic place autocomplete lookup, based on
-    # django-autocomplete-light tutorial
-    # restricted to staff only in url config
+    '''Basic place ajax autocomplete lookup, based on
+    django-autocomplete-light.
+    Currently restricted to staff only.'''
+    # staff restruction in url config
 
     def get_queryset(self):
         return Place.objects.filter(name__istartswith=self.q)
 
 
 class GeonamesLookup(autocomplete.Select2ListView):
+    '''GeoNames ajax lookup for use as autocomplete.
+    Currently restricted to staff only.'''
 
     def get(self, request, *args, **kwargs):
         """"Return option list json response."""
