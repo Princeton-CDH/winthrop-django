@@ -11,6 +11,7 @@ Winthrop documentation
    :maxdepth: 1
    :caption: Contents:
 
+   architecture
    codedocs
    Change Log <changelog>
 
