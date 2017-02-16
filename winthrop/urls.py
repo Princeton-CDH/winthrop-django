@@ -3,6 +3,7 @@
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.10/topics/http/urls/
 """
+from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.generic.base import RedirectView
@@ -21,3 +22,11 @@ urlpatterns = [
     url(r'^books/', include('winthrop.books.urls', namespace='books')),
 
 ]
+
+# NOTE: for some reason this isn't getting added automatically
+if settings.DEBUG:
+    try:
+        import debug_toolbar
+        urlpatterns += url(r'^__debug__/', include(debug_toolbar.urls)),
+    except ImportError:
+        pass
