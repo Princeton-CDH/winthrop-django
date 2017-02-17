@@ -1,4 +1,12 @@
-/* annotator author integration */
+/*
+annotator author integration
+
+- adds an author input field
+- display author name on marginalia item card when present
+- binds an autocomplete to author input (configured url, intended for
+  person lookup)
+- stores author name and id on the annotation
+*/
 
 var author = {
     // render extension to display author on marginalia item card
@@ -16,9 +24,10 @@ var author = {
 
     renderAuthor: function(annotation) {
         var author_div;
+        // display author name with a label if present in the annotation
         if (annotation.author && annotation.author.name) {
-          author_div = $('<div/>').addClass('annotator-author').html(
-            annotation.author.name  // name/id?
+            author_div = $('<div/>').addClass('annotator-author').html(
+                annotation.author.name
           ).prepend($('<label>Author:</label>'));
         }
         return author_div;
