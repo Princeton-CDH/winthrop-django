@@ -1,9 +1,32 @@
 from django import forms
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 from dal import autocomplete
+from djiffy.models import Canvas
 from annotator_store.admin import AnnotationAdmin
 
 from .models import Annotation
+
+
+class CanvasLinkWidget(autocomplete.ModelSelect2):
+    '''Customize autocomplete select widget to include a link
+    to view the related canvas on the website, since the 'view on site'
+    link for an annotation resolves to the JSON API url.'''
+
+    class Media:
+        css = {
+            'all': ('css/local-admin.css',)
+        }
+
+    def render(self, name, value, attrs=None):
+        widget = super(CanvasLinkWidget, self).render(name, value, attrs)
+        canvas = Canvas.objects.get(id=value)
+        # add a link to view the canvas on the site; borrowing grappelli
+        # styles for main "view on site" button
+        return mark_safe(u'''%s
+            <ul class="canvas-link grp-object-tools">
+                <li><a href="%s" target="_blank" class="grp-state-focus">View canvas on site</a>
+            </li></ul>''' % (widget, canvas.get_absolute_url()))
 
 
 class AnnotationAdminForm(forms.ModelForm):
@@ -21,7 +44,7 @@ class AnnotationAdminForm(forms.ModelForm):
             'author': autocomplete.ModelSelect2(
                 url='people:autocomplete',
                 attrs={'data-placeholder': 'Start typing name to search...'}),
-            'canvas': autocomplete.ModelSelect2(
+            'canvas': CanvasLinkWidget(
                 url='books:canvas-autocomplete',
                 attrs={'data-placeholder': 'Start typing canvas name or uri to search...'}),
 
