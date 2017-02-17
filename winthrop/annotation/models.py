@@ -12,27 +12,28 @@ class Annotation(BaseAnnotation):
     canvas = models.ForeignKey(Canvas, null=True, blank=True)
     author = models.ForeignKey(Person, null=True, blank=True)
 
-
-    def info(self):
-        info = super(Annotation, self).info()
-        info['extra_data'] = 'foo'
-        return info
-
     def save(self, *args, **kwargs):
         # for image annotation, URI should be set to canvas URI; look up
         # canvas by URI and associate with the record
-        self.canvas = None
-        try:
-            self.canvas = Canvas.objects.get(uri=self.uri)
-        except Canvas.DoesNotExist:
+
+        # if canvas is already set and uri matches annotation uri, do nothing
+        if self.canvas and self.uri == self.canvas.uri:
             pass
+        else:
+            # otherwise, lookup canvas and associate
+            # (clear out in case there is no match for the new uri)
+            self.canvas = None
+            try:
+                self.canvas = Canvas.objects.get(uri=self.uri)
+            except Canvas.DoesNotExist:
+                pass
 
         super(Annotation, self).save()
 
     def handle_extra_data(self, data, request):
         '''Handle any "extra" data that is not part of the stock annotation
         data model.  Use this method to customize the logic for updating
-        an annotation from request data.'''
+        an annotation from json request data (as sent by annotator.js).'''
         if 'author' in data and 'id' in data['author']:
             self.author = Person.objects.get(id=data['author']['id'])
             del data['author']
