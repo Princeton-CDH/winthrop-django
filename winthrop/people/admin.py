@@ -5,18 +5,23 @@ from django.utils.safestring import mark_safe
 from .models import Person, Residence, RelationshipType, Relationship
 from dal import autocomplete
 
+
 class RelationshipInline(admin.TabularInline):
     '''Inline class for Relationships'''
     model = Relationship
+    verbose_name_plural = 'From Relationships'
+    template = 'admin/relationship_custom_inline.html'
     fk_name = 'from_person'
+    extra = 1
     # Setting a logical order for the relationship fields
-    fields = ('to_person', 'relationship_type', 'start_year',
+    fields = ('relationship_type', 'to_person', 'start_year',
         'end_year', 'notes')
 
 
 class ResidenceInline(admin.TabularInline):
     '''Inline class for Residence'''
     model = Residence
+    extra = 1
     # Setting a logical order for the residence fields
     fields = ('place', 'start_year', 'end_year', 'notes')
 
