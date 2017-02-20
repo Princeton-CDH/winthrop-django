@@ -55,12 +55,47 @@ class TestRelationshipType(TestCase):
 
 class TestRelationship(TestCase):
 
-    def test_str(self):
+    def setUp(self):
+        '''Build a test relationship for use'''
         father = Person(authorized_name='Joe Schmoe')
         son = Person(authorized_name='Joe Schmoe Jr.')
         parent = RelationshipType(name='parent')
+
+        father.save()
+        son.save()
+        parent.save()
+
         rel = Relationship(from_person=father, to_person=son,
             relationship_type=parent)
+        rel.save()
+
+    def test_str(self):
+        rel = Relationship.objects.get(pk=1)
+        assert str(rel) == 'Joe Schmoe parent Joe Schmoe Jr.'
+
+    def test_through_relationships(self):
+        '''Make sure from/to sets make sense and follow consistent naming'''
+        father = Person.objects.get(pk=1)
+        son = Person.objects.get(pk=2)
+
+        # Not reciprocal, so from_relationships but not to_relationships
+        query = father.from_relationships.all()
+        assert isinstance(query[0], Relationship)
+        assert query[0].from_person == father
+        assert query[0].to_person == son
+
+        query = father.to_relationships.all()
+        assert not query
+
+        # Check non-reciprocity, from and to person are same for the
+        # Relationship object
+        query = son.to_relationships.all()
+        assert isinstance(query[0], Relationship)
+        assert query[0].from_person == father
+        assert query[0].to_person == son
+
+        query = son.from_relationships.all()
+        assert not query
 
 
 class TestViafAPI(TestCase):
@@ -145,4 +180,3 @@ class TestViafAutoSuggest(TestCase):
         data = data['results'][0]
         assert data['id'] == 'https://viaf.org/viaf/102333412/'
         assert data['text'] == 'Austen, Jane, 1775-1817'
-
