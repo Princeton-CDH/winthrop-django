@@ -1,15 +1,21 @@
 import json
+import os
+import requests
 
 from django.test import TestCase, override_settings
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.urls import reverse
 from unittest.mock import patch
-import requests
 
 from winthrop.places.models import Place
 from .models import Person, Residence, RelationshipType, Relationship
 from .viaf import ViafAPI
+from rdflib import Graph
+
+# Get the fixtures dir for this app
+FIXTURES_PATH = os.path.join(settings.BASE_DIR, 'winthrop/people/fixtures')
 
 
 class TestPerson(TestCase):
@@ -100,6 +106,12 @@ class TestRelationship(TestCase):
 
 class TestViafAPI(TestCase):
 
+    def setUp(self):
+        """Load the sample XML file and pass to the TestCase object"""
+        fixture_file = os.path.join(FIXTURES_PATH, 'sample_viaf_rdf.xml')
+        with open(fixture_file, 'r') as fixture:
+            self.mock_rdf = fixture.read()
+
     @patch('winthrop.people.viaf.requests')
     def test_suggest(self, mockrequests):
         viaf = ViafAPI()
@@ -132,6 +144,23 @@ class TestViafAPI(TestCase):
         # numeric id should also work
         assert ViafAPI.uri_from_id(1234) == \
             'https://viaf.org/viaf/1234/'
+
+    @patch('winthrop.people.viaf.requests')
+    def test_getRDF(self, mockrequests):
+        viaf = ViafAPI()
+        mock_rdf = self.mock_rdf
+        mockrequests.codes = requests.codes
+
+        # Mock a GET that works correctly
+        mockrequests.get.return_value.status_code = requests.codes.ok
+        mockrequests.get.return_value.text = mock_rdf
+        assert viaf.get_RDF('89599270') == mock_rdf
+
+        # Mock a GET that returns a bad code
+        mockrequests.get.return_value.status_code = requests.codes.bad
+        graph = Graph()
+        empty_rdf = graph.serialize()
+        assert viaf.get_RDF('89599270') == empty_rdf
 
 
 class TestViafAutoSuggest(TestCase):
