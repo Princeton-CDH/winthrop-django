@@ -1,7 +1,8 @@
 import re
 import requests
-from rdflib import Graph
+from rdflib.graph import Graph
 from .namespaces import schema
+
 
 class ViafAPI(object):
     """Wrapper for VIAF API.
