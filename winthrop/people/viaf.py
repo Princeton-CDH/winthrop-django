@@ -63,7 +63,10 @@ class ViafAPI(object):
         """Take RDF XML string/file-like and attempt to parse out birth and death dates
         Returns birth, death as integers or tuple with year only, None on bad
         match"""
+
         graph = Graph()
+        graph.parse(data=rdf)
+
 
         birthdate = self.parse_date(graph, schema.birthDate)
         deathdate = self.parse_date(graph, schema.deathDate)

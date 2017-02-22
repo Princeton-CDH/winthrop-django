@@ -162,6 +162,17 @@ class TestViafAPI(TestCase):
         empty_rdf = graph.serialize()
         assert viaf.get_RDF('89599270') == empty_rdf
 
+    def test_get_years(self):
+        viaf = ViafAPI()
+        mock_rdf = self.mock_rdf
+
+        # Test fixture should produce a tuple as follows
+        print(viaf.get_years(mock_rdf))
+        assert viaf.get_years(mock_rdf) == (69, 140)
+
+
+
+
 
 class TestViafAutoSuggest(TestCase):
 
