@@ -67,7 +67,6 @@ class ViafAPI(object):
         graph = Graph()
         graph.parse(data=rdf)
 
-
         birthdate = self.parse_date(graph, schema.birthDate)
         deathdate = self.parse_date(graph, schema.deathDate)
 
