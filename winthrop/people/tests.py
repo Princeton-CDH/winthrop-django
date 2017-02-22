@@ -112,6 +112,9 @@ class TestViafAPI(TestCase):
         with open(fixture_file, 'r') as fixture:
             self.mock_rdf = fixture.read()
 
+        graph = Graph()
+        self.empty_rdf = graph.serialize()
+
     @patch('winthrop.people.viaf.requests')
     def test_suggest(self, mockrequests):
         viaf = ViafAPI()
@@ -149,6 +152,7 @@ class TestViafAPI(TestCase):
     def test_getRDF(self, mockrequests):
         viaf = ViafAPI()
         mock_rdf = self.mock_rdf
+        empty_rdf = self.empty_rdf
         mockrequests.codes = requests.codes
 
         # Mock a GET that works correctly
@@ -158,21 +162,17 @@ class TestViafAPI(TestCase):
 
         # Mock a GET that returns a bad code
         mockrequests.get.return_value.status_code = requests.codes.bad
-        graph = Graph()
-        empty_rdf = graph.serialize()
         assert viaf.get_RDF('89599270') == empty_rdf
 
     def test_get_years(self):
         viaf = ViafAPI()
         mock_rdf = self.mock_rdf
+        empty_rdf = self.empty_rdf
 
         # Test fixture should produce a tuple as follows
-        print(viaf.get_years(mock_rdf))
         assert viaf.get_years(mock_rdf) == (69, 140)
-
-
-
-
+        # An empty RDF should produce (None, None)
+        assert viaf.get_years(empty_rdf) == (None, None)
 
 class TestViafAutoSuggest(TestCase):
 
