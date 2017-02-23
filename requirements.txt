@@ -3,7 +3,6 @@ mysqlclient
 django-grappelli
 django-autocomplete-light
 requests
-rdflib==4.2.0
-# rdflib 4.2.1 and 4.2.2 are disagreeing with SELinux somewhat fiercely as of 02/22
+rdflib
 # use develop branch of pucas until we have an initial release
 git+https://github.com/Princeton-CDH/django-pucas.git@develop#egg=pucas
