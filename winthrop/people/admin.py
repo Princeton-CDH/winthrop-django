@@ -33,7 +33,9 @@ class ViafWidget(autocomplete.Select2):
     def render(self, name, value, attrs=None):
         widget = super(ViafWidget, self).render(name, value, attrs)
         return mark_safe(
-            u'%s<p><br /><a id="viaf_uri" target="_blank" href="%s">%s</a></p>') % \
+            u'%s<p><br /><a id="viaf_uri" target="_blank" href="%s">%s</a></p>'
+            '<p> Note: Choosing a VIAF value will automatically set the birth'
+            ' and death fields, blanking the input if there is a previous value.') % \
             (widget, value or '', value or '')
 
 

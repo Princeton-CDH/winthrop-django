@@ -6,6 +6,7 @@ from winthrop.books.models import Book, Publisher, OwningInstitution, \
     Catalogue
 from winthrop.people.models import Person
 from winthrop.places.models import Place
+from winthrop.people.viaf import ViafAPI
 
 
 class Command(BaseCommand):
@@ -147,11 +148,25 @@ class Command(BaseCommand):
         for creator_type, csv_field in self.creators.items():
             # name could be empty (e.g. for translator, editor)
             name = data[csv_field]
+            # Get rid of any last stray periods, if they exist
+            name = name.strip('. ')
             if name:
                 try:
                     person = Person.objects.get(authorized_name=name)
                 except Person.DoesNotExist:
-                    person = Person.objects.create(authorized_name=name)
+                    viaf = ViafAPI()
+                    viafid = None
+                    results = viaf.suggest(name)
+                    # Handle no results
+                    if results != []:
+                        # Check for a 'nametype' and make sure it's personal
+                        if 'nametype' in results[0]:
+                            if results[0]['nametype'] == 'personal':
+                                viafid = results[0]['viafid']
+                    if viafid:
+                        viafid = ViafAPI.uri_from_id(viafid)
+                    person = Person.objects.create(authorized_name=name,
+                                viaf_id=viafid)
                     self.stats['person'] += 1
                 newbook.add_creator(person, creator_type)
 
@@ -162,5 +177,3 @@ class Command(BaseCommand):
             notes=data[self.fields['nysl_notes']])
 
         self.stats['book'] += 1
-
-

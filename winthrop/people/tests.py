@@ -19,6 +19,11 @@ FIXTURES_PATH = os.path.join(settings.BASE_DIR, 'winthrop/people/fixtures')
 
 
 class TestPerson(TestCase):
+    def setUp(self):
+        """Load the sample XML file and pass to the TestCase object"""
+        fixture_file = os.path.join(FIXTURES_PATH, 'sample_viaf_rdf.xml')
+        with open(fixture_file, 'r') as fixture:
+            self.mock_rdf = fixture.read()
 
     def test_str(self):
         pers = Person(authorized_name='Mr. So and So')
@@ -35,6 +40,16 @@ class TestPerson(TestCase):
 
         # queryset filters on alias fields should also work
         assert Person.objects.get(birth=1800) == pers
+
+    @patch('winthrop.people.viaf.ViafAPI.get_RDF',
+        return_value=Graph().serialize())
+    @patch('winthrop.people.viaf.ViafAPI.get_years', return_value=(1800, 1900))
+    def test_viaf_dates(self, fakedrdf, fakedyears):
+        '''Check that if a viaf_id is set, save method will call ViafAPI'''
+        pers = Person.objects.create(authorized_name='Mr. X',
+            viaf_id='http://notviaf/viaf/0000/')
+        assert pers.birth == 1800
+        assert pers.death == 1900
 
 class TestResidence(TestCase):
 
@@ -200,7 +215,8 @@ class TestViafAutoSuggest(TestCase):
         mock_response = [{
             'displayForm': 'Austen, Jane, 1775-1817',
             'term': 'Austen, Jane, 1775-1817',
-            'viafid': '102333412'
+            'viafid': '102333412',
+            'nametype': 'personal',
         }]
 
         mockviafapi.return_value.suggest.return_value = mock_response

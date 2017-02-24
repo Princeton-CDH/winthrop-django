@@ -1,7 +1,10 @@
+import re
+
 from django.db import models
 
 from winthrop.common.models import Named, Notable, DateRange
 from winthrop.places.models import Place
+from .viaf import ViafAPI
 
 
 class AliasIntegerField(models.IntegerField):
@@ -38,6 +41,19 @@ class Person(Notable, DateRange):
     class Meta:
         verbose_name_plural = 'People'
         ordering = ['authorized_name']
+
+    def save(self, *args, **kwargs):
+        '''Adds birth and death dates if they aren't in kwargs
+        and there's a viaf id for the record'''
+
+        if self.viaf_id and not self.birth and not self.death:
+            # Parse out the ID from the URI
+            id_num = (re.search(r'\d+', self.viaf_id)).group(0)
+            viaf = ViafAPI()
+            viaf_rdf = viaf.get_RDF(id_num)
+            self.birth, self.death = viaf.get_years(viaf_rdf)
+        # Call save normally
+        super(Person, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.authorized_name
