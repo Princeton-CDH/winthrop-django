@@ -49,9 +49,11 @@ class Book(Notable):
     # do we want any limit on short titles?
     original_pub_info = models.TextField(
         verbose_name='Original Publication Information')
-    publisher = models.ForeignKey(Publisher)
-    pub_place = models.ForeignKey(Place, verbose_name='Place of Publication')
-    pub_year = models.PositiveIntegerField('Publication Year')
+    publisher = models.ForeignKey(Publisher, blank=True, null=True)
+    pub_place = models.ForeignKey(Place, verbose_name='Place of Publication',
+        blank=True, null=True)
+    pub_year = models.PositiveIntegerField('Publication Year',
+        blank=True, null=True)
     # is positive integer enough, or do we need more validation here?
     is_extant = models.BooleanField(default=False)
     is_annotated = models.BooleanField(default=False)

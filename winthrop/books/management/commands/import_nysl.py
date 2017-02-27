@@ -1,12 +1,14 @@
 from collections import defaultdict
 import csv
+import re
 from django.core.management.base import BaseCommand, CommandError
 
 from winthrop.books.models import Book, Publisher, OwningInstitution, \
     Catalogue
 from winthrop.people.models import Person
-from winthrop.places.models import Place
 from winthrop.people.viaf import ViafAPI
+from winthrop.places.models import Place
+from winthrop.places.geonames import GeoNamesAPI
 
 
 class Command(BaseCommand):
@@ -93,6 +95,34 @@ class Command(BaseCommand):
 
 %(err)d errors''' % self.stats)
 
+    def viaf_lookup(self, name):
+        viaf = ViafAPI()
+        viafid = None
+        results = viaf.suggest(name)
+        # Handle no results
+        if results != []:
+            # Check for a 'nametype' and make sure it's personal
+            if 'nametype' in results[0]:
+                if results[0]['nametype'] == 'personal':
+                    viafid = results[0]['viafid']
+        return viafid
+
+    def geonames_lookup(self, place_name):
+        '''Function to wrap a GeoNames lookup and assign info.
+        Returns a dict for Place generator or None'''
+        geo = GeoNamesAPI()
+        # Get the top hit and presume the API guessed correctly
+        result = geo.search(place_name, max_rows=1)
+        place_dict = {}
+        if result:
+            place_dict['name'] = place_name
+            place_dict['latitude'] = float(result[0]['lat'])
+            place_dict['longitude'] = float(result[0]['lng'])
+            place_dict['geonames_id'] = geo.uri_from_id(result[0]['geonameId'])
+            return place_dict
+        else:
+            return None
+
     def create_book(self, data):
         # create a new book and all related models from
         # a row of data in the spreadsheet
@@ -113,8 +143,9 @@ class Command(BaseCommand):
         # handle book fields that require some logic
         # - publication year might have brackets, e.g. [1566],
         #   but model stores it as an integer
-        pub_year = data[self.fields['pub_year']]
-        newbook.pub_year = pub_year.strip('[]?')
+        pub_year = data[self.fields['pub_year']].strip('[]?. ')
+        if pub_year:
+            newbook.pub_year = pub_year
         # - is annotated; spreadsheet has variants in upper/lower case
         # and trailing periods; in some cases there are notes;
         # for now, assuming that anything ambiguous should be false here
@@ -123,24 +154,36 @@ class Command(BaseCommand):
 
         # add required relationships before saving the new book
         # - place
-        placename = data[self.fields['pub_place']]
-        try:
-            place = Place.objects.get(name=placename)
-        except Place.DoesNotExist:
-            place = Place.objects.create(name=placename,
-                latitude=0.0, longitude=0.0)
-            # TODO: geonames lookup?
-            self.stats['place'] += 1
-        newbook.pub_place = place
+        placename = data[self.fields['pub_place']].strip(' ?[]()')
+        # Dumb filter for sn/np
+        if len((re.sub(r'[.,]', '', placename))) < 3:
+            placename = None
+        if placename:
+            try:
+                place = Place.objects.get(name=placename)
+            except Place.DoesNotExist:
+                place_dict = self.geonames_lookup(placename)
+                if place_dict:
+                    place = Place.objects.create(**place_dict)
+                else:
+                    place = Place.objects.create(
+                        name=placename,
+                        latitude=0.0,
+                        longitude=0.0,
+                    )
+                self.stats['place'] += 1
+            newbook.pub_place = place
 
         # - publisher
-        publisher_name = data[self.fields['publisher']]
-        try:
-            publisher = Publisher.objects.get(name=publisher_name)
-        except Publisher.DoesNotExist:
-            publisher = Publisher.objects.create(name=publisher_name)
+        publisher_name = data[self.fields['publisher']].strip("? ")
+        if publisher_name:
+            try:
+                publisher = Publisher.objects.get(name=publisher_name)
+            except Publisher.DoesNotExist:
+                publisher = Publisher.objects.create(name=publisher_name)
+
             self.stats['publisher'] += 1
-        newbook.publisher = publisher
+            newbook.publisher = publisher
 
         newbook.save()
 
@@ -149,20 +192,15 @@ class Command(BaseCommand):
             # name could be empty (e.g. for translator, editor)
             name = data[csv_field]
             # Get rid of any last stray periods, if they exist
-            name = name.strip('. ')
+            name = name.strip('?. ')
+            # Use four characters as a dumb filter to toss stray 'np'/'sn'
+            if len(name) <= 4:
+                name = None
             if name:
                 try:
                     person = Person.objects.get(authorized_name=name)
                 except Person.DoesNotExist:
-                    viaf = ViafAPI()
-                    viafid = None
-                    results = viaf.suggest(name)
-                    # Handle no results
-                    if results != []:
-                        # Check for a 'nametype' and make sure it's personal
-                        if 'nametype' in results[0]:
-                            if results[0]['nametype'] == 'personal':
-                                viafid = results[0]['viafid']
+                    viafid = self.viaf_lookup(name)
                     if viafid:
                         viafid = ViafAPI.uri_from_id(viafid)
                     person = Person.objects.create(authorized_name=name,
