@@ -100,11 +100,11 @@ class Command(BaseCommand):
         viafid = None
         results = viaf.suggest(name)
         # Handle no results
-        if results != []:
+        if results:
             # Check for a 'nametype' and make sure it's personal
             if 'nametype' in results[0]:
                 if results[0]['nametype'] == 'personal':
-                    viafid = results[0]['viafid']
+                    viafid = viaf.search(results[0]['viafid'])
         return viafid
 
     def geonames_lookup(self, place_name):
@@ -129,6 +129,7 @@ class Command(BaseCommand):
         # nysl books, therefore assuming all are extant
         newbook = Book(is_extant=True)
         # set fields that can be mapped directly from the spreadsheet
+        # aside from removing periods
         for model_field, csv_field in self.fields_exact.items():
             value = data[csv_field]
             # special case: some of the catalog numbers have
@@ -136,13 +137,26 @@ class Command(BaseCommand):
             if model_field.endswith('catalog_number') and \
                 value == 'NA':
                 continue
+            # special case: some books are missing a short title
+            # supply those with first three words of title
+            if model_field == 'short_title' and not value:
+                words = data['Title'].strip('. ').split()
+                value = ' '.join(words[0:3])
+            # special case: strip periods for title and short_title
+            if model_field == 'title':
+                value = data['Title'].strip('. ')
 
             setattr(newbook, model_field, value)
 
         # handle book fields that require some logic
         # - publication year might have brackets, e.g. [1566],
         #   but model stores it as an integer
-        pub_year = data[self.fields['pub_year']].strip('[]?. ')
+        stripped_spaces_only = data[self.fields['pub_year']].strip()
+        pub_year = data[self.fields['pub_year']].strip('[]?.np ')
+        if re.search('-|i\.e\.', pub_year):
+            newbook.notes = 'Add Publication Year Info: %s' % stripped_spaces_only
+            pub_year = (re.match(r'\d+?(?=\D)', pub_year)).group(0)
+
         if pub_year:
             newbook.pub_year = pub_year
         # - is annotated; spreadsheet has variants in upper/lower case
@@ -174,7 +188,10 @@ class Command(BaseCommand):
             newbook.pub_place = place
 
         # - publisher
-        publisher_name = data[self.fields['publisher']].strip("? ")
+        publisher_name = data[self.fields['publisher']].strip("?. ")
+        # Catch np/sn
+        if len(publisher_name) < 4:
+            publisher_name = None
         if publisher_name:
             try:
                 publisher = Publisher.objects.get(name=publisher_name)
@@ -191,7 +208,10 @@ class Command(BaseCommand):
             # name could be empty (e.g. for translator, editor)
             name = data[csv_field]
             # Get rid of any last stray periods, if they exist
-            name = name.strip('?. ')
+            name = name.strip('?. []')
+            # Get various versions of 'Not sure' and remove name if they exist
+            if re.search(r'[Vv]arious|[A|a]nonymous|[N|n]one [G|g]iven', name):
+                name = None
             # Use four characters as a dumb filter to toss stray 'np'/'sn'
             if len(name) <= 4:
                 name = None
@@ -200,8 +220,6 @@ class Command(BaseCommand):
                     person = Person.objects.get(authorized_name=name)
                 except Person.DoesNotExist:
                     viafid = self.viaf_lookup(name)
-                    if viafid:
-                        viafid = ViafAPI.uri_from_id(viafid)
                     person = Person.objects.create(authorized_name=name,
                                 viaf_id=viafid)
                     self.stats['person'] += 1

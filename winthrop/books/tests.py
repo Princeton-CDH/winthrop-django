@@ -170,13 +170,13 @@ class TestImportNysl(TestCase):
         # API lookups, since we're already hacking it a bit.
         # TODO: Figure out how to mock this instead
         def dummy_viaf(*args, **kwargs):
-            return 'http://notactuallyviaf.org/viaf/00001'
+            return 'http://totallyviaf.org/viaf/00001/'
         def dummy_geonames(*args, **kwargs):
             return {
                 'latitude': 0,
                 'longitude': 0,
                 'geonames_id': 'http://notgeonames/0001/'
-        }
+            }
 
         self.cmd.viaf_lookup = dummy_viaf
         self.cmd.geonames_lookup = dummy_geonames
@@ -187,20 +187,27 @@ class TestImportNysl(TestCase):
             call_command(self.cmd, self.test_csv, stdout=out)
             output = out.getvalue()
             assert 'Imported content' in output
-            assert '2 books' in output
-            assert '2 places' in output
-            assert '2 people' in output
-            assert '2 publishers' in output
+            assert '3 books' in output
+            assert '3 places' in output
+            assert '3 people' in output
+            assert '3 publishers' in output
 
     def test_create_book(self):
         # load data from fixture to test book creation more directly
+        # TODO: Update to account for new variations
         with open(self.test_csv) as csvfile:
             csvreader = csv.DictReader(csvfile)
             de_christelicke = next(csvreader)
             mercurii = next(csvreader)
+            opera = next(csvreader)
 
         # test against first row of fixture data
         data = de_christelicke
+        # Cleanup for exact fields that will need it to match expected
+        for key, value in data.items():
+            if key and key.endswith('itle'):
+                data[key] = value.strip('. ')
+
         self.cmd.create_book(data)
         # find book object by short title and compare data
         book = Book.objects.get(short_title=data['Short Title'])
@@ -212,10 +219,15 @@ class TestImportNysl(TestCase):
         assert book.notes == data['Notes']
         # test fields on related models
         assert book.pub_place.name == data['Modern Place of Publication']
+        # Is geonames_id getting set and passed from call?
+        assert book.pub_place.geonames_id == 'http://notgeonames/0001/'
         assert book.publisher.name == data['Standardized Name of Publisher']
         # - first row has author, no editor or translator
         assert book.authors().first().person.authorized_name == \
             data['AUTHOR, Standarized']
+        # Is viaf_id getting set and passed from call?
+        assert book.authors().first().person.viaf_id == \
+            'http://totallyviaf.org/viaf/00001/'
         book_creators = book.creator_set.all()
         assert book_creators.filter(creator_type__name='Editor').count() == 0
         assert book_creators.filter(creator_type__name='Translator').count() == 0
@@ -227,6 +239,11 @@ class TestImportNysl(TestCase):
 
         # test variations in second row of fixture data
         data = mercurii
+        # cleanup for exact fields that needed it
+        for key, value in data.items():
+            if key and key.endswith('itle'):
+                data[key] = value.strip('. ')
+
         self.cmd.create_book(data)
         # find book object by short title and compare data
         book = Book.objects.get(short_title=data['Short Title'])
@@ -235,6 +252,19 @@ class TestImportNysl(TestCase):
         assert book.ink_catalog_number == ''
         assert book.pencil_catalog_number == ''
 
+        # test for expected short title when building it
+        data = opera
+
+        # Handle cleanup for exact fields that needed it
+        for key, value in data.items():
+            if key and key.endswith('itle'):
+                data[key] = value.strip('. ')
+
+        self.cmd.create_book(data)
+        short_title = ' '.join((data['Title'].split())[0:3])
+        # Find the book by short title
+        book = Book.objects.get(short_title=short_title)
+        assert book.short_title == short_title
 
 class TestBookViews(TestCase):
     fixtures = ['sample_book_data.json']
