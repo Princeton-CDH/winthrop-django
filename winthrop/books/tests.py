@@ -183,7 +183,8 @@ class TestImportNysl(TestCase):
 
     def test_run(self):
             out = StringIO()
-            call_command('import_nysl', self.test_csv, stdout=out)
+            # pass the modified self.cmd object
+            call_command(self.cmd, self.test_csv, stdout=out)
             output = out.getvalue()
             assert 'Imported content' in output
             assert '2 books' in output
