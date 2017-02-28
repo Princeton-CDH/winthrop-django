@@ -104,7 +104,7 @@ class Command(BaseCommand):
             # Check for a 'nametype' and make sure it's personal
             if 'nametype' in results[0]:
                 if results[0]['nametype'] == 'personal':
-                    viafid = viaf.search(results[0]['viafid'])
+                    viafid = viaf.uri_from_id(results[0]['viafid'])
         return viafid
 
     def geonames_lookup(self, place_name):
@@ -152,7 +152,7 @@ class Command(BaseCommand):
         # - publication year might have brackets, e.g. [1566],
         #   but model stores it as an integer
         stripped_spaces_only = data[self.fields['pub_year']].strip()
-        pub_year = data[self.fields['pub_year']].strip('[]?.np ')
+        pub_year = data[self.fields['pub_year']].strip('[]?.nd ')
         if re.search('-|i\.e\.', pub_year):
             newbook.notes = 'Add Publication Year Info: %s' % stripped_spaces_only
             pub_year = (re.match(r'\d+?(?=\D)', pub_year)).group(0)
@@ -168,8 +168,7 @@ class Command(BaseCommand):
         # add required relationships before saving the new book
         # - place
         placename = data[self.fields['pub_place']].strip(' ?[]()')
-        # Dumb filter for sn/np
-        if len((re.sub(r'[.,]', '', placename))) < 3:
+        if placename and len((re.sub(r'[.,]', '', placename))) < 3:
             placename = None
         if placename:
             try:
@@ -190,7 +189,7 @@ class Command(BaseCommand):
         # - publisher
         publisher_name = data[self.fields['publisher']].strip("?. ")
         # Catch np/sn
-        if len(publisher_name) < 4:
+        if publisher_name and len(publisher_name) < 4:
             publisher_name = None
         if publisher_name:
             try:
@@ -213,7 +212,7 @@ class Command(BaseCommand):
             if re.search(r'[Vv]arious|[A|a]nonymous|[N|n]one [G|g]iven', name):
                 name = None
             # Use four characters as a dumb filter to toss stray 'np'/'sn'
-            if len(name) <= 4:
+            if name and len(name) <= 4:
                 name = None
             if name:
                 try:
