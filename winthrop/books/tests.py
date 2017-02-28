@@ -5,6 +5,7 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.urls import reverse
 import json
+from unittest.mock import patch
 import os
 from io import StringIO
 
@@ -165,15 +166,30 @@ class TestImportNysl(TestCase):
         self.cmd.stats = defaultdict(int)
         self.cmd.nysl = OwningInstitution.objects.get(short_name='NYSL')
 
+        # Kludge to get dummy values in the command we're using to test for
+        # API lookups, since we're already hacking it a bit.
+        # TODO: Figure out how to mock this instead
+        def dummy_viaf(*args, **kwargs):
+            return 'http://notactuallyviaf.org/viaf/00001'
+        def dummy_geonames(*args, **kwargs):
+            return {
+                'latitude': 0,
+                'longitude': 0,
+                'geonames_id': 'http://notgeonames/0001/'
+        }
+
+        self.cmd.viaf_lookup = dummy_viaf
+        self.cmd.geonames_lookup = dummy_geonames
+
     def test_run(self):
-        out = StringIO()
-        call_command('import_nysl', self.test_csv, stdout=out)
-        output = out.getvalue()
-        assert 'Imported content' in output
-        assert '2 books' in output
-        assert '2 places' in output
-        assert '2 people' in output
-        assert '2 publishers' in output
+            out = StringIO()
+            call_command('import_nysl', self.test_csv, stdout=out)
+            output = out.getvalue()
+            assert 'Imported content' in output
+            assert '2 books' in output
+            assert '2 places' in output
+            assert '2 people' in output
+            assert '2 publishers' in output
 
     def test_create_book(self):
         # load data from fixture to test book creation more directly
@@ -243,5 +259,3 @@ class TestBookViews(TestCase):
         # decode response to inspect
         data = json.loads(result.content.decode('utf-8'))
         assert data['results'][0]['text'] == 'E. van der Erve'
-
-

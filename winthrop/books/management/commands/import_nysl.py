@@ -62,7 +62,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         input_file = kwargs['input_file']
-
+        self.mocking = False
         # TODO: create fixture for NYSL & NYC ?
 
         # all books will be catalogued with NYSL, so look for
@@ -115,7 +115,6 @@ class Command(BaseCommand):
         result = geo.search(place_name, max_rows=1)
         place_dict = {}
         if result:
-            place_dict['name'] = place_name
             place_dict['latitude'] = float(result[0]['lat'])
             place_dict['longitude'] = float(result[0]['lng'])
             place_dict['geonames_id'] = geo.uri_from_id(result[0]['geonameId'])
@@ -164,7 +163,7 @@ class Command(BaseCommand):
             except Place.DoesNotExist:
                 place_dict = self.geonames_lookup(placename)
                 if place_dict:
-                    place = Place.objects.create(**place_dict)
+                    place = Place.objects.create(name=placename, **place_dict)
                 else:
                     place = Place.objects.create(
                         name=placename,
