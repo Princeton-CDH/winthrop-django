@@ -10,7 +10,7 @@ from .models import Subject, Language, Publisher, OwningInstitution, \
 
 
 class NamedNotableBookCount(NamedNotableAdmin):
-    list_display = NamedNotableAdmin.list_display + ('book_count', )
+    list_display = NamedNotableAdmin.list_display + ('book_count',)
 
 
 class OwningInstitutionAdmin(admin.ModelAdmin):
@@ -27,7 +27,7 @@ class CollapsibleTabularInline(admin.TabularInline):
 class CatalogueInline(CollapsibleTabularInline):
     model = Catalogue
     fields = ('institution', 'call_number', 'start_year', 'end_year',
-        'is_current', 'is_sammelband', 'bound_order', 'notes')
+              'is_current', 'is_sammelband', 'bound_order', 'notes')
 
 
 class SubjectInline(CollapsibleTabularInline):
@@ -39,15 +39,41 @@ class LanguageInline(CollapsibleTabularInline):
     model = BookLanguage
     fields = ('language', 'is_primary', 'notes')
 
+class CreatorInlineForm(forms.ModelForm):
+    '''Custom model form for Book editing, used to add autocomplete
+    for place lookup.'''
+    class Meta:
+        model = Creator
+        fields = ('creator_type', 'person', 'notes')
+        widgets = {
+            'person': autocomplete.ModelSelect2(
+                url='people:person-autocomplete',
+                attrs={'data-placeholder': 'Start typing a name to search...'}
+            )
+        }
 
 class CreatorInline(CollapsibleTabularInline):
     model = Creator
-    fields = ('creator_type', 'person', 'notes')
+    form = CreatorInlineForm
+
+class PersonBookInlineForm(forms.ModelForm):
+    '''Custom model form for Book editing, used to add autocomplete
+    for place lookup.'''
+    class Meta:
+        model = PersonBook
+        fields = ('person', 'relationship_type', 'start_year', 'end_year',
+                  'notes')
+        widgets = {
+            'person': autocomplete.ModelSelect2(
+                url='people:person-autocomplete',
+                attrs={'data-placeholder': 'Start typing a name to search...'}
+            )
+        }
 
 
 class PersonBookInline(CollapsibleTabularInline):
     model = PersonBook
-    fields = ('person', 'relationship_type', 'start_year', 'end_year', 'notes')
+    form = PersonBookInlineForm
 
 
 class BookAdminForm(forms.ModelForm):

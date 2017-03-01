@@ -236,3 +236,28 @@ class TestViafAutoSuggest(TestCase):
         data = data['results'][0]
         assert data['id'] == 'https://viaf.org/viaf/102333412/'
         assert data['text'] == 'Austen, Jane, 1775-1817'
+
+class TestPersonViews(TestCase):
+    fixtures = ['sample_book_data.json']
+
+    def setUp(self):
+        # create an admin user to test autocomplete views
+        self.password = 'pass!@#$'
+        self.admin = get_user_model().objects.create_superuser('testadmin',
+            'test@example.com', self.password)
+
+    def test_person_autocomplete(self):
+        pub_autocomplete_url = reverse('people:person-autocomplete')
+        result = self.client.get(pub_autocomplete_url,
+            params={'q': 'Abelin'})
+        # not allowed to anonymous user
+        assert result.status_code == 302
+
+        # login as an admin user
+        self.client.login(username=self.admin.username, password=self.password)
+
+        result = self.client.get(pub_autocomplete_url, {'q': 'Abelin'})
+        assert result.status_code == 200
+        # decode response to inspect
+        data = json.loads(result.content.decode('utf-8'))
+        assert data['results'][0]['text'] == 'Abelin, Johann Philipp'

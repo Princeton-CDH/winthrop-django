@@ -6,16 +6,30 @@ from .models import Person, Residence, RelationshipType, Relationship
 from dal import autocomplete
 
 
+class RelationshipInlineForm(forms.ModelForm):
+    '''Custom model form for Book editing, used to add autocomplete
+    for place lookup.'''
+    class Meta:
+        model = Relationship
+        template = 'admin/relationship_custom_inline.html'
+        # Setting a logical order for the relationship fields
+        fields = ('relationship_type', 'to_person', 'start_year',
+            'end_year', 'notes')
+        widgets = {
+            'to_person': autocomplete.ModelSelect2(
+                url='people:person-autocomplete',
+                attrs={'data-placeholder': 'Start typing a name to search...'}
+            )
+        }
+
+
 class RelationshipInline(admin.TabularInline):
     '''Inline class for Relationships'''
     model = Relationship
-    verbose_name_plural = 'From Relationships'
-    template = 'admin/relationship_custom_inline.html'
     fk_name = 'from_person'
+    form = RelationshipInlineForm
+    verbose_name_plural = 'From Relationships'
     extra = 1
-    # Setting a logical order for the relationship fields
-    fields = ('relationship_type', 'to_person', 'start_year',
-        'end_year', 'notes')
 
 
 class ResidenceInline(admin.TabularInline):

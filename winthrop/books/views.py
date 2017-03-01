@@ -1,6 +1,6 @@
 from dal import autocomplete
 
-from .models import Publisher
+from .models import Person, Publisher
 
 
 class PublisherAutocomplete(autocomplete.Select2QuerySetView):

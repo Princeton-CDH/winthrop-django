@@ -3,6 +3,7 @@ import csv
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.test import TestCase
+from django.utils.safestring import mark_safe
 from django.urls import reverse
 import json
 from unittest.mock import patch
@@ -34,12 +35,20 @@ class TestOwningInstitution(TestCase):
 
     def test_book_count(self):
         # test abstract book count mix-in via owning institution model
+        # tests that html for admin form is rendered correctly
 
         pl = Place.objects.first()
         inst = OwningInstitution.objects.create(name='NYSL',
             place=pl)
         # new institution has no books associated
-        assert inst.book_count() == 0
+        base_url = reverse('admin:books_book_changelist')
+        assert inst.book_count() == \
+            mark_safe('<a href="%s?%ss__id__exact=%s">%s</a>' %
+                (base_url,
+                inst.__class__.__name__.lower(),
+                inst.pk,
+                0)
+            )
 
         # create a book and associated it with the institution
         pub = Publisher.objects.create(name='Pub Lee')
@@ -52,7 +61,14 @@ class TestOwningInstitution(TestCase):
         cat = Catalogue.objects.create(institution=inst, book=bk,
             is_current=False, is_sammelband=False)
 
-        assert inst.book_count() == 1
+
+        assert inst.book_count() == \
+            mark_safe('<a href="%s?%ss__id__exact=%s">%s</a>' %
+                (base_url,
+                inst.__class__.__name__.lower(),
+                inst.pk,
+                1)
+            )
 
 
 class TestBook(TestCase):
