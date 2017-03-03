@@ -154,7 +154,12 @@ class Command(BaseCommand):
         stripped_spaces_only = data[self.fields['pub_year']].strip()
         pub_year = data[self.fields['pub_year']].strip('[]?.nd ')
         if re.search('-|i\.e\.', pub_year):
-            newbook.notes = 'Add Publication Year Info: %s' % stripped_spaces_only
+            if newbook.notes:
+                newbook.notes += '\nAddtional Publication Year Info: %s' %\
+                    stripped_spaces_only
+            else:
+                newbook.notes = 'Addtional Publication Year Info: %s' %\
+                    stripped_spaces_only
             pub_year = (re.match(r'\d+?(?=\D)', pub_year)).group(0)
 
         if pub_year:
