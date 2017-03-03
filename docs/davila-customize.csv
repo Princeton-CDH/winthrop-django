@@ -1,5 +1,5 @@
 #This is a sample customization file for DAVILA, based on the schema for Project Quincy (also included)
-#It is a pipe ("|") separated CSV file
+#It is a pipe ('|') separated CSV file
 #You can either change the information below or replace this file with one of your own making
 
 #If you replace the file, make sure the new file is called "customize.csv" and placed in the data folder of your Processing sketch, or follow the instructions
