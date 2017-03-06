@@ -232,6 +232,7 @@ class TestImportNysl(TestCase):
         assert book.is_extant
         assert book.original_pub_info == data['PUB INFO - Original']
         assert not book.is_annotated
+        ## Account for notes on the flagged for reproduction
         assert book.notes == data['Notes']
         # test fields on related models
         assert book.pub_place.name == data['Modern Place of Publication']
@@ -268,7 +269,8 @@ class TestImportNysl(TestCase):
         assert book.ink_catalog_number == ''
         assert book.pencil_catalog_number == ''
 
-        # test for expected short title when building it
+        # test for expected short title when building short title
+        # Also check for the annotated field import
         data = opera
 
         # Handle cleanup for exact fields that needed it
@@ -281,6 +283,8 @@ class TestImportNysl(TestCase):
         # Find the book by short title
         book = Book.objects.get(short_title=short_title)
         assert book.short_title == short_title
+        assert book.notes == data['Notes'] + \
+            '\n\nReproduction Recommendation: Front flyleaf recto, TP'
 
 class TestBookViews(TestCase):
     fixtures = ['sample_book_data.json']

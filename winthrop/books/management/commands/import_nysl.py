@@ -30,6 +30,7 @@ class Command(BaseCommand):
     fields = {
         'pub_year': 'Year of Publication',
         'is_annotated': 'Annotated?',
+        'flagged_info': 'FLAGGED PAGES FOR REPRODUCTION',
         'pub_place': 'Modern Place of Publication',
         'publisher': 'Standardized Name of Publisher',
         # NYSL cataloguing information
@@ -155,10 +156,10 @@ class Command(BaseCommand):
         pub_year = data[self.fields['pub_year']].strip('[]?.nd ')
         if re.search('-|i\.e\.', pub_year):
             if newbook.notes:
-                newbook.notes += '\nAddtional Publication Year Info: %s' %\
+                newbook.notes += '\n\nAdditional Publication Year Info: %s' %\
                     stripped_spaces_only
             else:
-                newbook.notes = 'Addtional Publication Year Info: %s' %\
+                newbook.notes = 'Additional Publication Year Info: %s' %\
                     stripped_spaces_only
             pub_year = (re.match(r'\d+?(?=\D)', pub_year)).group(0)
 
@@ -167,8 +168,19 @@ class Command(BaseCommand):
         # - is annotated; spreadsheet has variants in upper/lower case
         # and trailing periods; in some cases there are notes;
         # for now, assuming that anything ambiguous should be false here
-        annotated = data[self.fields['is_annotated']].lower().strip('.')
+        annotated = data[self.fields['is_annotated']].lower().strip('. ')
         newbook.is_annotated = (annotated == 'yes')
+
+        # - flagged_info; pull info for flagged pages and add if it exists
+        if annotated == 'yes':
+            flagged_info = data[self.fields['flagged_info']].strip()
+            if flagged_info:
+                if newbook.notes:
+                    newbook.notes += '\n\nReproduction Recommendation: %s' %\
+                        flagged_info
+                else:
+                    newbook.notes = 'Reproduction Recommendation: %s' %\
+                        flagged_info
 
         # add required relationships before saving the new book
         # - place
