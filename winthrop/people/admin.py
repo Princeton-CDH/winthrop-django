@@ -2,8 +2,10 @@ from django import forms
 from django.contrib import admin
 from django.conf import settings
 from django.utils.safestring import mark_safe
-from .models import Person, Residence, RelationshipType, Relationship
 from dal import autocomplete
+
+from winthrop.footnotes.admin import FootnoteInline
+from .models import Person, Residence, RelationshipType, Relationship
 
 
 class RelationshipInlineForm(forms.ModelForm):
@@ -69,10 +71,11 @@ class PersonAdminForm(forms.ModelForm):
         }
 
 
+
 class PersonAdmin(admin.ModelAdmin):
     form = PersonAdminForm
     inlines = [
-        ResidenceInline, RelationshipInline
+        FootnoteInline, ResidenceInline, RelationshipInline
     ]
     list_display = ('authorized_name', 'sort_name', 'birth', 'death',
         'viaf_id', 'family_group')
@@ -84,7 +87,6 @@ class PersonAdmin(admin.ModelAdmin):
     class Media:
         static_url = getattr(settings, 'STATIC_URL')
         js = ['admin/viaf-suggest.js']
-
 
 admin.site.register(Person, PersonAdmin)
 admin.site.register(RelationshipType)

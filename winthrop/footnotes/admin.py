@@ -27,6 +27,7 @@ class FootnoteInline(GenericTabularInline):
     model = Footnote
     classes = ('grp-collapse grp-open', )  # grapelli collapsible
     fields = ('bibliography', 'location', 'snippet_text', 'is_agree', 'notes')
+    extra = 1
 
 
 class SourceTypeAdmin(NamedNotableAdmin):

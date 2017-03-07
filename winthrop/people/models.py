@@ -6,6 +6,9 @@ from winthrop.common.models import Named, Notable, DateRange
 from winthrop.places.models import Place
 from .viaf import ViafAPI
 
+# Generic footnote imports
+from django.contrib.contenttypes.fields import GenericRelation
+from winthrop.footnotes.models import Footnote
 
 class AliasIntegerField(models.IntegerField):
     '''Alias field adapted from https://djangosnippets.org/snippets/10440/
@@ -33,6 +36,7 @@ class Person(Notable, DateRange):
     death = AliasIntegerField(db_column='end_year', null=True, blank=True)
     sort_name = models.CharField(max_length=255, blank=True)
     family_group = models.CharField(max_length=255, blank=True)
+    footnotes = GenericRelation(Footnote)
     relationships = models.ManyToManyField('self', through='Relationship',
         related_name='related_to', symmetrical=False)
     # NOTE: django doesn't allow many-to-many to self with a through
