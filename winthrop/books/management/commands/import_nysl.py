@@ -119,6 +119,7 @@ class Command(BaseCommand):
                 if match_count > 1:
                     call_nos.append(catalogue.call_number)
                     catalogue.is_sammelband = True
+                    catalogue.save()
         sorted_vols = sorted(list(set(call_nos)))
         self.stdout.write('    Bound call nos. found: %s' % len(sorted_vols))
         self.stdout.write('The following are numbers that look sammelband: %s'
@@ -170,7 +171,7 @@ class Command(BaseCommand):
             # supply those with first three words of title
             if model_field == 'short_title' and not value:
                 words = data['Title'].strip('. ').split()
-                value = ' '.join(words[0:3])
+                value = (' '.join(words[0:3])).strip('.')
             # special case: strip periods for title and short_title
             if model_field == 'title':
                 value = data['Title'].strip('. ')
