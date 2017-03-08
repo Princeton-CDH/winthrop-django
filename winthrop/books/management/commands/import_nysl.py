@@ -104,38 +104,7 @@ class Command(BaseCommand):
 %(err)d errors''' % self.stats)
 
         # Now look for is_sammelband and set the flag
-        catalogue_set = Catalogue.objects.all()
-        call_nos = []
-        self.stdout.write('Now checking for bound volumes:')
-        for catalogue in catalogue_set:
-                # Remove letters that obscure sammelbands
-                call_search = (catalogue.call_number).strip('abcdefgh')
-                match_count = 0
-                for entry in catalogue_set:
-                    search_re = re.compile(r'%s$' % call_search)
-                    if re.match(search_re,
-                                (entry.call_number).strip('abcdefgh')):
-                        match_count += 1
-                # If match happened more than once, assume sammelband
-                if match_count > 1:
-                    call_nos.append(catalogue.call_number)
-                    catalogue.is_sammelband = True
-                    catalogue.save()
-        sorted_vols = sorted(list(set(call_nos)))
-        cat_list = []
-        for number in sorted_vols:
-            q = Catalogue.objects.filter(call_number=number)
-            cat_list = chain(cat_list, q)
-
-        self.stdout.write('    Number of call numbers that seem to have '
-                          'multiple bound titles: %s' % len(sorted_vols))
-        self.stdout.write('The following titles are marked as sammelband:')
-
-        i = 1
-        for cat in cat_list:
-            self.stdout.write('    %s. Short Title: %s - NYSL Call Number: %s'
-                              % (i, cat.book.short_title, cat.call_number))
-            i += 1
+        self.build_sammelband()
 
     def viaf_lookup(self, name):
         viaf = ViafAPI()
@@ -254,8 +223,7 @@ class Command(BaseCommand):
                 publisher = Publisher.objects.get(name=publisher_name)
             except Publisher.DoesNotExist:
                 publisher = Publisher.objects.create(name=publisher_name)
-
-            self.stats['publisher'] += 1
+                self.stats['publisher'] += 1
             newbook.publisher = publisher
 
         newbook.save()
@@ -290,3 +258,42 @@ class Command(BaseCommand):
 
 
         self.stats['book'] += 1
+
+    def build_sammelband(self):
+        '''Create sammelband flag for books with same/similar NYSL catalog numbers'''
+        # All the catalogues just created
+        catalogue_set = Catalogue.objects.all()
+        # Call number list, not yet made unique
+        call_nos = []
+        self.stdout.write('Now checking for bound volumes:')
+        for catalogue in catalogue_set:
+                # Remove letters that obscure sammelbands
+                call_search = (catalogue.call_number).strip('abcdefgh')
+                match_count = 0
+                for entry in catalogue_set:
+                    search_re = re.compile(r'%s$' % call_search)
+                    if re.match(search_re,
+                                (entry.call_number).strip('abcdefgh')):
+                        match_count += 1
+                # If match happened more than once, assume sammelband
+                if match_count > 1:
+                    call_nos.append(catalogue.call_number)
+                    catalogue.is_sammelband = True
+                    catalogue.save()
+        # A sorted unique vol list
+        sorted_vols = sorted(list(set(call_nos)))
+        # Get a list of books that are associated with a sammelband entry
+        cat_list = []
+        for number in sorted_vols:
+            q = Catalogue.objects.filter(call_number=number)
+            cat_list = chain(cat_list, q)
+
+        self.stdout.write('    Number of call numbers that seem to have '
+                          'multiple bound titles: %s' % len(sorted_vols))
+        self.stdout.write('The following titles are marked as sammelband:')
+        # Good old fashioned for-loop with iterator to build a list for the team
+        i = 1
+        for cat in cat_list:
+            self.stdout.write('    %s. Short Title: %s - NYSL Call Number: %s'
+                              % (i, cat.book.short_title, cat.call_number))
+            i += 1

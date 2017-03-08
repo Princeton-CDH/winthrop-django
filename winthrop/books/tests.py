@@ -203,7 +203,7 @@ class TestImportNysl(TestCase):
             call_command(self.cmd, self.test_csv, stdout=out)
             output = out.getvalue()
             assert 'Imported content' in output
-            assert '3 books' in output
+            assert '4 books' in output # Duplicated book to test expected behavior
             assert '3 places' in output
             assert '3 people' in output
             assert '3 publishers' in output
@@ -283,8 +283,13 @@ class TestImportNysl(TestCase):
         # Find the book by short title
         book = Book.objects.get(short_title=short_title)
         assert book.short_title == short_title
+        # Test that the reproduction notes were pulled as expected
         assert book.notes == data['Notes'] + \
             '\n\nReproduction Recommendation: Front flyleaf recto, TP'
+        # Check that is_sammelband was set on a 'bound' volume
+        self.cmd.create_book(data)
+        self.cmd.build_sammelband()
+        assert book.catalogue_set.first().is_sammelband == True
 
 class TestBookViews(TestCase):
     fixtures = ['sample_book_data.json']
