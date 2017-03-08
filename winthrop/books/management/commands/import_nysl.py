@@ -1,4 +1,5 @@
 from collections import defaultdict
+from itertools import chain
 import csv
 import re
 from django.core.management.base import BaseCommand, CommandError
@@ -121,9 +122,20 @@ class Command(BaseCommand):
                     catalogue.is_sammelband = True
                     catalogue.save()
         sorted_vols = sorted(list(set(call_nos)))
-        self.stdout.write('    Bound call nos. found: %s' % len(sorted_vols))
-        self.stdout.write('The following are numbers that look sammelband: %s'
-                          % sorted_vols)
+        cat_list = []
+        for number in sorted_vols:
+            q = Catalogue.objects.filter(call_number=number)
+            cat_list = chain(cat_list, q)
+
+        self.stdout.write('    Number of call numbers that seem to have '
+                          'multiple bound titles: %s' % len(sorted_vols))
+        self.stdout.write('The following titles are marked as sammelband:')
+
+        i = 1
+        for cat in cat_list:
+            self.stdout.write('    %s. Short Title: %s - NYSL Call Number: %s'
+                              % (i, cat.book.short_title, cat.call_number))
+            i += 1
 
     def viaf_lookup(self, name):
         viaf = ViafAPI()
