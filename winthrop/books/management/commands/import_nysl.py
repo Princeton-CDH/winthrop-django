@@ -60,6 +60,13 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('input_file')
+        parser.add_argument(
+            '--justsammel',
+            action='store_true',
+            dest='just_sammel',
+            default=False,
+            help='Just make sammelband connections'
+        )
 
     def handle(self, *args, **kwargs):
         input_file = kwargs['input_file']
@@ -74,27 +81,48 @@ class Command(BaseCommand):
             raise CommandError("Owning institution NYSL was not found")
 
         self.stats = defaultdict(int)
+        if not kwargs['just_sammel']:
+            with open(input_file) as csvfile:
+                csvreader = csv.DictReader(csvfile)
+                # each row in the CSV corresponds to a book record
+                for row in csvreader:
+                    try:
+                        self.create_book(row)
+                    except Exception as err:
+                        print('Error on import for %s: %s' %
+                            (row['Short Title'][:30], err))
+                        self.stats['err'] += 1
 
-        with open(input_file) as csvfile:
-            csvreader = csv.DictReader(csvfile)
-
-            # each row in the CSV corresponds to a book record
-            for row in csvreader:
-                try:
-                    self.create_book(row)
-                except Exception as err:
-                    print('Error on import for %s: %s' %
-                        (row['Short Title'][:30], err))
-                    self.stats['err'] += 1
-
-            # summarize what content was imported/created
-            self.stdout.write('''Imported content:
+                # summarize what content was imported/created
+                self.stdout.write('''Imported content:
     %(book)d books
     %(place)d places
     %(person)d people
     %(publisher)d publishers
 
 %(err)d errors''' % self.stats)
+
+        # Now look for is_sammelband and set the flag
+        catalogue_set = Catalogue.objects.all()
+        call_nos = []
+        self.stdout.write('Now checking for bound volumes:')
+        for catalogue in catalogue_set:
+                # Remove letters that obscure sammelbands
+                call_search = (catalogue.call_number).strip('abcdefgh')
+                match_count = 0
+                for entry in catalogue_set:
+                    search_re = re.compile(r'%s$' % call_search)
+                    if re.match(search_re,
+                                (entry.call_number).strip('abcdefgh')):
+                        match_count += 1
+                # If match happened more than once, assume sammelband
+                if match_count > 1:
+                    call_nos.append(catalogue.call_number)
+                    catalogue.is_sammelband = True
+        sorted_vols = sorted(list(set(call_nos)))
+        self.stdout.write('    Bound call nos. found: %s' % len(sorted_vols))
+        self.stdout.write('The following are numbers that look sammelband: %s'
+                          % sorted_vols)
 
     def viaf_lookup(self, name):
         viaf = ViafAPI()
@@ -246,5 +274,6 @@ class Command(BaseCommand):
             is_current=True,
             call_number=data[self.fields['nysl_call_number']],
             notes=data[self.fields['nysl_notes']])
+
 
         self.stats['book'] += 1
