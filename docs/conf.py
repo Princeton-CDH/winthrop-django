@@ -153,7 +153,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'Winthrop.tex', 'Winthrop Documentation',
-     'CDH @ Princeton', 'manual'),
+     'CDH @ Princeton & The Trustees of Princeton University', 'manual'),
 ]
 
 
