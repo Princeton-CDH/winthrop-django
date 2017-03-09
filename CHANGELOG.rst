@@ -56,12 +56,11 @@ Data Import
 * As a data editor, I want a one-time import of books (with associated people, places, publishers, and NYSL cataloguing information) from spreadsheet data into the system so that I can refine and augment the initial person data that’s already been collected.
 * As a data editor, when people are imported from spreadsheet data, I want them automatically linked to a VIAF record if possible, so that I don’t have to manually look up matches that can be made automatically.
 * As a data editor, when people are imported from spreadsheet data, I want birth and death dates to be added to the record where they can be inferred from the authorized name so that I don’t have to re-enter this data.
+* As a data editor, when a standard place name is imported from spreadsheet data, I want it to be associated with a Geonames URI, if possible, to ease data entry.
+* As a data editor, after the book data is imported, I want sammelbound titles to be marked based on NYSL call numbers.
 
 Accounts & Permissions
 ~~~~~~~~~~~~~~~~~~~~~~
 * As a project team member, I want to login with my Princeton CAS account so that I can use existing my existing credentials and not have to keep track of a separate username and password.
 * As an admin, I want to edit user and group permissions so I can manage project team member access within the system.
 * As an admin, I want an easy way to give project team members data editing permissions to that I don’t have to keep track of all the individual required permissions.
-
-
-
