@@ -84,3 +84,5 @@ directory::
 
     cd docs
     make html
+
+You can also view documentation for the current master branch `on GitHub Pages <https://princeton-cdh.github.io/winthrop-django/html/>`__
