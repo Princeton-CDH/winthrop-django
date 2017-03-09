@@ -1,0 +1,24 @@
+[
+{
+  "model": "books.owninginstitution",
+  "pk": 1,
+  "fields": {
+    "name": "New York Society Library",
+    "notes": "",
+    "short_name": "NYSL",
+    "contact_info": "53 East 79th Street \r\nNew York, NY 10075 \r\n212.288.6900\r\nhttps://www.nysoclib.org/",
+    "place": 3
+  }
+},
+{
+  "model": "places.place",
+  "pk": 3,
+  "fields": {
+    "name": "New York City",
+    "notes": "",
+    "geonames_id": "http://sws.geonames.org/5128581/",
+    "latitude": 40.71427,
+    "longitude": -74.00597
+  }
+}
+]
