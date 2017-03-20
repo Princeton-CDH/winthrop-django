@@ -1,0 +1,19 @@
+{% extends 'djiffy/base.html' %}
+{% load static %}
+
+{% block head_extras %}
+    <link rel="stylesheet" type="text/css" href="{% static "css/local.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% static "css/test-banner.css" %}" />
+{% endblock %}
+
+{% block page-title %}{% block page-subtitle %}{% endblock %}Winthrop{% endblock %}
+{% block xs-nav-title %}Winthrop {% endblock %}
+{% block nav-title %}Winthrop{% endblock %}
+
+{# extra nav links go here #}
+{# {% block navlinks %}{% endblock %} #}
+
+{% block navbar-extra %}
+    {% include 'snippets/test_banner.html' %}
+{% endblock %}
+

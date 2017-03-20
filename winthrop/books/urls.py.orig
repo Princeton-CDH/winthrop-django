@@ -7,7 +7,11 @@ from winthrop.books.views import PublisherAutocomplete, CanvasAutocomplete
 urlpatterns = [
     url(r'^autocomplete/publisher/$', staff_member_required(PublisherAutocomplete.as_view()),
         name='publisher-autocomplete'),
+<<<<<<< HEAD
+]
+=======
     url(r'^canvas/publisher/$', staff_member_required(CanvasAutocomplete.as_view()),
         name='canvas-autocomplete'),
 
 ]
+>>>>>>> feature/iiif-books

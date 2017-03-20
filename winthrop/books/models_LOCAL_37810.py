@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-from djiffy.models import Manifest
 
 from winthrop.common.models import Named, Notable, DateRange
 from winthrop.places.models import Place
@@ -84,15 +83,13 @@ class Book(Notable):
     owning_institutions = models.ManyToManyField(OwningInstitution,
         through='Catalogue')
 
-    digital_edition = models.ForeignKey(Manifest, blank=True, null=True,
-        help_text='Digitized edition of this book, if available')
-
     # proof-of-concept generic relation to footnotes
     # (actual models that need this still TBD)
     footnotes = GenericRelation(Footnote)
 
     class Meta:
         ordering = ['title']
+
 
     def __str__(self):
         return '%s (%s)' % (self.short_title, self.pub_year)

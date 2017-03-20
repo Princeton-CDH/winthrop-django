@@ -1,8 +1,11 @@
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
+<<<<<<< HEAD
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+=======
 from djiffy.models import Manifest
+>>>>>>> feature/iiif-books
 
 from winthrop.common.models import Named, Notable, DateRange
 from winthrop.places.models import Place

@@ -30,7 +30,11 @@ urlpatterns = [
 
 ]
 
+<<<<<<< HEAD
+# NOTE: for some reason this isn't getting added automatically
+=======
 
+>>>>>>> feature/iiif-books
 if settings.DEBUG:
     try:
         import debug_toolbar

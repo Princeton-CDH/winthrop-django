@@ -37,14 +37,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
+    'django.contrib.sites',
     'django_cas_ng',
     'pucas',
+    'djiffy',
+    'annotator_store',
     # local apps
     'winthrop.common',
     'winthrop.places',
     'winthrop.people',
     'winthrop.books',
     'winthrop.footnotes',
+    'winthrop.annotation',
 ]
 
 MIDDLEWARE = [
@@ -56,6 +61,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# for django 1.9
+MIDDLEWARE_CLASSES = MIDDLEWARE
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
@@ -133,6 +141,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'sitemedia'),
 ]
 
+SITE_ID = 1
+
 # pucas configuration that is not expected to change across deploys
 # and does not reference local server configurations or fields
 PUCAS_LDAP = {
@@ -144,6 +154,8 @@ PUCAS_LDAP = {
         'email': 'mail',
     },
 }
+
+ANNOTATOR_ANNOTATION_MODEL = 'annotation.Annotation'
 
 ##################
 # LOCAL SETTINGS #

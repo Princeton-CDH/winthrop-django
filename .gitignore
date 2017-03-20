@@ -1,7 +1,7 @@
 # local ignores
 local_settings.py
 db.sqlite3
-
+dev.db
 
 # stock python git-ignores provided by github
 

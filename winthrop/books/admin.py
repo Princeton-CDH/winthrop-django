@@ -102,7 +102,7 @@ class BookAdmin(admin.ModelAdmin):
     fields = ('title', 'short_title', 'original_pub_info', 'publisher',
         'pub_place', 'pub_year', 'is_extant', 'is_annotated', 'is_digitized',
         'red_catalog_number', 'ink_catalog_number', 'pencil_catalog_number',
-        'dimensions', 'notes')
+        'dimensions', 'digital_edition', 'notes')
     search_fields = ('title', 'creator__person__authorized_name',
         'catalogue__call_number', 'notes', 'publisher__name')
     inlines = [CreatorInline, LanguageInline, SubjectInline, CatalogueInline,

@@ -1,8 +1,5 @@
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
-from django.urls import reverse
-from django.utils.safestring import mark_safe
-from djiffy.models import Manifest
 
 from winthrop.common.models import Named, Notable, DateRange
 from winthrop.places.models import Place
@@ -11,19 +8,14 @@ from winthrop.footnotes.models import Footnote
 
 
 class BookCount(models.Model):
-    '''Mix-in for models related to books; adds book count property and link to
-    associated books'''
+    '''Mix-in for models related to books; adds book count property'''
+
     class Meta:
         abstract = True
 
     def book_count(self):
-        base_url = reverse('admin:books_book_changelist')
-        return mark_safe('<a href="%s?%ss__id__exact=%s">%s</a>' % (
-                            base_url,
-                            self.__class__.__name__.lower(),
-                            self.pk,
-                            self.book_set.count()
-                ))
+        '''number of associated books'''
+        return self.book_set.count()
     book_count.short_description = '# books'
 
 
@@ -31,16 +23,13 @@ class Subject(Named, Notable, BookCount):
     '''Subject categorization for books'''
     pass
 
-
 class Language(Named, Notable, BookCount):
     '''Language that a book is written in or a language included in a book'''
     pass
 
-
 class Publisher(Named, Notable, BookCount):
     '''Publisher of a book'''
     pass
-
 
 class OwningInstitution(Named, Notable, BookCount):
     '''Institution that owns the extant copy of a book'''
@@ -60,11 +49,9 @@ class Book(Notable):
     # do we want any limit on short titles?
     original_pub_info = models.TextField(
         verbose_name='Original Publication Information')
-    publisher = models.ForeignKey(Publisher, blank=True, null=True)
-    pub_place = models.ForeignKey(Place, verbose_name='Place of Publication',
-        blank=True, null=True)
-    pub_year = models.PositiveIntegerField('Publication Year',
-        blank=True, null=True)
+    publisher = models.ForeignKey(Publisher)
+    pub_place = models.ForeignKey(Place, verbose_name='Place of Publication')
+    pub_year = models.PositiveIntegerField('Publication Year')
     # is positive integer enough, or do we need more validation here?
     is_extant = models.BooleanField(default=False)
     is_annotated = models.BooleanField(default=False)
@@ -84,15 +71,13 @@ class Book(Notable):
     owning_institutions = models.ManyToManyField(OwningInstitution,
         through='Catalogue')
 
-    digital_edition = models.ForeignKey(Manifest, blank=True, null=True,
-        help_text='Digitized edition of this book, if available')
-
     # proof-of-concept generic relation to footnotes
     # (actual models that need this still TBD)
     footnotes = GenericRelation(Footnote)
 
     class Meta:
         ordering = ['title']
+
 
     def __str__(self):
         return '%s (%s)' % (self.short_title, self.pub_year)
@@ -110,7 +95,6 @@ class Book(Notable):
         # NOTE: possibly might want to use last names here
         return ', '.join(str(auth.person) for auth in self.authors())
     author_names.short_description = 'Authors'
-    author_names.admin_order_field = 'creator__person__authorized_name'
 
     def add_author(self, person):
         '''Add the specified person as an author of this book'''
