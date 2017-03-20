@@ -5,3 +5,8 @@ django-autocomplete-light
 requests
 rdflib
 git+https://github.com/Princeton-CDH/django-pucas.git@0.5#egg=pucas
+# for now, djiffy needs unreleased version of piffle for py3
+git+https://github.com/Princeton-CDH/piffle.git@feature/python3-compatibility#egg=piffle
+# ditty for develop branch of djiffy
+git+https://github.com/Princeton-CDH/djiffy.git@develop#egg=djiffy
+git+https://github.com/Princeton-CDH/django-annotator-store.git@feature/optional-permissions#egg=annotator_store
