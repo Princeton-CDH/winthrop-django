@@ -189,4 +189,3 @@ if DEBUG:
         MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
     except ImportError:
         pass
-
