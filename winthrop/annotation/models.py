@@ -63,25 +63,6 @@ class Annotation(BaseAnnotation):
         else:
             # clear out in case previously set
             self.author = None
-        # Handle tags and turn them into subjects for convenience's sake
-        # Assume the first one is_primary, can count on order since tags are a
-        # list
-        if 'tags' in data:
-            pri_tag = True
-            for tag in data['tags']:
-                try:
-                    subject = Subject.objects.get(name=tag)
-                    ann_sub_dict = {
-                        'subject': subject,
-                        'annotation': self,
-                        'is_primary': pri_tag,
-                    }
-                    AnnotationSubject.objects.get_or_create(**ann_sub_dict)
-                    pri_tag = False
-
-                except ObjectDoesNotExist:
-                    pass
-
         return data
 
     def info(self):
