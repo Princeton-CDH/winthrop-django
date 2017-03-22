@@ -2,6 +2,7 @@ from urllib.parse import urlparse
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.urls import resolve, Resolver404
+from django.utils.safestring import mark_safe
 from annotator_store.models import BaseAnnotation
 from djiffy.models import Canvas
 from winthrop.common.models import Named, Notable

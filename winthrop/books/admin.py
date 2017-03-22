@@ -47,7 +47,7 @@ class CreatorInlineForm(forms.ModelForm):
         fields = ('creator_type', 'person', 'notes')
         widgets = {
             'person': autocomplete.ModelSelect2(
-                url='people:person-autocomplete',
+                url='people:autocomplete',
                 attrs={'data-placeholder': 'Start typing a name to search...'}
             )
         }
@@ -65,7 +65,7 @@ class PersonBookInlineForm(forms.ModelForm):
                   'notes')
         widgets = {
             'person': autocomplete.ModelSelect2(
-                url='people:person-autocomplete',
+                url='people:autocomplete',
                 attrs={'data-placeholder': 'Start typing a name to search...'}
             )
         }

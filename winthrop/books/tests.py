@@ -2,6 +2,7 @@ from collections import defaultdict
 import csv
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
+from django.utils.safestring import mark_safe
 from django.test import TestCase
 try:
     # django 1.10
