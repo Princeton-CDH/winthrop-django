@@ -10,5 +10,5 @@ urlpatterns = [
     url(r'^autocomplete/viaf/suggest/$', staff_member_required(ViafAutoSuggest.as_view()),
         name='viaf-autosuggest'),
     url(r'^autocomplete/person/$', staff_member_required(PersonAutocomplete.as_view()),
-        name='person-autocomplete'),
+        name='autocomplete'),
 ]

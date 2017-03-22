@@ -247,7 +247,7 @@ class TestPersonViews(TestCase):
             'test@example.com', self.password)
 
     def test_person_autocomplete(self):
-        pub_autocomplete_url = reverse('people:person-autocomplete')
+        pub_autocomplete_url = reverse('people:autocomplete')
         result = self.client.get(pub_autocomplete_url,
             params={'q': 'Abelin'})
         # not allowed to anonymous user
