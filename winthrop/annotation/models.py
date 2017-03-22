@@ -1,9 +1,29 @@
 from urllib.parse import urlparse
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.urls import resolve, Resolver404
 from annotator_store.models import BaseAnnotation
 from djiffy.models import Canvas
+from winthrop.common.models import Named, Notable
 from winthrop.people.models import Person
+from winthrop.books.models import Subject
+
+
+class AnnotationCount(models.Model):
+    '''Mix-in for models related to annotations; adds annotation count property
+    and link to associated annotations'''
+    class Meta:
+        abstract = True
+
+    def annotation_count(self):
+        base_url = reverse('admin:annotations_annotation_changelist')
+        return mark_safe('<a href="%s?%ss__id__exact=%s">%s</a>' % (
+                            base_url,
+                            self.__class__.__name__.lower(),
+                            self.pk,
+                            self.annotation_set.count()
+                ))
+    annotation_count.short_description = '# annotations'
 
 
 class Annotation(BaseAnnotation):
@@ -11,6 +31,9 @@ class Annotation(BaseAnnotation):
     # could just use uri, but faster lookup if we associate...
     canvas = models.ForeignKey(Canvas, null=True, blank=True)
     author = models.ForeignKey(Person, null=True, blank=True)
+
+    # Annotations are connected to subjects in roughly the same way as Books
+    subjects = models.ManyToManyField(Subject, through='AnnotationSubject')
 
     def save(self, *args, **kwargs):
         # for image annotation, URI should be set to canvas URI; look up
@@ -40,6 +63,24 @@ class Annotation(BaseAnnotation):
         else:
             # clear out in case previously set
             self.author = None
+        # Handle tags and turn them into subjects for convenience's sake
+        # Assume the first one is_primary, can count on order since tags are a
+        # list
+        if 'tags' in data:
+            pri_tag = True
+            for tag in data['tags']:
+                try:
+                    subject = Subject.objects.get(name=tag)
+                    ann_sub_dict = {
+                        'subject': subject,
+                        'annotation': self,
+                        'is_primary': pri_tag,
+                    }
+                    AnnotationSubject.objects.get_or_create(**ann_sub_dict)
+                    pri_tag = False
+
+                except ObjectDoesNotExist:
+                    pass
 
         return data
 
@@ -82,7 +123,15 @@ class Annotation(BaseAnnotation):
     admin_thumbnail.allow_tags = True
 
 
+class AnnotationSubject(Notable, AnnotationCount):
+    '''Through model for subjects and their linked annotations'''
+    subject = models.ForeignKey(Subject)
+    annotation = models.ForeignKey(Annotation)
+    is_primary = models.BooleanField()
 
+    class Meta:
+        unique_together = ('annotation', 'subject')
 
-
-
+    def __str__(self):
+        return '%s %s%s' % (self.annotation, self.subject,
+            ' (primary)' if self.is_primary else '')
