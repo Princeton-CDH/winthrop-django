@@ -27,7 +27,7 @@ class AnnotationCount(models.Model):
     annotation_count.short_description = '# annotations'
 
 
-class Tag(Named):
+class Tag(Named, Notable):
     '''Stub model for tag'''
     pass
 
@@ -132,4 +132,4 @@ class AnnotationTag(Notable, AnnotationCount):
         unique_together = ('tag', 'annotation')
 
     def __str__(self):
-        return '%s %s' % (self.annotation, self.tag)    
+        return '%s %s' % (self.annotation, self.tag)

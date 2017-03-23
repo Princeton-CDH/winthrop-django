@@ -5,7 +5,7 @@ from dal import autocomplete
 from djiffy.models import Canvas
 from annotator_store.admin import AnnotationAdmin
 
-from .models import Annotation, AnnotationSubject
+from .models import Annotation, AnnotationSubject, Tag
 
 class CollapsibleTabularInline(admin.TabularInline):
     'Django admin tabular inline with grappelli collapsible classes added'
@@ -70,3 +70,4 @@ class WinthropAnnotationAdmin(AnnotationAdmin):
 admin.site.unregister(Annotation)
 admin.site.register(Annotation, WinthropAnnotationAdmin)
 admin.site.register(AnnotationSubject)
+admin.site.register(Tag)
