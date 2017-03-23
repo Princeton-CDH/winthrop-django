@@ -12,12 +12,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.CreateModel(
-            name='Order',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-            ],
-        ),
         migrations.AlterModelOptions(
             name='person',
             options={'ordering': ['authorized_name'], 'verbose_name_plural': 'People'},

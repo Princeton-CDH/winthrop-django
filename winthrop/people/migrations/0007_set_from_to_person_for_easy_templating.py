@@ -13,9 +13,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.DeleteModel(
-            name='Order',
-        ),
         migrations.AlterField(
             model_name='relationship',
             name='from_person',

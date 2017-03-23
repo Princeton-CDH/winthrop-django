@@ -27,6 +27,10 @@ class AnnotationCount(models.Model):
     annotation_count.short_description = '# annotations'
 
 
+class Tag(Named):
+    '''Stub model for tag'''
+    pass
+
 class Annotation(BaseAnnotation):
     # NOTE: do we want to associate explicitly with canvas in the db?
     # could just use uri, but faster lookup if we associate...
@@ -117,3 +121,15 @@ class AnnotationSubject(Notable, AnnotationCount):
     def __str__(self):
         return '%s %s%s' % (self.annotation, self.subject,
             ' (primary)' if self.is_primary else '')
+
+
+class AnnotationTag(Notable, AnnotationCount):
+    '''Through model for associating tags and annotations'''
+    tag = models.ForeignKey(Tag)
+    annotation = models.ForeignKey(Annotation)
+
+    class Meta:
+        unique_together = ('tag', 'annotation')
+
+    def __str__(self):
+        return '%s %s' % (self.annotation, self.tag)    
