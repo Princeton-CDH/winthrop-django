@@ -6,8 +6,10 @@ The `urlpatterns` list routes URLs to views. For more information please see:
 from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.contrib.admin.views.decorators import staff_member_required
 from django.views.generic.base import RedirectView
 from annotator_store import views as annotator_views
+from winthrop.annotation.views import tag_autocomplete
 
 
 urlpatterns = [
@@ -22,14 +24,12 @@ urlpatterns = [
     url(r'^places/', include('winthrop.places.urls', namespace='places')),
     url(r'^books/', include('winthrop.books.urls', namespace='books')),
     url(r'^iiif-books/', include('djiffy.urls', namespace='djiffy')),
-
     # annotations
     url(r'^annotations/api/', include('annotator_store.urls', namespace='annotation-api')),
     # annotatorjs doesn't handle trailing slash in api prefix url
     url(r'^annotations/api', annotator_views.AnnotationIndex.as_view(), name='annotation-api-prefix'),
-
+    url(r'^annotations/autocomplete/tags/$', tag_autocomplete, name='tags-autocomplete')
 ]
-
 
 if settings.DEBUG:
     try:

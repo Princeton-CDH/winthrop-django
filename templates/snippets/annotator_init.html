@@ -21,7 +21,6 @@
   <link rel="stylesheet" type="text/css" href="{% static 'ext/annotator/annotator.min.css' %}"/>
   {# <link rel="stylesheet" type="text/css" href="//emory-lits-labs.github.io/annotator-meltdown/build/0.3.0/annotator.meltdown.min.css" /> #}
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-
 {# Initialize annotator.js *#}
 <script type="text/javascript" charset="utf-8">
 
@@ -92,6 +91,9 @@ $.ajaxSetup({
         };
     };
 
+
+
+
   var marginalia_opts = {
     show_author: true,
     // viewer: annotatormeltdown.render,
@@ -148,9 +150,48 @@ $.ajaxSetup({
   app.ident.identity = "{{ user.username }}";
   // set superuser status to allow auth checking
   // (enforced at application level, only affects what is displayed)
-  app.ident.is_superuser = {{ request.user.is_superuser|lower }};
+  app.ident.is_superuser = {{ request.user.is_superuser|lower }}
 
 
 });
-</script>
 
+$(document).ready(function () {
+      // Function to parse a list of tags and only autocomplete on what's after the
+      // comma.
+      var parseRecentTag = function(str) {
+        var list = str.split(',');
+        var latest = list[list.length - 1]
+        return latest.trim()
+      }
+
+      // Function that handles passing the query to 'term'
+      var tagAutocompleteSearch = function(request, response) {
+        term = parseRecentTag(request.term);
+        $.get('{% url "tags-autocomplete" %}', 'term='+term,
+            function(data) {
+              response(data);
+            });
+        }
+
+      // Bind an autocomplete to tags field (field 1) using jQuery UI (since
+      // we already use it anyway)
+          $( "#annotator-field-1").autocomplete({
+              source: tagAutocompleteSearch,
+              select: function(event, ui) {
+                var val = $('#annotator-field-1').val()
+                if (val.indexOf(',') == -1) {
+                  val = ui.item.value + ', ';
+                } else {
+                  val = val.replace(/,[^,]+$/, "") + ", " + ui.item.value + ', ';
+                }
+                $(this).val(val);
+                // Stop the default event from firing because we're
+                // handling the setting
+                event.preventDefault();
+              }
+          });
+
+});
+
+
+</script>
