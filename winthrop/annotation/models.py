@@ -40,6 +40,9 @@ class Annotation(BaseAnnotation):
     # Annotations are connected to subjects in roughly the same way as Books
     subjects = models.ManyToManyField(Subject, through='AnnotationSubject')
 
+    # Annotations and tags about their characteristics associated with Tags
+    tags = models.ManyToManyField(Tag, through='AnnotationTag')
+
     def save(self, *args, **kwargs):
         # for image annotation, URI should be set to canvas URI; look up
         # canvas by URI and associate with the record
@@ -68,6 +71,27 @@ class Annotation(BaseAnnotation):
         else:
             # clear out in case previously set
             self.author = None
+
+        if 'tags' in data:
+            # First, clear out any tags and re-create them --in case user
+            # deletes in annotator
+            related_tags = AnnotationTag.objects.filter(annotation=self)
+            related_tags.delete()
+            for tag in data['tags']:
+                # Enforcing tag vocabulary, so we want to pass
+                # if it isn't there. Otherwise create the tag.
+                try:
+                    tag = tag.strip(', ')
+                    tag_obj = Tag.objects.get(name=tag)
+                    annotation_tag, c = AnnotationTag.objects.get_or_create(
+                        annotation=self,
+                        tag=tag_obj
+                    )
+                    if c:
+                        print('Wrote a tag')
+                except ObjectDoesNotExist:
+                    pass
+            del data['tags']
         return data
 
     def info(self):
@@ -77,8 +101,10 @@ class Annotation(BaseAnnotation):
         if self.author:
             info['author'] = {
                 'name': self.author.authorized_name,
-                'id': self.author.id
+                'id': self.author.id,
             }
+        related_tags = AnnotationTag.objects.filter(annotation=self)
+        info['tags'] = [related_tag.tag.name for related_tag in related_tags]
         return info
 
     img_info_to_iiif = {'w': 'width', 'h': 'height', 'x': 'x', 'y': 'y'}

@@ -5,11 +5,13 @@ from dal import autocomplete
 from djiffy.models import Canvas
 from annotator_store.admin import AnnotationAdmin
 
-from .models import Annotation, AnnotationSubject, Tag
+from .models import Annotation, AnnotationSubject, AnnotationTag, Tag
+
 
 class CollapsibleTabularInline(admin.TabularInline):
     'Django admin tabular inline with grappelli collapsible classes added'
     classes = ('grp-collapse grp-open',)
+
 
 class CanvasLinkWidget(autocomplete.ModelSelect2):
     '''Customize autocomplete select widget to include a link
@@ -59,9 +61,13 @@ class SubjectInline(CollapsibleTabularInline):
     fields = ('subject', 'is_primary', 'notes')
 
 
+class TagInline(CollapsibleTabularInline):
+    model = AnnotationTag
+    fields = ('tag', 'notes')
+
 class WinthropAnnotationAdmin(AnnotationAdmin):
     form = AnnotationAdminForm
-    inlines = [SubjectInline]
+    inlines = [SubjectInline, TagInline]
     list_display = ('text_preview', 'author', 'canvas', 'admin_thumbnail')
     # NOTE: 'quote' == anchor text, and should be editable
     readonly_fields = ('uri',)  #  maybe also 'extra_data' ?
