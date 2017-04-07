@@ -164,7 +164,7 @@ $.ajaxSetup({
   app.ident.is_superuser = {{ request.user.is_superuser|lower }}
 
   // Bind tag autocomplete
-  bindTagAutocomplete("{% url 'tags-autocomplete' %}", "#annotator-field-1")
+  bindTagAutocomplete("{% url 'tag-autocomplete' %}", "#annotator-field-1")
   // Replace comment text
   fixComment('#annotator-field-0')
 

@@ -9,7 +9,7 @@ from django.contrib import admin
 from django.contrib.admin.views.decorators import staff_member_required
 from django.views.generic.base import RedirectView
 from annotator_store import views as annotator_views
-from winthrop.annotation.views import tag_autocomplete
+from winthrop.annotation.views import TagAutocomplete
 
 
 urlpatterns = [
@@ -28,7 +28,7 @@ urlpatterns = [
     url(r'^annotations/api/', include('annotator_store.urls', namespace='annotation-api')),
     # annotatorjs doesn't handle trailing slash in api prefix url
     url(r'^annotations/api', annotator_views.AnnotationIndex.as_view(), name='annotation-api-prefix'),
-    url(r'^annotations/autocomplete/tags/$', tag_autocomplete, name='tags-autocomplete')
+    url(r'^annotations/autocomplete/tag/$', staff_member_required(TagAutocomplete.as_view()), name='tag-autocomplete'),
 ]
 
 if settings.DEBUG:

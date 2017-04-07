@@ -1,6 +1,6 @@
 /* Integration for binding jQuery autocomplete to tags field from marginalia
 
-- For now, leaving it independent of the tags logic since use case may change.
+- For now, leaving it independent of the tags logic in Marginalia since use case may change.
 - Parses a string of comma separated tags and handles the lookup to an autocomplete
 - bindTagAutocomplete function takes two arguments:
     1. autocomplete_url - an autocomplete lookup
@@ -19,12 +19,19 @@ var bindTagAutocomplete = function(autocomplete_url, id_string) {
     return latest.trim()
   }
 
-  // Function that handles passing the query to 'term'
+  // Function that handles passing the query
   var tagAutocompleteSearch = function(request, response) {
     term = parseRecentTag(request.term);
-    $.get(autocomplete_url, 'term='+term,
+    $.get(autocomplete_url, {q: term},
         function(data) {
-          response(data);
+          // convert response into format jquery-ui expects
+          response($.map(data.results, function (value, key) {
+              return {
+                  label: value.text,
+                  value: value.text,
+                  id: value.id
+              };
+          }));
         });
     }
 

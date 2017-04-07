@@ -1,10 +1,14 @@
 /*
-Two items are contained here:
-
+Winthrop Annotator Overrides and Extensions
 -A simple jQuery shim to fix the text on the 'Comment' box to something more
 sensible
 
--An extension that adds needed fields for the Winthrop family on the page project.
+-Extensions that add needed fields for the Winthrop family on the page project:
+    -annotation translation
+    -annotation language
+    -anchor text
+    -anchor text translation
+
 */
 
 var fixComment = function(field) {
