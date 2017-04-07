@@ -26,7 +26,7 @@ var translation = {
         if (annotation.translation) {
             translation_div = $('<div/>').addClass('annotator-translation').html(
                 annotation.translation
-          ).prepend($('<label>Annotation Translation:</label>'));
+          ).prepend($('<label>Annotation Translation:</label><br/>'));
         }
         return translation_div;
       },

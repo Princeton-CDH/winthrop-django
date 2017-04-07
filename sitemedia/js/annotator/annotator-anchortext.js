@@ -26,7 +26,7 @@ var anchortext = {
         if (annotation.anchortext) {
             anchortext_div = $('<div/>').addClass('annotator-anchortext').html(
                 annotation.anchortext
-          ).prepend($('<label>Anchor Text:</label>'));
+          ).prepend($('<label>Anchor Text:</label><br/>'));
         }
         return anchortext_div;
       },
@@ -45,13 +45,9 @@ var anchortext = {
             // initialize textarea value & id when annotation.anchortext is present
             if (annotation.anchortext) {
                 textarea.val(annotation.anchortext);
-
             } else {
                 textarea.val('');
             }
-
-            // configure autocomplete to look up anchortexts from persons in the db
-
         }
 
         function setAnchorText(field, annotation) {

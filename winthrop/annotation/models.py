@@ -75,7 +75,6 @@ class Annotation(BaseAnnotation):
         else:
             # clear out in case previously set
             self.author = None
-
         if 'tags' in data:
             # First, clear out any tags and re-create them --in case user
             # deletes in annotator
@@ -114,6 +113,7 @@ class Annotation(BaseAnnotation):
             }
         related_tags = AnnotationTag.objects.filter(annotation=self)
         info['tags'] = [related_tag.tag.name for related_tag in related_tags]
+        info['anchortext'] = self.quote
         return info
 
     img_info_to_iiif = {'w': 'width', 'h': 'height', 'x': 'x', 'y': 'y'}

@@ -13,6 +13,7 @@
 <!--   <script type="text/javascript" src="{% static 'js/annotator/annotator.permissions.js' %}"></script> -->
   <script type="text/javascript" src="{% static 'js/annotator/annotator-anchortext.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/annotator/annotator-author.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/annotator/annotator-language.js' %}"></script>=
   <script type="text/javascript" src="{% static 'js/annotator/annotator-translation.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/annotator/tag-lookup.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/annotator/winthrop-overrides.js' %}"></script>
@@ -110,6 +111,7 @@ $.ajaxSetup({
     renderExtensions: [
         // annotation_permissions.renderExtension,
         author.renderExtension,
+        language.renderExtension,
         translation.renderExtension,
         anchortext.renderExtension
     ],
@@ -141,6 +143,7 @@ $.ajaxSetup({
           editorExtensions: [
               // annotatormeltdown.getEditorExtension({min_width: '500px', font_awesome: true}),
               _marginalia.editorExtension,  /* includes tags */
+              language.getEditorExtension({language_autocomplete_url: "{% url 'books:language-autocomplete' %}"}),
               author.getEditorExtension({author_lookup_url: "{% url 'people:autocomplete' %}"}),
               translation.getEditorExtension(),
               anchortext.getEditorExtension(),
