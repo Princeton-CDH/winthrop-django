@@ -7,7 +7,7 @@ from annotator_store.models import BaseAnnotation
 from djiffy.models import Canvas
 from winthrop.common.models import Named, Notable
 from winthrop.people.models import Person
-from winthrop.books.models import Subject
+from winthrop.books.models import Subject, Language
 
 
 class AnnotationCount(models.Model):
@@ -42,6 +42,10 @@ class Annotation(BaseAnnotation):
 
     # Annotations and tags about their characteristics associated with Tags
     tags = models.ManyToManyField(Tag, through='AnnotationTag')
+
+    # Annotations are connected to Languages like books, with flags for annotation
+    # language and anchor text language
+    languages = models.ManyToManyField(Language, through='AnnotationLanguage')
 
     def save(self, *args, **kwargs):
         # for image annotation, URI should be set to canvas URI; look up
@@ -92,6 +96,11 @@ class Annotation(BaseAnnotation):
                 except ObjectDoesNotExist:
                     pass
             del data['tags']
+            if 'anchortext' in data:
+                self.quote = data['anchortext']
+                del data['anchortext']
+            else:
+                self.quote = None
         return data
 
     def info(self):
@@ -159,3 +168,17 @@ class AnnotationTag(Notable, AnnotationCount):
 
     def __str__(self):
         return '%s %s' % (self.annotation, self.tag)
+
+
+class AnnotationLanguage(Notable, AnnotationCount):
+    '''Through model for associating tags and annotations'''
+    annotation = models.ForeignKey(Annotation)
+    language = models.ForeignKey(Language)
+    is_annotation_lang = models.BooleanField(default=False)
+    is_anchor_lang = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('language', 'annotation')
+
+    def __str__(self):
+        return '%s %s' % (self.annotation, self.language)

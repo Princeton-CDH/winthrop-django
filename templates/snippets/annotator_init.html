@@ -11,10 +11,12 @@
 <!--  <script type="text/javascript" src="//emory-lits-labs.github.io/annotator-meltdown-zotero/build/0.1.0/annotator.meltdown.zotero.min.js"></script> <!-- includes jquery-ui autocomplete, also used by related-pages -->
 
 <!--   <script type="text/javascript" src="{% static 'js/annotator/annotator.permissions.js' %}"></script> -->
-
+  <script type="text/javascript" src="{% static 'js/annotator/annotator-anchortext.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/annotator/annotator-author.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/annotator/annotator-translation.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/annotator/tag-lookup.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/annotator/winthrop-overrides.js' %}"></script>
+
 
 
   <link rel="stylesheet" type="text/css" href="//emory-lits-labs.github.io/annotator-imgselect/src/jquery.imgareaselect-0.9.10/css/imgareaselect-default.css" />
@@ -108,6 +110,8 @@ $.ajaxSetup({
     renderExtensions: [
         // annotation_permissions.renderExtension,
         author.renderExtension,
+        translation.renderExtension,
+        anchortext.renderExtension
     ],
     toggle: {
       class: 'btn btn-green',
@@ -139,7 +143,7 @@ $.ajaxSetup({
               _marginalia.editorExtension,  /* includes tags */
               author.getEditorExtension({author_lookup_url: "{% url 'people:autocomplete' %}"}),
               translation.getEditorExtension(),
-              anchorText.getEditorExtension()
+              anchortext.getEditorExtension(),
           ]
       })
       .include(annotatorImageSelect, {
