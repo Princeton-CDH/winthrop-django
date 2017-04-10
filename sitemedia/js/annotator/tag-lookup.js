@@ -49,6 +49,11 @@ var bindTagAutocomplete = function(autocomplete_url, id_string) {
             // Stop the default event from firing because we're
             // handling the setting
             event.preventDefault();
-          }
+          },
+          open: function(event, ui) {
+              // annotator purposely sets the editor at a very high z-index;
+              // set autocomplete still higher so it isn't obscured by annotator buttons
+              $('.ui-autocomplete').css('z-index', $('.annotator-editor').css('z-index') + 1);
+          },
       });
 }

@@ -17,7 +17,7 @@ var author = {
         item.find('.annotator-author').remove();
         // insert author (if any) before tags or footer, whichever comes first
         if (author_div) {
-            author_div.insertBefore(item.find('.annotator-tags,.annotation-footer').first());
+            author_div.insertBefore(item.find('.annotator-translation,.annotator-anchortext,.annotator-tags,.annotation-footer').first());
         }
         return item;
     },

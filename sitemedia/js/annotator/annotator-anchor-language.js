@@ -1,47 +1,47 @@
 /*
-annotator language integration
+annotator annotation-language integration
 
-- adds an language input field
-- display language name on marginalia item card when present
-- stores language on the annotation
-- connects to an autocomplete to use the pre-slugged language vocabulary
+- adds an anchor-anchorLanguage input field
+- display anchorLanguage name on marginalia item card when present
+- stores anchorLanguage on the annotation
+- connects to an autocomplete to use the pre-slugged anchorLanguage vocabulary
 */
 
 
 
 
 
-var language = {
-    // render extension to display language on marginalia item card
+var anchorLanguage = {
+    // render extension to display anchorLanguage on marginalia item card
 
     renderExtension: function(annotation, item) {
-        // replace existing language block with updated version
-        var language_div = language.renderLanguage(annotation);
-        item.find('.annotator-language').remove();
-        // insert language (if any) before tags or footer, whichever comes first
-        if (language_div) {
-            language_div.insertAfter(item.find('.text,.annotator-author').last());
+        // replace existing anchorLanguage block with updated version
+        var anchorLanguage_div = anchorLanguage.renderAnchorLanguage(annotation);
+        item.find('.annotator-anchorLanguage').remove();
+        // insert anchorLanguage (if any) before tags or footer, whichever comes first
+        if (anchorLanguage_div) {
+            anchorLanguage_div.insertAfter(item.find('.annotator-languages,.annotator-anchortext,.annotator-author').last());
         }
         return item;
     },
 
-    renderLanguage: function(annotation) {
-        var language_div;
-        // display language name with a label if present in the annotation
+    renderAnchorLanguage: function(annotation) {
+        var anchorLanguage_div;
+        // display anchorLanguage name with a label if present in the annotation
         // modeled on marginalia tag renderer
-        if (annotation.language && $.isArray(annotation.language) && annotation.language.length > 0) {
-            language_div = $('<div/>').addClass('annotator-languages').html(function () {
-            return '<label>Language(s):</label>' + $.map(annotation.language, function (language) {
-              return language
+        if (annotation.anchorLanguage && $.isArray(annotation.anchorLanguage) && annotation.anchorLanguage.length > 0) {
+            anchorLanguage_div = $('<div/>').addClass('annotator-anchorLanguage').html(function () {
+            return '<label>Anchor text language(s):</label>' + $.map(annotation.anchorLanguage, function (anchorLanguage) {
+              return anchorLanguage
             }).join(', ');
             });
           }
-        return language_div;
+        return anchorLanguage_div;
       },
 
      getEditorExtension: function getEditorExtension(options) {
 
-      // editor extension to make language editable
+      // editor extension to make anchorLanguage editable
      return function editorExtension(e) {
         // The input element added to the Annotator.Editor wrapped in jQuery.
         // Cached to save having to recreate it everytime the editor is displayed.
@@ -50,11 +50,11 @@ var language = {
 
 
         function updateField(field, annotation) {
-            $(field).addClass('language-lookup');
-            // initialize input value & id when annotation.language is present
-            if (annotation.language){
-              languages = annotation.language.join(', ')
-              input.val(languages)
+            $(field).addClass('anchorLanguage-lookup');
+            // initialize input value & id when annotation.anchorLanguage is present
+            if (annotation.anchorLanguage){
+              anchorLanguages = annotation.anchorLanguage.join(', ')
+              input.val(anchorLanguages)
             } else {
                 input.val('');
             }
@@ -85,7 +85,7 @@ var language = {
               }
 
       // Bind an autocomplete to tags field
-          $('.language-lookup input').autocomplete({
+          $('.anchorLanguage-lookup input').autocomplete({
               source: langAutocompleteSearch,
               select: function(event, ui) {
                 var val = $(this).val()
@@ -108,25 +108,25 @@ var language = {
 
         }
 
-        function setLanguage(field, annotation) {
-            // store language info on the annotation object
+        function setAnchorLanguage(field, annotation) {
+            // store anchorLanguage info on the annotation object
             if (input.val() != '') {
-              var languages = input.val().split(',')
-              for (i = 0; i < languages.length; i++) {
-                languages[i] = languages[i].trim()
+              var anchorLanguages = input.val().split(',')
+              for (i = 0; i < anchorLanguages.length; i++) {
+                anchorLanguages[i] = anchorLanguages[i].trim()
               }
-              annotation.language = languages
+              annotation.anchorLanguage = anchorLanguages
             } else {
-                // clear out language if it was previously set
-                annotation.language = [];
+                // clear out anchorLanguage if it was previously set
+                annotation.anchorLanguage = [];
             }
         }
 
         field = e.addField({
-            label: 'Annotation language(s)',
+            label: 'Anchor text language(s)',
             type: 'input',
             load: updateField,
-            submit: setLanguage
+            submit: setAnchorLanguage
         });
 
         input = $(field).find('input');

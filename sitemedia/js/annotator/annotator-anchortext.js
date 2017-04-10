@@ -11,7 +11,7 @@ var anchortext = {
 
     renderExtension: function(annotation, item) {
         // replace existing anchortext block with updated version
-        var anchortext_div = anchortext.renderAuthor(annotation);
+        var anchortext_div = anchortext.renderAnchor(annotation);
         item.find('.annotator-anchortext').remove();
         // insert anchortext (if any) before tags or footer, whichever comes first
         if (anchortext_div) {
@@ -20,7 +20,7 @@ var anchortext = {
         return item;
     },
 
-    renderAuthor: function(annotation) {
+    renderAnchor: function(annotation) {
         var anchortext_div;
         // display anchortext name with a label if present in the annotation
         if (annotation.anchortext) {

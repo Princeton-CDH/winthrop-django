@@ -1,7 +1,7 @@
-from urllib.parse import urlparse
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
-from django.urls import resolve, Resolver404
+from django.http.request import HttpRequest
 from django.utils.safestring import mark_safe
 from annotator_store.models import BaseAnnotation
 from djiffy.models import Canvas
@@ -30,6 +30,7 @@ class AnnotationCount(models.Model):
 class Tag(Named, Notable):
     '''Stub model for tag'''
     pass
+
 
 class Annotation(BaseAnnotation):
     # NOTE: do we want to associate explicitly with canvas in the db?
@@ -62,13 +63,21 @@ class Annotation(BaseAnnotation):
                 self.canvas = Canvas.objects.get(uri=self.uri)
             except Canvas.DoesNotExist:
                 pass
-
         super(Annotation, self).save()
+
+        # Handle updating the object so that any fields from handle_extra_data
+        # populate correctly
+
+        # Dummmy http request that we won't be using but handle extra data
+        # expects
+        request = HttpRequest()
+        self.handle_extra_data(self.extra_data, request)
 
     def handle_extra_data(self, data, request):
         '''Handle any "extra" data that is not part of the stock annotation
         data model.  Use this method to customize the logic for updating
         an annotation from json request data (as sent by annotator.js).'''
+
         if 'author' in data and 'id' in data['author']:
             self.author = Person.objects.get(id=data['author']['id'])
             del data['author']
@@ -90,16 +99,49 @@ class Annotation(BaseAnnotation):
                         annotation=self,
                         tag=tag_obj
                     )
-                    if c:
-                        print('Wrote a tag')
                 except ObjectDoesNotExist:
                     pass
             del data['tags']
+
             if 'anchortext' in data:
                 self.quote = data['anchortext']
                 del data['anchortext']
             else:
                 self.quote = None
+
+            if 'language' in data:
+                related_languages = AnnotationLanguage.objects.filter(
+                    annotation=self,
+                    is_annotation_lang=True)
+                related_languages.delete()
+                for language in data['language']:
+                    try:
+                        lang = Language.objects.get(name=language)
+                        lang_note, c = AnnotationLanguage.objects.get_or_create(
+                            annotation=self,
+                            language=lang,
+                            is_annotation_lang=True,
+                        )
+                    except ObjectDoesNotExist:
+                        pass
+                del data['language']
+
+            if 'anchorLanguage' in data:
+                related_languages = AnnotationLanguage.objects.filter(
+                    annotation=self,
+                    is_anchor_lang=True)
+                related_languages.delete()
+                try:
+                    for language in data['anchorLanguage']:
+                        lang = Language.objects.get(name=language)
+                        lang_note, c = AnnotationLanguage.objects.get_or_create(
+                            annotation=self,
+                            language=lang,
+                            is_anchor_lang=True,
+                        )
+                except ObjectDoesNotExist:
+                    pass
+                del data['anchorLanguage']
         return data
 
     def info(self):
@@ -112,8 +154,27 @@ class Annotation(BaseAnnotation):
                 'id': self.author.id,
             }
         related_tags = AnnotationTag.objects.filter(annotation=self)
-        info['tags'] = [related_tag.tag.name for related_tag in related_tags]
+        related_langs = AnnotationLanguage.objects.filter(
+            annotation=self,
+            is_annotation_lang=True,
+        )
+        related_anchor_langs = AnnotationLanguage.objects.filter(
+            annotation=self,
+            is_anchor_lang=True,
+        )
+        info['tags'] = [
+            related_tag.tag.name
+            for related_tag in related_tags
+        ]
         info['anchortext'] = self.quote
+        info['language'] = [
+            related_lang.language.name
+            for related_lang in related_langs
+        ]
+        info['anchorLanguage'] = [
+            related_lang.language.name
+            for related_lang in related_anchor_langs
+        ]
         return info
 
     img_info_to_iiif = {'w': 'width', 'h': 'height', 'x': 'x', 'y': 'y'}

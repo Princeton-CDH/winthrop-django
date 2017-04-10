@@ -11,7 +11,7 @@ var translation = {
 
     renderExtension: function(annotation, item) {
         // replace existing translation block with updated version
-        var translation_div = translation.renderAuthor(annotation);
+        var translation_div = translation.renderTranslation(annotation);
         item.find('.annotator-translation').remove();
         // insert translation (if any) before tags or footer, whichever comes first
         if (translation_div) {
@@ -20,7 +20,7 @@ var translation = {
         return item;
     },
 
-    renderAuthor: function(annotation) {
+    renderTranslation: function(annotation) {
         var translation_div;
         // display translation name with a label if present in the annotation
         if (annotation.translation) {
@@ -54,7 +54,7 @@ var translation = {
 
         }
 
-        function setTranslation(field, annotation) {
+        function setAnchorTranslation(field, annotation) {
             // store translation info on the annotation object
             if (textarea.val() != '') {
                 annotation.translation = textarea.val();
@@ -68,7 +68,8 @@ var translation = {
             label: 'Annotation Translation',
             type: 'textarea',
             load: updateField,
-            submit: setTranslation
+            submit: setAnchorTranslation
+
         });
 
         textarea = $(field).find('textarea');
