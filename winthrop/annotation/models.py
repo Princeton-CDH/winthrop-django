@@ -166,7 +166,8 @@ class Annotation(BaseAnnotation):
             related_tag.tag.name
             for related_tag in related_tags
         ]
-        info['anchortext'] = self.quote
+        if self.quote:
+            info['anchortext'] = self.quote
         info['language'] = [
             related_lang.language.name
             for related_lang in related_langs
@@ -239,7 +240,8 @@ class AnnotationLanguage(Notable, AnnotationCount):
     is_anchor_lang = models.BooleanField(default=False)
 
     class Meta:
-        unique_together = ('language', 'annotation')
+        unique_together = ('language', 'annotation', 'is_annotation_lang',
+            'is_anchor_lang')
 
     def __str__(self):
         return '%s %s' % (self.annotation, self.language)
