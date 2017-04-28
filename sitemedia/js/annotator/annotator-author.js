@@ -71,6 +71,9 @@ var author = {
                       }
                     });
                 },
+                focus: function(event, ui) {
+                  event.preventDefault();
+                },
                 select: function( event, ui ) {
                     // store person id in a data attribute
                     $(event.target).attr('data-author-id', ui.item.id);

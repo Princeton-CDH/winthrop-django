@@ -87,6 +87,9 @@ var language = {
       // Bind an autocomplete to tags field
           $('.language-lookup input').autocomplete({
               source: langAutocompleteSearch,
+              focus: function(event, ui) {
+                event.preventDefault();
+              },
               select: function(event, ui) {
                 var val = $(this).val()
                 if (val.indexOf(',') == -1) {

@@ -17,6 +17,7 @@
   <script type="text/javascript" src="{% static 'js/annotator/annotator-anchor-language.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/annotator/annotator-anchor-translation.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/annotator/annotator-translation.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/annotator/annotator-subject.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/annotator/tag-lookup.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/annotator/winthrop-overrides.js' %}"></script>
 
@@ -113,6 +114,7 @@ $.ajaxSetup({
     renderExtensions: [
         // annotation_permissions.renderExtension,
         author.renderExtension,
+        subject.renderExtension,
         language.renderExtension,
         translation.renderExtension,
         anchortext.renderExtension,
@@ -151,6 +153,7 @@ $.ajaxSetup({
               _marginalia.editorExtension,  /* includes tags */
               language.getEditorExtension({language_autocomplete_url: language_autocomplete}),
               author.getEditorExtension({author_lookup_url: "{% url 'people:autocomplete' %}"}),
+              subject.getEditorExtension({subject_autocomplete_url: "{% url 'books:subject-autocomplete' %}"}),
               translation.getEditorExtension(),
               anchortext.getEditorExtension(),
               anchorLanguage.getEditorExtension({language_autocomplete_url: language_autocomplete}),

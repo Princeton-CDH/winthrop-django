@@ -27,7 +27,7 @@ class CanvasLinkWidget(autocomplete.ModelSelect2):
         widget = super(CanvasLinkWidget, self).render(name, value, attrs)
         canvas = Canvas.objects.get(id=value)
         # add a link to view the canvas on the site; borrowing grappelli
-        # styles for main "view on site" button
+        # styltexes for main "view on site" button
         return mark_safe(u'''%s
             <ul class="canvas-link grp-object-tools">
                 <li><a href="%s" target="_blank" class="grp-state-focus">View canvas on site</a>
@@ -54,6 +54,8 @@ class AnnotationAdminForm(forms.ModelForm):
                 attrs={'data-placeholder': 'Start typing canvas name or uri to search...'}),
 
         }
+        fields = ('text', 'text_translation', 'user', 'extra_data', 'canvas',
+            'author', 'quote', 'anchor_translation', 'uri')
 
 
 class SubjectInline(CollapsibleTabularInline):
@@ -75,5 +77,4 @@ class WinthropAnnotationAdmin(AnnotationAdmin):
 
 admin.site.unregister(Annotation)
 admin.site.register(Annotation, WinthropAnnotationAdmin)
-admin.site.register(AnnotationSubject)
 admin.site.register(Tag)

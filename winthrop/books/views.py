@@ -1,7 +1,7 @@
 from django.db.models import Q
 from dal import autocomplete
 from djiffy.models import Canvas
-from .models import Publisher, Language
+from .models import Publisher, Language, Subject
 
 
 class PublisherAutocomplete(autocomplete.Select2QuerySetView):
@@ -24,9 +24,14 @@ class CanvasAutocomplete(autocomplete.Select2QuerySetView):
             Q(uri__contains=self.q)
         )
 
-
 class LanguageAutocomplete(autocomplete.Select2QuerySetView):
     '''Autocomplete for languages in the controlled vocabulary list'''
 
     def get_queryset(self):
         return Language.objects.filter(name__icontains=self.q)
+
+
+class SubjectAutocomplete(autocomplete.Select2QuerySetView):
+    '''Basic autocomplete view for Subjects'''
+    def get_queryset(self):
+        return Subject.objects.filter(name__icontains=self.q)

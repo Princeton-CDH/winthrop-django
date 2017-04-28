@@ -38,6 +38,14 @@ class Annotation(BaseAnnotation):
     canvas = models.ForeignKey(Canvas, null=True, blank=True)
     author = models.ForeignKey(Person, null=True, blank=True)
 
+    # Winthrop specific fields
+    text_translation = models.TextField(null=True, blank=True,
+        verbose_name='Annotation text translation')
+    anchor_translation = models.TextField(null=True, blank=True,
+        verbose_name='Anchor text translation')
+    # Override since we want this to be potentially optional
+    quote = models.TextField(null=True, blank=True)
+
     # Annotations are connected to subjects in roughly the same way as Books
     subjects = models.ManyToManyField(Subject, through='AnnotationSubject')
 
@@ -72,6 +80,9 @@ class Annotation(BaseAnnotation):
         # expects
         request = HttpRequest()
         self.handle_extra_data(self.extra_data, request)
+        super(Annotation, self).save()
+
+
 
     def handle_extra_data(self, data, request):
         '''Handle any "extra" data that is not part of the stock annotation
@@ -84,6 +95,7 @@ class Annotation(BaseAnnotation):
         else:
             # clear out in case previously set
             self.author = None
+
         if 'tags' in data:
             # First, clear out any tags and re-create them --in case user
             # deletes in annotator
@@ -103,49 +115,78 @@ class Annotation(BaseAnnotation):
                     pass
             del data['tags']
 
-            if 'anchortext' in data:
-                self.quote = data['anchortext']
-                del data['anchortext']
-            else:
-                self.quote = None
+        if 'anchortext' in data:
+            self.quote = data['anchortext']
+            del data['anchortext']
+        else:
+            self.quote = None
 
-            if 'language' in data:
-                related_languages = AnnotationLanguage.objects.filter(
-                    annotation=self,
-                    is_annotation_lang=True)
-                related_languages.delete()
-                for language in data['language']:
-                    try:
-                        lang = Language.objects.get(name=language)
-                        lang_note, c = AnnotationLanguage.objects.get_or_create(
-                            annotation=self,
-                            language=lang,
-                            is_annotation_lang=True,
-                        )
-                    except ObjectDoesNotExist:
-                        pass
-                del data['language']
-
-            if 'anchorLanguage' in data:
-                related_languages = AnnotationLanguage.objects.filter(
-                    annotation=self,
-                    is_anchor_lang=True)
-                related_languages.delete()
+        if 'language' in data:
+            related_languages = AnnotationLanguage.objects.filter(
+                annotation=self,
+                is_annotation_lang=True)
+            related_languages.delete()
+            for language in data['language']:
                 try:
-                    for language in data['anchorLanguage']:
+                    lang = Language.objects.get(name=language)
+                    lang_note, c = AnnotationLanguage.objects.get_or_create(
+                        annotation=self,
+                        language=lang,
+                        is_annotation_lang=True,
+                    )
+                except ObjectDoesNotExist:
+                    pass
+            del data['language']
+
+        if 'anchorLanguage' in data:
+            related_languages = AnnotationLanguage.objects.filter(
+                annotation=self,
+                is_anchor_lang=True)
+            related_languages.delete()
+            for language in data['anchorLanguage']:
+                    try:
                         lang = Language.objects.get(name=language)
                         lang_note, c = AnnotationLanguage.objects.get_or_create(
                             annotation=self,
                             language=lang,
                             is_anchor_lang=True,
                         )
+                    except ObjectDoesNotExist:
+                        pass
+            del data['anchorLanguage']
+
+        if 'subject' in data:
+            related_subjects = AnnotationSubject.objects.filter(
+                annotation=self,
+            )
+            related_subjects.delete()
+            first = True
+            for subject in data['subject']:
+                try:
+                    subj = Subject.objects.get(name=subject)
+                    AnnotationSubject.objects.get_or_create(
+                        annotation=self,
+                        subject=subj,
+                        is_primary=first
+                    )
+                    first = False
                 except ObjectDoesNotExist:
                     pass
-                del data['anchorLanguage']
+            del data['subject']
+        if 'translation' in data:
+            self.text_translation = data['translation']
+            del data['translation']
+        else:
+            self.text_translation = None
+        if 'anchorTranslation' in data:
+            self.anchor_translation = data['anchorTranslation']
+            del data['anchorTranslation']
+        else:
+            self.anchor_translation = None
         return data
 
     def info(self):
-        # extend the default info impleentation (used to generate json)
+        # extend the default info implementation (used to generate json)
         # to include local database fields in the output
         info = super(Annotation, self).info()
         if self.author:
@@ -162,20 +203,38 @@ class Annotation(BaseAnnotation):
             annotation=self,
             is_anchor_lang=True,
         )
-        info['tags'] = [
-            related_tag.tag.name
-            for related_tag in related_tags
-        ]
+
+        related_subjects = AnnotationSubject.objects.filter(
+            annotation=self
+        )
+
+        if related_tags:
+            info['tags'] = [
+                related_tag.tag.name
+                for related_tag in related_tags
+            ]
         if self.quote:
             info['anchortext'] = self.quote
-        info['language'] = [
-            related_lang.language.name
-            for related_lang in related_langs
-        ]
-        info['anchorLanguage'] = [
-            related_lang.language.name
-            for related_lang in related_anchor_langs
-        ]
+        if related_langs:
+            info['language'] = [
+                related_lang.language.name
+                for related_lang in related_langs
+            ]
+        if related_anchor_langs:
+            info['anchorLanguage'] = [
+                related_lang.language.name
+                for related_lang in related_anchor_langs
+            ]
+        if related_subjects:
+            info['subject'] = [
+                related_subj.subject.name
+                for related_subj in related_subjects
+            ]
+        if self.text_translation:
+            info['translation'] = self.text_translation
+        if self.anchor_translation:
+            info['anchorTranslation'] = self.anchor_translation
+
         return info
 
     img_info_to_iiif = {'w': 'width', 'h': 'height', 'x': 'x', 'y': 'y'}

@@ -1,7 +1,7 @@
 /*
 annotator translation integration
 
-- adds an translation textarea field
+- adds a translation textarea field
 - display translation name on marginalia item card when present
 - stores translation on the annotation
 */

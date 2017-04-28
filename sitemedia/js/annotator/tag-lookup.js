@@ -38,6 +38,9 @@ var bindTagAutocomplete = function(autocomplete_url, id_string) {
   // Bind an autocomplete to tags field
       $(id_string).autocomplete({
           source: tagAutocompleteSearch,
+          focus: function(event, ui) {
+            event.preventDefault();
+          },
           select: function(event, ui) {
             var val = $('#annotator-field-1').val()
             if (val.indexOf(',') == -1) {
