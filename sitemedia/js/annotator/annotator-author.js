@@ -58,7 +58,7 @@ var author = {
                     $.ajax({
                       dataType: "json",
                       url: options.author_lookup_url,
-                      data: { q: request.term },
+                      data: { q: request.term, winthrop: true },
                       success: function (data, status, jqXHR) {
                         // convert response into format jquery-ui expects
                         response($.map(data.results, function (value, key) {

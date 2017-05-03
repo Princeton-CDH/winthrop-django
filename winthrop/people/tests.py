@@ -261,3 +261,18 @@ class TestPersonViews(TestCase):
         # decode response to inspect
         data = json.loads(result.content.decode('utf-8'))
         assert data['results'][0]['text'] == 'Abelin, Johann Philipp'
+
+        # Now set the winthrop flag and make a Winthrop to test
+        Person.objects.create(authorized_name='Winthrop, Abigail')
+        Person.objects.create(authorized_name='Winthrop, Thomas')
+
+        result = self.client.get(pub_autocomplete_url,
+            {'q': 'A', 'winthrop': True})
+        # Forming this as an actual query string so that the behavior mimes
+        # the additional query string value passed by the author autocomplete
+        data = json.loads(result.content.decode('utf-8'))
+        assert data['results'][0]['text'] == 'Winthrop, Abigail'
+        # Further check that it sorts by authorized_name as per the default
+        assert data['results'][1]['text'] == 'Winthrop, Thomas'
+        # And then as normal
+        assert data['results'][2]['text'] == 'Abelin, Johann Philipp'
