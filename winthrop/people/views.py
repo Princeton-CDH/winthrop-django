@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from dal import autocomplete
 from .models import Person
+from winthrop.books.models import PersonBook
 from django.db.models import BooleanField, Case, When, Value
 from .viaf import ViafAPI
 
@@ -33,16 +34,8 @@ class PersonAutocomplete(autocomplete.Select2QuerySetView):
     # NOTE staff restrection applied in url config
 
     def get_queryset(self):
-        winthrop_search = self.request.GET.get('winthrop', None)
-        if winthrop_search:
-            return Person.objects.annotate(
-                is_winthrop=Case(
-                    When(authorized_name__icontains='Winthrop'),
-                    then=Value(True),
-                    default=Value(False),
-                    output_field=BooleanField()
-                )
-            ).filter(authorized_name__icontains=self.q).order_by('is_winthrop',
-                'authorized_name')
-
-        return Person.objects.filter(authorized_name__icontains=self.q)
+        winthrop_only = self.request.GET.get('winthrop', None)
+        people = Person.objects.filter(authorized_name__icontains=self.q)
+            if winthrop_only:
+                people = people.filter(personbook__isnull=False)
+        return people
