@@ -54,5 +54,21 @@
         "name": "cipher",
         "notes": ""
     }
+},
+{
+    "model": "annotation.tag",
+    "pk": 8,
+    "fields": {
+        "name": "handwriting sample",
+        "notes": ""
+    }
+},
+{
+    "model": "annotation.tag",
+    "pk": 9,
+    "fields": {
+        "name": "signature",
+        "notes": ""
+    }
 }
 ]
