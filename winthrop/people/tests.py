@@ -1,29 +1,34 @@
 import json
 import os
+import pytest
+import rdflib
 import requests
+from unittest.mock import patch
 
 from django.test import TestCase, override_settings
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.urls import reverse
-from unittest.mock import patch
+
 
 from winthrop.books.models import Book, PersonBook, PersonBookRelationshipType
 from winthrop.places.models import Place
 from .models import Person, Residence, RelationshipType, Relationship
-from .viaf import ViafAPI
+from .viaf import ViafAPI, ViafEntity
 from rdflib import Graph
 
 # Get the fixtures dir for this app
-FIXTURES_PATH = os.path.join(settings.BASE_DIR, 'winthrop/people/fixtures')
+FIXTURES_PATH = os.path.join(settings.BASE_DIR, 'winthrop', 'people', 'fixtures')
 
 
 class TestPerson(TestCase):
+
+    fixture_file = os.path.join(FIXTURES_PATH, 'sample_viaf_rdf.xml')
+
     def setUp(self):
         """Load the sample XML file and pass to the TestCase object"""
-        fixture_file = os.path.join(FIXTURES_PATH, 'sample_viaf_rdf.xml')
-        with open(fixture_file, 'r') as fixture:
+        with open(self.fixture_file, 'r') as fixture:
             self.mock_rdf = fixture.read()
 
     def test_str(self):
@@ -42,15 +47,60 @@ class TestPerson(TestCase):
         # queryset filters on alias fields should also work
         assert Person.objects.get(birth=1800) == pers
 
-    @patch('winthrop.people.viaf.ViafAPI.get_RDF',
-        return_value=Graph().serialize())
-    @patch('winthrop.people.viaf.ViafAPI.get_years', return_value=(1800, 1900))
-    def test_viaf_dates(self, fakedrdf, fakedyears):
-        '''Check that if a viaf_id is set, save method will call ViafAPI'''
-        pers = Person.objects.create(authorized_name='Mr. X',
-            viaf_id='http://notviaf/viaf/0000/')
-        assert pers.birth == 1800
-        assert pers.death == 1900
+    def test_viaf(self):
+        uri = 'http://viaf.org/89599270'
+        pers = Person(viaf_id=uri)
+        assert isinstance(pers.viaf, ViafEntity)
+        assert pers.viaf.uri == uri
+
+    def test_set_birth_death_years(self):
+        # use viaf id matching fixture rdf file
+        pers = Person(viaf_id='http://viaf.org/viaf/89599270')
+
+        # patch fixture in for viaf rdf
+        test_rdf = rdflib.Graph()
+        test_rdf.parse(self.fixture_file)
+
+        with patch('winthrop.people.viaf.rdflib.Graph') as mockgraph:
+            mockgraph.return_value = test_rdf
+            pers.set_birth_death_years()
+            assert pers.birth == pers.viaf.birthyear
+            assert pers.birth == 69
+            assert pers.death == pers.viaf.deathyear
+            assert pers.death == 140
+
+    def test_save(self):
+        pers = Person()
+        # test that birth/death years are set from viaf when appropriate
+        with patch.object(pers, 'set_birth_death_years') as mocksetyears:
+            # no viaf id - not called
+            pers.save()
+            mocksetyears.assert_not_called()
+
+            # viaf id but birth/death already set - not called
+            pers.viaf_id = 'http://viaf.org/viaf/89599270'
+            pers.birth = 100
+            pers.death = 150
+            pers.save()
+            mocksetyears.assert_not_called()
+
+            # viaf id but birth already set - not called
+            pers.viaf_id = 'http://viaf.org/viaf/89599270'
+            pers.birth = 2001
+            pers.death = None
+            pers.save()
+            mocksetyears.assert_not_called()
+
+
+            # viaf id and no birth/death - called
+            pers.viaf_id = 'http://viaf.org/viaf/89599270'
+            pers.birth = None
+            pers.death = None
+            pers.save()
+            mocksetyears.assert_called_with()
+
+
+
 
 class TestResidence(TestCase):
 
@@ -159,36 +209,11 @@ class TestViafAPI(TestCase):
 
     def test_get_uri(self):
         assert ViafAPI.uri_from_id('1234') == \
-            'https://viaf.org/viaf/1234/'
+            'http://viaf.org/viaf/1234'
         # numeric id should also work
         assert ViafAPI.uri_from_id(1234) == \
-            'https://viaf.org/viaf/1234/'
+            'http://viaf.org/viaf/1234'
 
-    @patch('winthrop.people.viaf.requests')
-    def test_getRDF(self, mockrequests):
-        viaf = ViafAPI()
-        mock_rdf = self.mock_rdf
-        empty_rdf = self.empty_rdf
-        mockrequests.codes = requests.codes
-
-        # Mock a GET that works correctly
-        mockrequests.get.return_value.status_code = requests.codes.ok
-        mockrequests.get.return_value.text = mock_rdf
-        assert viaf.get_RDF('89599270') == mock_rdf
-
-        # Mock a GET that returns a bad code
-        mockrequests.get.return_value.status_code = requests.codes.bad
-        assert viaf.get_RDF('89599270') == empty_rdf
-
-    def test_get_years(self):
-        viaf = ViafAPI()
-        mock_rdf = self.mock_rdf
-        empty_rdf = self.empty_rdf
-
-        # Test fixture should produce a tuple as follows
-        assert viaf.get_years(mock_rdf) == (69, 140)
-        # An empty RDF should produce (None, None)
-        assert viaf.get_years(empty_rdf) == (None, None)
 
 class TestViafAutoSuggest(TestCase):
 
@@ -235,8 +260,58 @@ class TestViafAutoSuggest(TestCase):
         assert isinstance(data['results'][0], dict)
         # Now check for what needs to be in a dict to fill the autocomplete
         data = data['results'][0]
-        assert data['id'] == 'https://viaf.org/viaf/102333412/'
+        assert data['id'] == 'http://viaf.org/viaf/102333412'
         assert data['text'] == 'Austen, Jane, 1775-1817'
+
+
+class TestViafEntity(TestCase):
+
+    test_id = 102333412
+    test_uri = 'http://viaf.org/viaf/102333412'
+    rdf_fixture = os.path.join(FIXTURES_PATH, 'sample_viaf_rdf.xml')
+
+    def test_init(self):
+        # numeric id (either int or string should work)
+        ent = ViafEntity(self.test_id)
+        assert ent.uri == self.test_uri
+        ent = ViafEntity(str(self.test_id))
+        assert ent.uri == self.test_uri
+        # uri
+        ent = ViafEntity(self.test_uri)
+        assert ent.uri == self.test_uri
+
+    def test_uriref(self):
+        ent = ViafEntity(self.test_uri)
+        assert ent.uriref == rdflib.URIRef(self.test_uri)
+
+    @patch('winthrop.people.viaf.rdflib')
+    def test_rdf(self, mockrdflib):
+        ent = ViafEntity(self.test_uri)
+        assert ent.rdf == mockrdflib.Graph.return_value
+        # should initialize a graph and parse uri data
+        mockrdflib.Graph.assert_called_with()
+        mockrdflib.Graph.return_value.parse.assert_called_with(
+            self.test_uri)
+
+    def test_properties(self):
+        # use viaf id matching fixture rdf file
+        ent = ViafEntity('89599270')
+
+        test_rdf = rdflib.Graph()
+        test_rdf.parse(self.rdf_fixture)
+
+        with patch('winthrop.people.viaf.rdflib.Graph') as mockgraph:
+            mockgraph.return_value = test_rdf
+            assert str(ent.birthdate) == '69'
+            assert str(ent.deathdate) == '140'
+            assert ent.birthyear == 69
+            assert ent.deathyear == 140
+
+    def test_year_from_isodate(self):
+        assert ViafEntity.year_from_isodate('2001') == 2001
+        assert ViafEntity.year_from_isodate('2002-01') == 2002
+        assert ViafEntity.year_from_isodate('2004-03-05') == 2004
+
 
 class TestPersonViews(TestCase):
     fixtures = ['sample_book_data.json']
