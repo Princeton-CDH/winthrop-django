@@ -169,12 +169,13 @@ class TestCatalogue(TestCase):
         assert '%s / %s (1891-)' % (bk, inst) == str(cat)
 
 
-
 # TODO: do we want/need tests for through models?
 # book-subject, book-language, creator, person-book
 # Expect to have more sophisticated/meaningful things to test
 # as we add functionality.
 
+
+@patch('winthrop.people.models.Person.set_birth_death_years')  # skip viaf
 class TestImportNysl(TestCase):
 
     test_csv = os.path.join(FIXTURE_DIR, 'test_nysl_data.csv')
@@ -201,7 +202,7 @@ class TestImportNysl(TestCase):
         self.cmd.viaf_lookup = dummy_viaf
         self.cmd.geonames_lookup = dummy_geonames
 
-    def test_run(self):
+    def test_run(self, mocksetbirthdeath):
             out = StringIO()
             # pass the modified self.cmd object
             call_command(self.cmd, self.test_csv, stdout=out)
@@ -212,7 +213,7 @@ class TestImportNysl(TestCase):
             assert '3 people' in output
             assert '3 publishers' in output
 
-    def test_create_book(self):
+    def test_create_book(self, mocksetbirthdeath):
         # load data from fixture to test book creation more directly
         # TODO: Update to account for new variations
         with open(self.test_csv) as csvfile:
@@ -294,6 +295,7 @@ class TestImportNysl(TestCase):
         self.cmd.create_book(data)
         self.cmd.build_sammelband()
         assert book.catalogue_set.first().is_sammelband == True
+
 
 class TestBookViews(TestCase):
     fixtures = ['sample_book_data.json']
