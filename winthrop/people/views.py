@@ -36,6 +36,6 @@ class PersonAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         winthrop_only = self.request.GET.get('winthrop', None)
         people = Person.objects.filter(authorized_name__icontains=self.q)
-            if winthrop_only:
+        if winthrop_only:
                 people = people.filter(personbook__isnull=False)
         return people
