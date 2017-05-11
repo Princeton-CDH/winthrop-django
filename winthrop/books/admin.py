@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import admin
 from dal import autocomplete
+from djiffy.admin import ManifestSelectWidget
 
 from winthrop.common.admin import NamedNotableAdmin
 from winthrop.footnotes.admin import FootnoteInline
@@ -88,7 +89,9 @@ class BookAdminForm(forms.ModelForm):
                 attrs={'data-placeholder': 'Start typing location to search...'}),
            'publisher': autocomplete.ModelSelect2(
                 url='books:publisher-autocomplete',
-                attrs={'data-placeholder': 'Start typing publisher name to search...'})
+                attrs={'data-placeholder': 'Start typing publisher name to search...'}),
+           'digital_edition': ManifestSelectWidget
+
         }
 
 
