@@ -13,12 +13,13 @@ import json
 from unittest.mock import patch
 import os
 from io import StringIO
+from djiffy.models import Manifest
 
 from winthrop.places.models import Place
 from winthrop.people.models import Person
 from .models import OwningInstitution, Book, Publisher, Catalogue, \
     Creator, CreatorType
-from .management.commands import import_nysl
+from .management.commands import import_nysl, import_digitaleds
 
 
 FIXTURE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -321,3 +322,65 @@ class TestBookViews(TestCase):
         # decode response to inspect
         data = json.loads(result.content.decode('utf-8'))
         assert data['results'][0]['text'] == 'E. van der Erve'
+
+
+class TestWinthropManifestImporter(TestCase):
+    fixtures = ['sample_book_data.json']
+
+    def setUp(self):
+        self.importer = import_digitaleds.WinthropManifestImporter()
+
+    @patch('winthrop.books.management.commands.import_digitaleds.ManifestImporter.import_book')
+    @patch('winthrop.books.management.commands.import_digitaleds.ManifestImporter.error_msg')
+    def test_matching(self, mockerror_msg, mocksuperimport):
+        manifest_uri = 'http://so.me/manifest/uri'
+        path = '/path/to/manifest.json'
+
+        # simulate import failed
+        mocksuperimport.return_value = None
+
+        assert self.importer.import_book(manifest_uri, path) == None
+        mocksuperimport.assert_called_with(manifest_uri, path)
+
+        # simulate import success but not local identifier
+        db_manif = Manifest(label='Test Manifest', short_id='123ab')
+        # NOTE: using unsaved db manifest object to avoid import skipping
+        # due to manifest uri already being in the database
+        mocksuperimport.return_value = db_manif
+        assert self.importer.import_book(manifest_uri, path) == db_manif
+        mockerror_msg.assert_called_with('No local identifier found')
+
+        # local identifier but no match in local book db
+        db_manif.metadata = {'Local identifier': ['Win 100']}
+        self.importer.import_book(manifest_uri, path)
+        mockerror_msg.assert_called_with('No match for Win 100')
+
+        # local identifier matches book in fixture
+        db_manif.metadata['Local identifier'] = ['Win 60']
+        # must be saved in the db to link to book record
+        db_manif.save()
+        self.importer.import_book(manifest_uri, path)
+        book = Book.objects.get(catalogue__call_number='Win 60')
+        assert book.digital_edition == db_manif
+
+
+@patch('winthrop.books.management.commands.import_digitaleds.WinthropManifestImporter')
+class TestImportDigitalEds(TestCase):
+
+    def test_command(self, mockimporter):
+        cmd = import_digitaleds.Command()
+
+        # normal file/uri
+        test_paths = ['one', 'two']
+        cmd.handle(path=test_paths)
+        assert mockimporter.return_value.import_paths.called_with(test_paths)
+
+        # shortcut for nysl
+        cmd.handle(path=['NYSL'])
+        assert mockimporter.return_value.import_paths \
+            .called_with([cmd.manifest_uris['NYSL']])
+
+        # works within a list also
+        cmd.handle(path=['one', 'NYSL', 'two'])
+        assert mockimporter.return_value.import_paths \
+            .called_with(['one', cmd.manifest_uris['NYSL'], 'two'])
