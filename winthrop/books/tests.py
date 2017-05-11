@@ -61,7 +61,7 @@ class TestOwningInstitution(TestCase):
             short_title='Some rambling',
             original_pub_info='foo',
             publisher=pub, pub_place=pl, pub_year=1823,
-            is_extant=False, is_annotated=False, is_digitized=False)
+            is_extant=False, is_annotated=False)
 
         cat = Catalogue.objects.create(institution=inst, book=bk,
             is_current=False, is_sammelband=False)

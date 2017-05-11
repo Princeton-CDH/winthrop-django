@@ -68,7 +68,6 @@ class Book(Notable):
     # is positive integer enough, or do we need more validation here?
     is_extant = models.BooleanField(default=False)
     is_annotated = models.BooleanField(default=False)
-    is_digitized = models.BooleanField(default=False)
     red_catalog_number = models.CharField(max_length=255, blank=True)
     ink_catalog_number = models.CharField(max_length=255, blank=True)
     pencil_catalog_number = models.CharField(max_length=255, blank=True)
@@ -96,6 +95,10 @@ class Book(Notable):
 
     def __str__(self):
         return '%s (%s)' % (self.short_title, self.pub_year)
+
+    def is_digitized(self):
+        return self.digital_edition != None
+    is_digitized.boolean = True
 
     def catalogue_call_numbers(self):
         'Convenience access to catalogue call numbers, for display in admin'

@@ -349,5 +349,4 @@ class TestPersonViews(TestCase):
             {'q': 'a', 'winthrop': True})
         data = json.loads(result.content.decode('utf-8'))
         # Jan should come first
-        print(data)
         assert data['results'][0]['text'] == laski.authorized_name
