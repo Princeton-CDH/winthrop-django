@@ -89,6 +89,10 @@ class Annotation(BaseAnnotation):
         data model.  Use this method to customize the logic for updating
         an annotation from json request data (as sent by annotator.js).'''
 
+
+        # NOTE: Working on the presumption that any data not included in the
+        # JSON Extra data should be removed if it's added to a Django database
+        # field or model
         if 'author' in data and 'id' in data['author']:
             self.author = Person.objects.get(id=data['author']['id'])
             del data['author']
@@ -186,6 +190,8 @@ class Annotation(BaseAnnotation):
         return data
 
     def info(self):
+        '''Passes fields that are included on the annotation model into the
+        JSON object representation of the annotation'''
         # extend the default info implementation (used to generate json)
         # to include local database fields in the output
         info = super(Annotation, self).info()
@@ -194,6 +200,10 @@ class Annotation(BaseAnnotation):
                 'name': self.author.authorized_name,
                 'id': self.author.id,
             }
+
+
+        # TODO: These can be cleaned up in the new implementation using
+        # Django convenience methods
         related_tags = AnnotationTag.objects.filter(annotation=self)
         related_langs = AnnotationLanguage.objects.filter(
             annotation=self,
@@ -293,8 +303,11 @@ class AnnotationTag(Notable, AnnotationCount):
 
 class AnnotationLanguage(Notable, AnnotationCount):
     '''Through model for associating tags and annotations'''
+    # TODO: Is there a better way to model this that doesn't require a Through
+    # model?
     annotation = models.ForeignKey(Annotation)
     language = models.ForeignKey(Language)
+    # Flags to model whether the association it to an an anchor or annotation?
     is_annotation_lang = models.BooleanField(default=False)
     is_anchor_lang = models.BooleanField(default=False)
 
