@@ -45,13 +45,10 @@ class Annotation(BaseAnnotation):
         verbose_name='Anchor text translation')
     # Override since we want this to be potentially optional
     quote = models.TextField(null=True, blank=True)
-
     # Annotations are connected to subjects in roughly the same way as Books
-    subjects = models.ManyToManyField(Subject, through='AnnotationSubject')
-
+    subjects = models.ManyToManyField(Subject)
     # Annotations and tags about their characteristics associated with Tags
-    tags = models.ManyToManyField(Tag, through='AnnotationTag')
-
+    tags = models.ManyToManyField(Tag)
     # Annotations are connected to Languages like books, with flags for annotation
     # language and anchor text language
     languages = models.ManyToManyField(Language, through='AnnotationLanguage')
@@ -273,32 +270,6 @@ class Annotation(BaseAnnotation):
             return u'<img src="%s" />' % self.canvas.image.mini_thumbnail()
     admin_thumbnail.short_description = 'Thumbnail'
     admin_thumbnail.allow_tags = True
-
-
-class AnnotationSubject(Notable, AnnotationCount):
-    '''Through model for subjects and their linked annotations'''
-    subject = models.ForeignKey(Subject)
-    annotation = models.ForeignKey(Annotation)
-    is_primary = models.BooleanField()
-
-    class Meta:
-        unique_together = ('annotation', 'subject')
-
-    def __str__(self):
-        return '%s %s%s' % (self.annotation, self.subject,
-            ' (primary)' if self.is_primary else '')
-
-
-class AnnotationTag(Notable, AnnotationCount):
-    '''Through model for associating tags and annotations'''
-    tag = models.ForeignKey(Tag)
-    annotation = models.ForeignKey(Annotation)
-
-    class Meta:
-        unique_together = ('tag', 'annotation')
-
-    def __str__(self):
-        return '%s %s' % (self.annotation, self.tag)
 
 
 class AnnotationLanguage(Notable, AnnotationCount):

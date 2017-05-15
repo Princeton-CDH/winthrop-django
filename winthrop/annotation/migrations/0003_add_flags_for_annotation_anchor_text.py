@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('annotation', '0007_create_language_annotation_many_to_many'),
+        ('annotation', '0002_create_language_annotation_many_to_many'),
     ]
 
     operations = [

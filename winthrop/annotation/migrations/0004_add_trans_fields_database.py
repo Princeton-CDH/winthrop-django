@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('annotation', '0010_annotation_quote_optional'),
+        ('annotation', '0003_add_flags_for_annotation_anchor_text'),
     ]
 
     operations = [
