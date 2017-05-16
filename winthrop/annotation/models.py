@@ -39,19 +39,19 @@ class Annotation(BaseAnnotation):
     author = models.ForeignKey(Person, null=True, blank=True)
 
     # Winthrop specific fields
-    text_translation = models.TextField(null=True, blank=True,
+    text_translation = models.TextField(blank=True,
         verbose_name='Annotation text translation')
-    anchor_translation = models.TextField(null=True, blank=True,
+    anchor_translation = models.TextField(blank=True,
         verbose_name='Anchor text translation')
     # Override since we want this to be potentially optional
-    quote = models.TextField(null=True, blank=True)
+    quote = models.TextField(blank=True)
     # Annotations are connected to subjects in roughly the same way as Books
     subjects = models.ManyToManyField(Subject)
     # Annotations and tags about their characteristics associated with Tags
     tags = models.ManyToManyField(Tag)
-    # Annotations are connected to Languages like books, with flags for annotation
     # language and anchor text language
-    languages = models.ManyToManyField(Language, through='AnnotationLanguage')
+    languages = models.ManyToManyField(Language)
+    anchor_languages = models.ManyToManyField(Language, related_name='+')
 
     def save(self, *args, **kwargs):
         # for image annotation, URI should be set to canvas URI; look up
@@ -70,17 +70,6 @@ class Annotation(BaseAnnotation):
                 pass
         super(Annotation, self).save()
 
-        # Handle updating the object so that any fields from handle_extra_data
-        # populate correctly
-
-        # Dummmy http request that we won't be using but handle extra data
-        # expects
-        request = HttpRequest()
-        self.handle_extra_data(self.extra_data, request)
-        super(Annotation, self).save()
-
-
-
     def handle_extra_data(self, data, request):
         '''Handle any "extra" data that is not part of the stock annotation
         data model.  Use this method to customize the logic for updating
@@ -98,92 +87,46 @@ class Annotation(BaseAnnotation):
             self.author = None
 
         if 'tags' in data:
-            # First, clear out any tags and re-create them --in case user
-            # deletes in annotator
-            related_tags = AnnotationTag.objects.filter(annotation=self)
-            related_tags.delete()
-            for tag in data['tags']:
-                # Enforcing tag vocabulary, so we want to pass
-                # if it isn't there. Otherwise create the tag.
-                try:
-                    tag = tag.strip(', ')
-                    tag_obj = Tag.objects.get(name=tag)
-                    annotation_tag, c = AnnotationTag.objects.get_or_create(
-                        annotation=self,
-                        tag=tag_obj
-                    )
-                except ObjectDoesNotExist:
-                    pass
+            # TODO: check if commas are being passed, again handle in js
+            # NOTE: tag vocabulary is enforced; unrecognized tags
+            # are ignored.
+            tags = Tag.objects.filter(name__in=data['tags'])
+            self.tags.set(tags)
             del data['tags']
 
         if 'anchortext' in data:
             self.quote = data['anchortext']
             del data['anchortext']
         else:
-            self.quote = None
+            self.quote = ''
 
         if 'language' in data:
-            related_languages = AnnotationLanguage.objects.filter(
-                annotation=self,
-                is_annotation_lang=True)
-            related_languages.delete()
-            for language in data['language']:
-                try:
-                    lang = Language.objects.get(name=language)
-                    lang_note, c = AnnotationLanguage.objects.get_or_create(
-                        annotation=self,
-                        language=lang,
-                        is_annotation_lang=True,
-                    )
-                except ObjectDoesNotExist:
-                    pass
+            langs = Language.objects.filter(name__in=data['language'])
+            self.languages.set(langs)
             del data['language']
 
         if 'anchorLanguage' in data:
-            related_languages = AnnotationLanguage.objects.filter(
-                annotation=self,
-                is_anchor_lang=True)
-            related_languages.delete()
-            for language in data['anchorLanguage']:
-                    try:
-                        lang = Language.objects.get(name=language)
-                        lang_note, c = AnnotationLanguage.objects.get_or_create(
-                            annotation=self,
-                            language=lang,
-                            is_anchor_lang=True,
-                        )
-                    except ObjectDoesNotExist:
-                        pass
+            anchor_langs = Language.objects.filter(
+                name__in=data['anchorLanguage'])
+            self.anchor_languages.set(anchor_langs)
             del data['anchorLanguage']
 
         if 'subject' in data:
-            related_subjects = AnnotationSubject.objects.filter(
-                annotation=self,
-            )
-            related_subjects.delete()
-            first = True
-            for subject in data['subject']:
-                try:
-                    subj = Subject.objects.get(name=subject)
-                    AnnotationSubject.objects.get_or_create(
-                        annotation=self,
-                        subject=subj,
-                        is_primary=first
-                    )
-                    first = False
-                except ObjectDoesNotExist:
-                    pass
+            subjects = Subject.objects.filter(name__in=data['subject'])
+            self.subjects.set(subjects)
             del data['subject']
+
         if 'translation' in data:
             self.text_translation = data['translation']
             del data['translation']
         else:
-            self.text_translation = None
+            self.text_translation = ''
         if 'anchorTranslation' in data:
             self.anchor_translation = data['anchorTranslation']
             del data['anchorTranslation']
         else:
-            self.anchor_translation = None
+            self.anchor_translation = ''
+
         return data
 
     def info(self):
@@ -198,45 +141,12 @@ class Annotation(BaseAnnotation):
                 'id': self.author.id,
             }
 
-
-        # TODO: These can be cleaned up in the new implementation using
-        # Django convenience methods
-        related_tags = AnnotationTag.objects.filter(annotation=self)
-        related_langs = AnnotationLanguage.objects.filter(
-            annotation=self,
-            is_annotation_lang=True,
-        )
-        related_anchor_langs = AnnotationLanguage.objects.filter(
-            annotation=self,
-            is_anchor_lang=True,
-        )
-
-        related_subjects = AnnotationSubject.objects.filter(
-            annotation=self
-        )
-
-        if related_tags:
-            info['tags'] = [
-                related_tag.tag.name
-                for related_tag in related_tags
-            ]
-        if self.quote:
-            info['anchortext'] = self.quote
-        if related_langs:
-            info['language'] = [
-                related_lang.language.name
-                for related_lang in related_langs
-            ]
-        if related_anchor_langs:
-            info['anchorLanguage'] = [
-                related_lang.language.name
-                for related_lang in related_anchor_langs
-            ]
-        if related_subjects:
-            info['subject'] = [
-                related_subj.subject.name
-                for related_subj in related_subjects
-            ]
+        info.update({
+            'tags': [tag.name for tag in self.tags.all()],
+            'language': [language.name for language in self.languages.all()],
+            'anchorLanguage': [language.name for language in self.anchor_languages.all()],
+            'subjects': [subject.name for subject in self.subjects.all()]
+        })
         if self.text_translation:
             info['translation'] = self.text_translation
         if self.anchor_translation:
@@ -271,20 +181,6 @@ class Annotation(BaseAnnotation):
     admin_thumbnail.short_description = 'Thumbnail'
     admin_thumbnail.allow_tags = True
 
-
-class AnnotationLanguage(Notable, AnnotationCount):
-    '''Through model for associating tags and annotations'''
-    # TODO: Is there a better way to model this that doesn't require a Through
-    # model?
-    annotation = models.ForeignKey(Annotation)
-    language = models.ForeignKey(Language)
-    # Flags to model whether the association it to an an anchor or annotation?
-    is_annotation_lang = models.BooleanField(default=False)
-    is_anchor_lang = models.BooleanField(default=False)
-
-    class Meta:
-        unique_together = ('language', 'annotation', 'is_annotation_lang',
-            'is_anchor_lang')
 
     def __str__(self):
         return '%s %s' % (self.annotation, self.language)

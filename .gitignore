@@ -3,6 +3,11 @@ local_settings.py
 db.sqlite3
 dev.db
 
+
+# Floobits
+.floo
+.flooignore
+
 # stock python git-ignores provided by github
 
 # Byte-compiled / optimized / DLL files
