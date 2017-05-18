@@ -10,17 +10,17 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('djiffy', '0001_initial'),
-        ('books', '0007_title-length'),
+        ('books', '0010_publisher_pub_place_year_really_optional'),
     ]
 
     operations = [
-        migrations.AlterModelOptions(
-            name='book',
-            options={'ordering': ['title']},
-        ),
         migrations.AddField(
             model_name='book',
             name='digital_edition',
             field=models.ForeignKey(blank=True, help_text='Digitized edition of this book, if available', null=True, on_delete=django.db.models.deletion.CASCADE, to='djiffy.Manifest'),
+        ),
+        migrations.RemoveField(
+            model_name='book',
+            name='is_digitized',
         ),
     ]
