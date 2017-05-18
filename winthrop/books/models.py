@@ -210,7 +210,11 @@ class PersonBook(Notable, DateRange):
     '''Interactions or connections between books and people other than
     annotation.'''
     # FIXME: better name? concept/thing/model
-    person = models.ForeignKey(Person)
+    person = models.ForeignKey(
+        Person,
+        help_text=('This association also determines if a person is added to '
+                   'the annotator autocomplete.')
+    )
     book = models.ForeignKey(Book)
     relationship_type = models.ForeignKey(PersonBookRelationshipType)
 
