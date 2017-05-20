@@ -2,9 +2,14 @@ from django.test import TestCase
 from unittest.mock import Mock
 
 from .models import Annotation, Tag
+from winthrop.people.models import Person
 
 
 class TestAnnotation(TestCase):
+
+    def setUp(self):
+        # create a person we can use for all the tests
+        self.author = Person.objects.create(authorized_name='Bar, Foo')
 
     def test_handle_extra_data(self):
 
@@ -39,6 +44,41 @@ class TestAnnotation(TestCase):
         annotation.handle_extra_data({'tags': []}, Mock())
         assert annotation.tags.count() == 0
 
+        # test adding author in data base
+        annotation = Annotation.objects.create()
+        annotation.handle_extra_data({
+            'author': {'authorized_name': 'Bar, Foo', 'id': self.author.pk}
+            },
+            Mock()
+        )
+
+        # check that an author is set
+        assert annotation.author
+        # check that it is Mr. Foo Bar
+        assert annotation.author == self.author
+
+        # empty author field should unset author on annotation
+        annotation.handle_extra_data({'author': ''}, Mock())
+        assert not annotation.author
+
+        # an author field that passes an author without id should
+        # also unset the author
+        # set an author
+        annotation.handle_extra_data({
+            'author': {'authorized_name': 'Bar, Foo', 'id': self.author.pk}
+            },
+            Mock()
+        )
+        # check that an author is set
+        assert annotation.author
+        annotation.handle_extra_data({
+            'author': {'authorized_name': 'Barz, Foo'}
+            },
+            Mock()
+        )
+        # Dud author should unset the field
+        assert not annotation.author
+
     def test_info(self):
         annotation = Annotation.objects.create()
         # tags should be an empty list when none are set
@@ -47,6 +87,21 @@ class TestAnnotation(TestCase):
         annotation.handle_extra_data({'tags': tags}, Mock())
         # order not guaranteed / not important; sort for comparison
         assert annotation.info()['tags'].sort() == tags.sort()
+
+        # test author - author should be empty in info
+        assert 'author' not in annotation.info()
+        # set an author
+        annotation.handle_extra_data({
+            'author': {'authorized_name': 'Bar, Foo', 'id': self.author.pk}
+            },
+            Mock()
+        )
+        # author should be added to the fields
+        assert annotation.info()['author']
+        # name and id should be set from database
+        assert annotation.info()['author']['name'] == \
+            self.author.authorized_name
+        assert annotation.info()['author']['id'] == self.author.pk
 
 
 class TestTag(TestCase):
