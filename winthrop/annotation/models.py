@@ -80,12 +80,14 @@ class Annotation(BaseAnnotation):
         # JSON Extra data should be removed if it's added to a Django database
         # field or model
         if 'author' in data and 'id' in data['author']:
-            self.author = Person.objects.get(id=data['author']['id'])
+            try:
+                self.author = Person.objects.get(id=data['author']['id'])
+            except (ObjectDoesNotExist, ValueError):
+                self.author = None
             del data['author']
         else:
             # clear out in case previously set
             self.author = None
-
         if 'tags' in data:
             # TODO: check if commas are being passed, again handle in js
             # NOTE: tag vocabulary is enforced; unrecognized tags
