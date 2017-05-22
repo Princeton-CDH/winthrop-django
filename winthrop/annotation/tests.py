@@ -119,14 +119,14 @@ class TestAnnotation(TestCase):
         # test setting of local text fields
         text_dict = {
             'translation': 'text of translation',
-            'anchortext': 'transcript of anchor text',
+            'quote': 'transcript of anchor text',
             'anchorTranslation': 'text of anchor translation',
         }
         # make a copy because the expected behavior is to delete the dict
         copy = text_dict.copy()
         annotation.handle_extra_data(copy, Mock())
         # all of the object fields should equal their dict equivalent
-        assert annotation.quote == text_dict['anchortext']
+        assert annotation.quote == text_dict['quote']
         assert annotation.text_translation == text_dict['translation']
         assert annotation.anchor_translation == text_dict['anchorTranslation']
         # if a field is deleted from the dict, it should be deleted from object
@@ -136,7 +136,7 @@ class TestAnnotation(TestCase):
         copy = text_dict.copy()
         annotation.handle_extra_data(copy, Mock())
         assert not annotation.text_translation
-        assert annotation.quote == text_dict['anchortext']
+        assert annotation.quote == text_dict['quote']
         assert annotation.anchor_translation == text_dict['anchorTranslation']
         # check that copy dict is empty
         assert not copy
@@ -193,10 +193,10 @@ class TestAnnotation(TestCase):
             'quote': 'transcript of anchor text',
             'anchor_translation': 'text of anchor translation',
         }
-        annotation.update(**text_dict)
+        annotation = Annotation.objects.create(**text_dict)
         assert annotation.info()['translation'] == text_dict['text_translation']
-        assert annotation.info()['anchortext'] == text_dict['quote']
-        assert annotation.info()['text_translation'] == text_dict['quote']
+        assert annotation.info()['quote'] == text_dict['quote']
+        assert annotation.info()['anchorTranslation'] == text_dict['anchor_translation']
 
 
 class TestTag(TestCase):
