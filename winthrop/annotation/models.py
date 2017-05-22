@@ -96,9 +96,9 @@ class Annotation(BaseAnnotation):
             self.tags.set(tags)
             del data['tags']
 
-        if 'anchortext' in data:
-            self.quote = data['anchortext']
-            del data['anchortext']
+        if 'quote' in data:
+            self.quote = data['quote']
+            del data['quote']
         else:
             self.quote = ''
 
