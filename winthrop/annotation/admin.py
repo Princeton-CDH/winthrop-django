@@ -25,9 +25,13 @@ class CanvasLinkWidget(autocomplete.ModelSelect2):
 
     def render(self, name, value, attrs=None):
         widget = super(CanvasLinkWidget, self).render(name, value, attrs)
+        # if no canvas id is set, return widget as is
+        if not value:
+            return widget
+
+        # otherwise, add a link to view the canvas on the site;
+        # borrowing grappelli style for main "view on site" button
         canvas = Canvas.objects.get(id=value)
-        # add a link to view the canvas on the site; borrowing grappelli
-        # styltexes for main "view on site" button
         return mark_safe(u'''%s
             <ul class="canvas-link grp-object-tools">
                 <li><a href="%s" target="_blank" class="grp-state-focus">View canvas on site</a>
