@@ -13,10 +13,6 @@
 <!--   <script type="text/javascript" src="{% static 'js/annotator/annotator.permissions.js' %}"></script> -->
   <script type="text/javascript" src="{% static 'js/annotator/winthrop-plugin.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/annotator/tag-lookup.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/annotator/winthrop-overrides.js' %}"></script>
-
-
-
   <link rel="stylesheet" type="text/css" href="//emory-lits-labs.github.io/annotator-imgselect/src/jquery.imgareaselect-0.9.10/css/imgareaselect-default.css" />
   <script type="text/javascript" src="//emory-lits-labs.github.io/annotator-imgselect/build/0.2.2/annotator.imgselect.min.js"></script>
 
@@ -102,10 +98,19 @@ $.ajaxSetup({
       }
   }
 
+  var languageAutocomplete = "{% url 'books:language-autocomplete' %}"
   var confs = [
-    {name: 'translation', label: 'Annotation translation'}
+    // Annotation translation
+    { name: 'translation',
+      label: 'Annotation translation'
+    },
+    {
+      name: 'language',
+      label: 'Annotation languages',
+      type: 'list',
+      autocompleteUrl: languageAutocomplete
+    }
   ]
-
   var marginalia_opts = {
     show_author: true,
     // viewer: annotatormeltdown.render,
@@ -127,7 +132,6 @@ $.ajaxSetup({
 
   // configuring marginalia here so it can be referenced in annotator search
   // Also including var for language autocomplete since it's used twice
-  var language_autocomplete = "{% url 'books:language-autocomplete' %}"
   var _marginalia = annotatorMarginalia(marginalia_opts);
   var app = new annotator.App()
       .include(contentUri)
@@ -168,12 +172,10 @@ $.ajaxSetup({
   app.ident.is_superuser = {{ request.user.is_superuser|lower }}
 
   // Bind tag autocomplete
-  bindTagAutocomplete("{% url 'tag-autocomplete' %}", "#annotator-field-1")
-  // Replace comment text
-  fixComment('#annotator-field-0')
-
+  bindTagAutocomplete("{% url 'tag-autocomplete' %}", "#annotator-field-1");
+  // Replace comment text (card text is handled in render method of plugin)
+  fixComment('#annotator-field-0');
 });
-
 
 
 

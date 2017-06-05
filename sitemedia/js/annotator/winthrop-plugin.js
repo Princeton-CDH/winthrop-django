@@ -1,10 +1,10 @@
 /*
 Winthrop Annotator Plugin
-- Requiresments: jQuery, annotator.js 2.0+, marginalia
-- add object 'winthrop' with methods to create a renderextension
-and editor extension for Winthrop Family on the Page Project
-- conf objects should specify the following properties: name, label, and type (if list)
-  and eventualy autocompletes
+- Requirements: jQuery, annotator.js 2.0+, marginalia
+- Create object 'winthrop' with methods to create a rende rextension
+and editor extension for Winthrop Family on the Page Project fields
+- conf objects should specify the following properties: name, label, and type (if list),
+along with an autocompleteUrl
 */
 
 var winthrop = {
@@ -20,18 +20,18 @@ var winthrop = {
       if (fieldValue || fieldValue == 0) {
         // split arrays into a comma delimited string
         if ($.isArray(fieldValue)) {
-          div = $('<div/>').addClass('annotator-'+conf.name).html(function () {
-          return '<label>'+conf.label+'</label>' + $.map(fieldValue, function (value) {
+          div = $('<div/>').addClass('annotator-' + conf.name).html(function() {
+            return '<label>' + conf.label + ':</label>' + $.map(fieldValue, function(value) {
+              return value
             }).join(', ');
           });
-        }
-      else {
-        // otherwise return the field value
-        div = $('<div/>').addClass('annotator-'+conf.name).html(
+        } else {
+          // otherwise return the field value
+          div = $('<div/>').addClass('annotator-' + conf.name).html(
             fieldValue
-          ).prepend($('<label>'+conf.label+':</label>'));
+          ).prepend($('<label>' + conf.label + ':</label>'));
+        }
       }
-    }
       return div;
     }
     // rendered function that iterates over confs array
@@ -44,6 +44,12 @@ var winthrop = {
           div.insertAfter(item.find('.text' + (i != 0 ? ',.' + confs[i - 1].name : '')).last())
         }
       }
+
+      var annotationText = item.find('.text').children();
+      if (annotationText.text() == 'No comment') {
+        annotationText.text('No annotation text');
+      }
+
       return item;
     }
   },
@@ -62,8 +68,9 @@ var winthrop = {
             values = input.val().split(',');
             for (i in values) {
               // set an array of values, trimming any stray commas
-              annotation[conf.name] = values[i].trim().replace(/(^,)|(,$)/g, "");
+              values[i] = values[i].trim().replace(/(^,)|(,$)/g, "");
             }
+            annotation[conf.name] = values
           } else {
             annotation[conf.name] = input.val();
           }
@@ -79,7 +86,7 @@ var winthrop = {
         // If the property exists on the object and isn't a falsy value
         // use the type property to determine how to set the field values
         if (annotation[conf.name] || annotation[conf.name == 0]) {
-          if (annotation.type == 'list') {
+          if (conf.type == 'list') {
             input.val(annotation[conf.name].join(', '));
           } else {
             input.val(annotation[conf.name]);
@@ -114,7 +121,83 @@ var winthrop = {
             fields[j].submit = makeSetField(confs[i], input);
           }
         }
+        // Bind an autocomplete now that we have a field to an input
+
+        // Function to parse the most recent tag
+        function parseRecent(str) {
+          var list = str.split(',');
+          var latest = list[list.length - 1]
+          return latest.trim()
+        }
+
+        // Configure the ajax query using GET shorthand
+        function autocompleteSearch(request, response) {
+          term = parseRecent(request.term);
+          // autoCompleteUrl from conf function
+          $.get(confs[i].autocompleteUrl, {
+              q: term
+            },
+            function(data) {
+              // convert response into format jquery-ui expects
+              response($.map(data.results, function(value, key) {
+                return {
+                  label: value.text,
+                  value: value.text,
+                  id: value.id
+                };
+              }));
+            });
+        }
+
+        // Function that triggers on select to add an item to a list
+        function selectFunc(obj, ui) {
+          var val = obj.val();
+          // comma list style handling
+          if (confs[i].type == 'list') {
+            if (val.indexOf(',') == -1) {
+              val = ui.item.value + ', ';
+            } else {
+              val = val.replace(/,[^,]+$/, "") + ", " + ui.item.value + ', ';
+            }
+          }
+          // Regardless, set the object
+          obj.val(val);
+        }
+
+        // Actually configure and bind the autocomplete
+        if (confs[i].autocompleteUrl) {
+          input.autocomplete({
+            source: autocompleteSearch,
+            select: function(event, ui) {
+              selectFunc($(this), ui);
+              event.preventDefault();
+            },
+            focus: function(event, ui) {
+              event.preventDefault();
+            },
+            open: function(event, ui) {
+              // annotator purposely sets the editor at a very high z-index;
+              // set autocomplete still higher so it isn't obscured by annotator buttons
+              $('.ui-autocomplete')
+                .css('z-index', $('.annotator-editor').css('z-index') + 1);
+            },
+          });
+        }
+
       }
     }
+
+    // makeEditorExtension wrapper end brance
   }
+  // winthropß wrapper end brace
+}
+
+/*
+Winthrop Annotator Override
+-A simple jQuery shim to fix the text on the 'Comment' box to something more
+sensible
+*/
+function fixComment(field) {
+  // field - any valid jQuery selector for the annotation text field
+  $(field).attr('placeholder', 'Annotation text...');
 }
