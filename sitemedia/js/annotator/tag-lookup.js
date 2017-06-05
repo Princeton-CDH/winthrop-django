@@ -38,6 +38,7 @@ var bindTagAutocomplete = function(autocomplete_url, id_string) {
   // Bind an autocomplete to tags field
       $(id_string).autocomplete({
           source: tagAutocompleteSearch,
+          minLength: 0,
           focus: function(event, ui) {
             event.preventDefault();
           },
@@ -59,4 +60,7 @@ var bindTagAutocomplete = function(autocomplete_url, id_string) {
               $('.ui-autocomplete').css('z-index', $('.annotator-editor').css('z-index') + 1);
           },
       });
+
+      $(id_string).bind('focus', function () {
+        $(this).autocomplete("search");
 }

@@ -106,12 +106,12 @@ var winthrop = {
 
       for (var i in confs) {
         // loop through all the fields and add them to e
+        var type = confs[i].size ? confs[i].size : 'input'
         field = e.addField({
           label: confs[i].label,
-          type: 'input'
+          type: type
         });
-
-        input = $(field).find('input');
+        input = $(field).find(type);
         fields = e.fields
         // Add the load and submit functions now that
         // we have an input DOM object
@@ -121,6 +121,11 @@ var winthrop = {
             fields[j].submit = makeSetField(confs[i], input);
           }
         }
+
+        // Give a label field to the input too
+        input.parent().prepend('<label class="field-label">'+confs[i].label+'</label>');
+
+
         // Bind an autocomplete now that we have a field to an input
 
         // Function to parse the most recent tag
@@ -168,6 +173,7 @@ var winthrop = {
         if (confs[i].autocompleteUrl) {
           input.autocomplete({
             source: autocompleteSearch,
+            minLength: 0,
             select: function(event, ui) {
               selectFunc($(this), ui);
               event.preventDefault();
@@ -182,6 +188,10 @@ var winthrop = {
                 .css('z-index', $('.annotator-editor').css('z-index') + 1);
             },
           });
+
+          input.bind('focus', function () {
+            $(this).autocomplete("search");
+          })
         }
 
       }
@@ -189,7 +199,7 @@ var winthrop = {
 
     // makeEditorExtension wrapper end brance
   }
-  // winthropß wrapper end brace
+  // winthrop wrapper end brace
 }
 
 /*
