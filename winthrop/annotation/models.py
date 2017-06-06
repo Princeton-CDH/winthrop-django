@@ -44,7 +44,9 @@ class Annotation(BaseAnnotation):
     anchor_translation = models.TextField(blank=True,
         verbose_name='Anchor text translation')
     # Override since we want this to be potentially optional
+    # No unit tests because these should be set by django-annotator-store
     quote = models.TextField(blank=True)
+    text = models.TextField(blank=True)
     # Annotations are connected to subjects in roughly the same way as Books
     subjects = models.ManyToManyField(Subject)
     # Annotations and tags about their characteristics associated with Tags
@@ -74,49 +76,45 @@ class Annotation(BaseAnnotation):
         '''Handle any "extra" data that is not part of the stock annotation
         data model.  Use this method to customize the logic for updating
         an annotation from json request data (as sent by annotator.js).'''
-
-
         # NOTE: Working on the presumption that any data not included in the
         # JSON Extra data should be removed if it's added to a Django database
         # field or model
-        if 'author' in data and 'id' in data['author']:
+        if 'author' in data:
             try:
-                self.author = Person.objects.get(id=data['author']['id'])
-            except (ObjectDoesNotExist, ValueError):
+                # TODO: Should authorized names always be distinguishable?
+                # They're usually self-disambiguating. This allows for
+                # author to almost 100% be treated like all other fields
+                author = Person.objects.get(
+                    authorized_name__iexact=data['author']
+                )
+                self.author = author
+            except (ValueError, ObjectDoesNotExist):
                 self.author = None
             del data['author']
-        else:
-            # clear out in case previously set
-            self.author = None
+
         if 'tags' in data:
-            # TODO: check if commas are being passed, again handle in js
             # NOTE: tag vocabulary is enforced; unrecognized tags
             # are ignored.
             tags = Tag.objects.filter(name__in=data['tags'])
             self.tags.set(tags)
             del data['tags']
 
-        if 'quote' in data:
-            self.quote = data['quote']
-            del data['quote']
-        else:
-            self.quote = ''
-
-        if 'language' in data:
-            langs = Language.objects.filter(name__in=data['language'])
+        if 'languages' in data:
+            langs = Language.objects.filter(name__in=data['languages'])
             self.languages.set(langs)
-            del data['language']
+            del data['languages']
 
-        if 'anchorLanguage' in data:
+        if 'anchorLanguages' in data:
             anchor_langs = Language.objects.filter(
-                name__in=data['anchorLanguage'])
+                name__in=data['anchorLanguages'])
             self.anchor_languages.set(anchor_langs)
-            del data['anchorLanguage']
+            del data['anchorLanguages']
 
-        if 'subject' in data:
-            subjects = Subject.objects.filter(name__in=data['subject'])
+        if 'subjects' in data:
+            subjects = Subject.objects.filter(name__in=data['subjects'])
+            print(subjects)
             self.subjects.set(subjects)
-            del data['subject']
+            del data['subjects']
 
         if 'translation' in data:
             self.text_translation = data['translation']
@@ -138,22 +136,17 @@ class Annotation(BaseAnnotation):
         # to include local database fields in the output
         info = super(Annotation, self).info()
         if self.author:
-            info['author'] = {
-                'name': self.author.authorized_name,
-                'id': self.author.id,
-            }
-
+            info['author'] = self.author.authorized_name
         info.update({
             'tags': [tag.name for tag in self.tags.all()],
-            'language': [language.name for language in self.languages.all()],
-            'anchorLanguage': [language.name for language in self.anchor_languages.all()],
+            'languages': [language.name for language in self.languages.all()],
+            'anchorLanguages': [language.name for language in self.anchor_languages.all()],
             'subjects': [subject.name for subject in self.subjects.all()]
         })
         if self.text_translation:
             info['translation'] = self.text_translation
         if self.anchor_translation:
             info['anchorTranslation'] = self.anchor_translation
-
         return info
 
     img_info_to_iiif = {'w': 'width', 'h': 'height', 'x': 'x', 'y': 'y'}
@@ -183,6 +176,5 @@ class Annotation(BaseAnnotation):
     admin_thumbnail.short_description = 'Thumbnail'
     admin_thumbnail.allow_tags = True
 
-
     def __str__(self):
-        return '%s %s' % (self.annotation, self.language)
+        return '%s' % (self.text)

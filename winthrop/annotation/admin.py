@@ -47,6 +47,7 @@ class AnnotationAdminForm(forms.ModelForm):
         labels = {
             # the quoted text in standard annotator.js parlance is the anchor
             # text for our annotation/marginalia
+            'tags': 'Annotation type',
             'quote': 'Anchor text',
         }
         widgets = {
@@ -58,8 +59,8 @@ class AnnotationAdminForm(forms.ModelForm):
                 attrs={'data-placeholder': 'Start typing canvas name or uri to search...'}),
 
         }
-        fields = ('text', 'text_translation', 'user', 'extra_data', 'canvas',
-            'author', 'quote', 'anchor_translation', 'uri')
+        fields = ('text', 'tags', 'text_translation', 'languages', 'subjects', 'canvas',
+            'author', 'quote', 'anchor_translation', 'anchor_languages', 'user', 'extra_data', 'uri')
 
 
 class WinthropAnnotationAdmin(AnnotationAdmin):

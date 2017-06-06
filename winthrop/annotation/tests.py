@@ -46,11 +46,7 @@ class TestAnnotation(TestCase):
         assert annotation.tags.count() == 0
 
         # test adding author in database
-        annotation.handle_extra_data({
-            'author': {'authorized_name': 'Bar, Foo', 'id': self.author.pk}
-            },
-            Mock()
-        )
+        annotation.handle_extra_data({'author': 'Bar, Foo'}, Mock())
         # check that an author is set
         assert annotation.author
         # check that it is Mr. Foo Bar
@@ -60,27 +56,17 @@ class TestAnnotation(TestCase):
         annotation.handle_extra_data({'author': ''}, Mock())
         assert not annotation.author
 
-        # an author field that passes an author without id should
-        # also unset the author
-        # set an author
-        annotation.handle_extra_data({
-            'author': {'authorized_name': 'Bar, Foo', 'id': self.author.pk}
-            },
-            Mock()
-        )
+        # an incorrect authorized_name should also do the same
+        annotation.handle_extra_data({'author': 'Bar, Foo'}, Mock())
         # check that an author is set
         assert annotation.author
-        annotation.handle_extra_data({
-            'author': {'authorized_name': 'Barz, Foo'}
-            },
-            Mock()
-        )
-        # Dud author should unset the field
+        # dud author should unset the field
+        annotation.handle_extra_data({'author': 'Bar, Foobaz'}, Mock())
         assert not annotation.author
 
-        # test setting language (including not setting a language not in database)
+        # test setting languages (including not setting a language not in database)
         languages = ['English', 'Latin', 'Ancient Greek', 'Lojban']
-        annotation.handle_extra_data({'language': languages}, Mock())
+        annotation.handle_extra_data({'languages': languages}, Mock())
         assert annotation.languages.count() == 3
         assoc_languages = [language.name for language in
                            annotation.languages.all()]
@@ -88,7 +74,7 @@ class TestAnnotation(TestCase):
         # order unimportant call sort() method
         assert assoc_languages.sort() == languages[:-1].sort()
         languages = languages[0:2]  # subset to English and locations
-        annotation.handle_extra_data({'language': languages}, Mock())
+        annotation.handle_extra_data({'languages': languages}, Mock())
         # Ancient Greek should have been removed
         assert annotation.languages.count() == 2
         assoc_languages = [language.name for language in
@@ -101,7 +87,7 @@ class TestAnnotation(TestCase):
         # test setting anchor_language (including not setting a language not in database)
         # IDEA: Keep it DRY with a function to run this on both similar fields?
         languages = ['English', 'Latin', 'Ancient Greek', 'Lojban']
-        annotation.handle_extra_data({'anchorLanguage': languages}, Mock())
+        annotation.handle_extra_data({'anchorLanguages': languages}, Mock())
         assert annotation.anchor_languages.count() == 3
         assoc_languages = [language.name for language in
                            annotation.anchor_languages.all()]
@@ -109,7 +95,7 @@ class TestAnnotation(TestCase):
         # order unimportant call sort() method
         assert assoc_languages.sort() == languages[:-1].sort()
         languages = languages[0:2]  # subset to English and locations
-        annotation.handle_extra_data({'anchorLanguage': languages}, Mock())
+        annotation.handle_extra_data({'anchorLanguages': languages}, Mock())
         # Ancient Greek should have been removed
         assert annotation.anchor_languages.count() == 2
         assoc_languages = [language.name for language in
@@ -119,14 +105,12 @@ class TestAnnotation(TestCase):
         # test setting of local text fields
         text_dict = {
             'translation': 'text of translation',
-            'quote': 'transcript of anchor text',
             'anchorTranslation': 'text of anchor translation',
         }
         # make a copy because the expected behavior is to delete the dict
         copy = text_dict.copy()
         annotation.handle_extra_data(copy, Mock())
         # all of the object fields should equal their dict equivalent
-        assert annotation.quote == text_dict['quote']
         assert annotation.text_translation == text_dict['translation']
         assert annotation.anchor_translation == text_dict['anchorTranslation']
         # if a field is deleted from the dict, it should be deleted from object
@@ -136,7 +120,6 @@ class TestAnnotation(TestCase):
         copy = text_dict.copy()
         annotation.handle_extra_data(copy, Mock())
         assert not annotation.text_translation
-        assert annotation.quote == text_dict['quote']
         assert annotation.anchor_translation == text_dict['anchorTranslation']
         # check that copy dict is empty
         assert not copy
@@ -153,49 +136,42 @@ class TestAnnotation(TestCase):
         # test author - author should be empty in info
         assert 'author' not in annotation.info()
         # set an author
-        annotation.handle_extra_data({
-            'author': {'name': 'Bar, Foo', 'id': self.author.pk}
-            },
-            Mock()
-        )
+        annotation.handle_extra_data({'author': 'Bar, Foo'}, Mock())
         # author should be added to the fields
         assert annotation.info()['author']
         # name and id should be set from database
-        assert annotation.info()['author']['name'] == \
+        assert annotation.info()['author'] == \
             self.author.authorized_name
-        assert annotation.info()['author']['id'] == self.author.pk
 
         # set languages on annotation object
         languages = ['English', 'Latin', 'German']
         annotation.languages.set(Language.objects.filter(name__in=languages))
         # language key should exist
-        assert annotation.info()['language']
+        assert annotation.info()['languages']
         # it should have all three languages
-        assert len(annotation.info()['language']) == 3
+        assert len(annotation.info()['languages']) == 3
         # it should have those specific languages, order unimportant so sort()
-        assert annotation.info()['language'].sort() == languages.sort()
+        assert annotation.info()['languages'].sort() == languages.sort()
 
         # set anchor languages on annotation object
         languages = ['English', 'Latin', 'German']
         annotation.anchor_languages.set(Language.objects.filter(name__in=languages))
         # anchorLanguage key should exist
-        assert annotation.info()['anchorLanguage']
+        assert annotation.info()['anchorLanguages']
         # it should have all three languages
-        assert len(annotation.info()['language']) == 3
+        assert len(annotation.info()['anchorLanguages']) == 3
         # it should have those specific languages, order unimportant so sort()
-        assert annotation.info()['language'].sort() == languages.sort()
+        assert annotation.info()['anchorLanguages'].sort() == languages.sort()
 
         # set local text fields
         # NOTE: Not quote, because that's part of the built in functionality
         # of django-annotator-store
         text_dict = {
             'text_translation': 'text of translation',
-            'quote': 'transcript of anchor text',
             'anchor_translation': 'text of anchor translation',
         }
         annotation = Annotation.objects.create(**text_dict)
         assert annotation.info()['translation'] == text_dict['text_translation']
-        assert annotation.info()['quote'] == text_dict['quote']
         assert annotation.info()['anchorTranslation'] == text_dict['anchor_translation']
 
 
