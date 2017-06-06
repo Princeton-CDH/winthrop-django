@@ -63,4 +63,5 @@ var bindTagAutocomplete = function(autocomplete_url, id_string) {
 
       $(id_string).bind('focus', function () {
         $(this).autocomplete("search");
-}
+      });
+}      
