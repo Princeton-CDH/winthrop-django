@@ -99,15 +99,47 @@ $.ajaxSetup({
   }
 
   var languageAutocomplete = "{% url 'books:language-autocomplete' %}"
+  var annotatorAutocomplete = "{% url 'people:autocomplete' 'annotator' %}"
+  var subjectAutocomplete = "{% url 'books:subject-autocomplete' %}"
   var confs = [
-    // Annotation translation
     { name: 'translation',
       label: 'Annotation translation',
       size: 'textarea'
     },
     {
-      name: 'language',
-      label: 'Annotation languages',
+      name: 'languages',
+      label: 'Annotation language(s)',
+      placeholder: 'Enter languages separated by commas...',
+      type: 'list',
+      autocompleteUrl: languageAutocomplete
+    },
+    {
+      name: 'author',
+      label: 'Annotator',
+      placeholder: 'Choose person w/ person-book interactions',
+      autocompleteUrl: annotatorAutocomplete,
+    },
+    {
+      name: 'subjects',
+      label: 'Annotation subjects',
+      placeholder: 'Enter subjects separated by commas',
+      type: 'list',
+      autocompleteUrl: subjectAutocomplete
+    },
+    {
+      name: 'quotes',
+      label: 'Anchor text',
+      size: 'textarea'
+    },
+    {
+      name: 'anchorTranslation',
+      label: 'Anchor text translation',
+      size: 'textarea',
+    },
+    {
+      name: 'anchorLanguages',
+      label: 'Anchor language(s)',
+      placeholder: 'Enter languages separated by commas...',
       type: 'list',
       autocompleteUrl: languageAutocomplete
     }
@@ -172,8 +204,8 @@ $.ajaxSetup({
   // (enforced at application level, only affects what is displayed)
   app.ident.is_superuser = {{ request.user.is_superuser|lower }}
 
-  // Bind tag autocomplete
-  bindTagAutocomplete("{% url 'tag-autocomplete' %}", "#annotator-field-1");
+  // Bind tag autocomplete and add more useful label
+  resetTagAutocomplete("{% url 'tag-autocomplete' %}", "#annotator-field-1");
   // Replace comment text (card text is handled in render method of plugin)
   fixComment('#annotator-field-0');
 });

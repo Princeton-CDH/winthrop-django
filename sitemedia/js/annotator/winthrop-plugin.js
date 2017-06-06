@@ -4,7 +4,7 @@ Winthrop Annotator Plugin
 - Create object 'winthrop' with methods to create a rende rextension
 and editor extension for Winthrop Family on the Page Project fields
 - conf objects should specify the following properties: name, label, and type (if list),
-along with an autocompleteUrl
+along with an autocompleteUrl, fieldType ('textarea', 'input' (default))
 */
 
 var winthrop = {
@@ -17,11 +17,11 @@ var winthrop = {
       var div = null;
       // Just in case, to catch an actual 0 if this code
       // is ever re-used
-      if (fieldValue || fieldValue == 0) {
+      if (typeof fieldValue != 'undefined' && !$.isEmptyObject(fieldValue)) {
         // split arrays into a comma delimited string
         if ($.isArray(fieldValue)) {
           div = $('<div/>').addClass('annotator-' + conf.name).html(function() {
-            return '<label>' + conf.label + ':</label>' + $.map(fieldValue, function(value) {
+            return '<label class="field-label">' + conf.label + '</label>' + $.map(fieldValue, function(value) {
               return value
             }).join(', ');
           });
@@ -29,19 +29,22 @@ var winthrop = {
           // otherwise return the field value
           div = $('<div/>').addClass('annotator-' + conf.name).html(
             fieldValue
-          ).prepend($('<label>' + conf.label + ':</label>'));
+          ).prepend($('<label class="field-label">' + conf.label + '</label>'));
         }
       }
       return div;
     }
     // rendered function that iterates over confs array
     return function(annotation, item) {
+      var previousClass = '.text'
       for (i in confs) {
         // Invoke renderField with options as passed to function
         var div = renderField(annotation[confs[i].name], confs[i]);
-        item.find('.annotator-' + confs[i].name).remove();
+        var divClass = '.annotator-' + confs[i].name
+        item.find(divClass).remove();
         if (div != null) {
-          div.insertAfter(item.find('.text' + (i != 0 ? ',.' + confs[i - 1].name : '')).last())
+          div.insertAfter(item.find(previousClass));
+          previousClass = divClass;
         }
       }
 
@@ -60,6 +63,7 @@ var winthrop = {
 
     // Generic functionality for field setter
     function makeSetField(conf, input) {
+
       return function(field, annotation) {
         // set the annotation object with an empty string
         annotation[conf.name] = '';
@@ -74,6 +78,7 @@ var winthrop = {
           } else {
             annotation[conf.name] = input.val();
           }
+          console.log(conf.name+": "+annotation[conf.name]);
         }
       }
     }
@@ -108,26 +113,31 @@ var winthrop = {
         // loop through all the fields and add them to e
         var type = confs[i].size ? confs[i].size : 'input'
         field = e.addField({
-          label: confs[i].label,
+          // This is properly *placeholder*, so setting is as such
+          // using label as fallback
+          label: confs[i].placeholder ? confs[i].placeholder : confs[i].label,
           type: type
         });
         input = $(field).find(type);
-        fields = e.fields
+        var fields = e.fields
         // Add the load and submit functions now that
         // we have an input DOM object
         for (var j in fields) {
-          if (fields[j].label == confs[i].label) {
+          if (fields[j].label == confs[i].label || fields[j].label == confs[i].placeholder) {
             fields[j].load = makeUpdateField(confs[i], input);
             fields[j].submit = makeSetField(confs[i], input);
           }
         }
-
         // Give a label field to the input too
         input.parent().prepend('<label class="field-label">'+confs[i].label+'</label>');
 
-
-        // Bind an autocomplete now that we have a field to an input
-
+        /*
+        The following code does the following:
+          1) Provides utility functions for parsing a list of tags into an array
+          2) Binds an autocomplete for all of the tag lists and provides
+            an alternate for the author field specifically
+          3)
+        */
         // Function to parse the most recent tag
         function parseRecent(str) {
           var list = str.split(',');
@@ -135,64 +145,83 @@ var winthrop = {
           return latest.trim()
         }
 
+        function makeSearchFunction(conf) {
         // Configure the ajax query using GET shorthand
-        function autocompleteSearch(request, response) {
-          term = parseRecent(request.term);
-          // autoCompleteUrl from conf function
-          $.get(confs[i].autocompleteUrl, {
-              q: term
-            },
-            function(data) {
-              // convert response into format jquery-ui expects
-              response($.map(data.results, function(value, key) {
-                return {
-                  label: value.text,
-                  value: value.text,
-                  id: value.id
-                };
-              }));
-            });
-        }
+          return function(request, response) {
+            term = parseRecent(request.term);
+            // autoCompleteUrl from conf function
+            $.get(conf.autocompleteUrl, {
+                q: term
+              },
+              function(data) {
+                // convert response into format jquery-ui expects
+                response($.map(data.results, function(value, key) {
+                  return {
+                    label: value.text,
+                    value: value.text,
+                    id: value.id
+                  };
+                }));
+              });
+          }
+      }
 
-        // Function that triggers on select to add an item to a list
-        function selectFunc(obj, ui) {
+      // Function that triggers on select to add an item to a list
+      function SelectFunc(obj, ui) {
           var val = obj.val();
           // comma list style handling
-          if (confs[i].type == 'list') {
             if (val.indexOf(',') == -1) {
               val = ui.item.value + ', ';
             } else {
               val = val.replace(/,[^,]+$/, "") + ", " + ui.item.value + ', ';
             }
-          }
-          // Regardless, set the object
-          obj.val(val);
-        }
+        // Regardless, set the object
+        obj.val(val);
+      }
 
         // Actually configure and bind the autocomplete
         if (confs[i].autocompleteUrl) {
-          input.autocomplete({
-            source: autocompleteSearch,
-            minLength: 0,
-            select: function(event, ui) {
-              selectFunc($(this), ui);
-              event.preventDefault();
-            },
-            focus: function(event, ui) {
-              event.preventDefault();
-            },
-            open: function(event, ui) {
-              // annotator purposely sets the editor at a very high z-index;
-              // set autocomplete still higher so it isn't obscured by annotator buttons
-              $('.ui-autocomplete')
-                .css('z-index', $('.annotator-editor').css('z-index') + 1);
-            },
-          });
-
+          if (confs[i].name != 'author') {
+            input.autocomplete({
+              source: makeSearchFunction(confs[i]),
+              minLength: 0,
+              select: function(event, ui) {
+                SelectFunc($(this), ui);
+                event.preventDefault();
+              },
+              focus: function(event, ui) {
+                event.preventDefault();
+              },
+              open: function(event, ui) {
+                // annotator purposely sets the editor at a very high z-index;
+                // set autocomplete still higher so it isn't obscured by annotator buttons
+                $('.ui-autocomplete')
+                  .css('z-index', $('.annotator-editor').css('z-index') + 1);
+              },
+            });
+          }
+          // Special handling for author as the odd field out
+          // since it's not a parsed list
+          else {
+            input.autocomplete({
+              source: makeSearchFunction(confs[i]),
+              minLength: 0,
+              focus: function(event, ui) {
+                event.preventDefault();
+              },
+              open: function(event, ui) {
+                // annotator purposely sets the editor at a very high z-index;
+                // set autocomplete still higher so it isn't obscured by annotator buttons
+                $('.ui-autocomplete')
+                  .css('z-index', $('.annotator-editor').css('z-index') + 1);
+              },
+            });
+          }
+          // Bind a element to make the autocomplete window pop up on focus
           input.bind('focus', function () {
             $(this).autocomplete("search");
           })
-        }
+      }
 
       }
     }
