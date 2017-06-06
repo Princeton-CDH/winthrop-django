@@ -2,7 +2,7 @@ from django.test import TestCase
 from unittest.mock import Mock
 
 from .models import Annotation, Tag
-from winthrop.books.models import Language
+from winthrop.books.models import Book, Language, PersonBook, PersonBookRelationshipType
 from winthrop.people.models import Person
 
 
@@ -10,7 +10,12 @@ class TestAnnotation(TestCase):
 
     def setUp(self):
         # create a person we can use for all the tests
+        book = Book.objects.create(title='Long title', short_title='Long',
+            original_pub_info='fake pub info')
         self.author = Person.objects.create(authorized_name='Bar, Foo')
+        self.pb = PersonBook.objects.create(book=book, person=self.author,
+            relationship_type=PersonBookRelationshipType.objects.get(pk=1))
+
 
     def test_handle_extra_data(self):
 
@@ -63,6 +68,18 @@ class TestAnnotation(TestCase):
         # dud author should unset the field
         annotation.handle_extra_data({'author': 'Bar, Foobaz'}, Mock())
         assert not annotation.author
+
+        # an author not in the list of annotators should unset
+        annotation.handle_extra_data({'author': 'Bar, Foo'}, Mock())
+        # check that an author is set
+        assert annotation.author
+        # delete relationship
+        pb = self.pb
+        pb.delete()
+        # handle_extra_data again
+        annotation.handle_extra_data({'author': 'Bar, Foo'}, Mock())
+        assert not annotation.author
+
 
         # test setting languages (including not setting a language not in database)
         languages = ['English', 'Latin', 'Ancient Greek', 'Lojban']

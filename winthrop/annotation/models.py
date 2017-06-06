@@ -80,15 +80,17 @@ class Annotation(BaseAnnotation):
         # JSON Extra data should be removed if it's added to a Django database
         # field or model
         if 'author' in data:
-            try:
-                # TODO: Should authorized names always be distinguishable?
-                # They're usually self-disambiguating. This allows for
-                # author to almost 100% be treated like all other fields
-                author = Person.objects.get(
-                    authorized_name__iexact=data['author']
-                )
-                self.author = author
-            except (ValueError, ObjectDoesNotExist):
+            # TODO: Should authorized names always be distinguishable?
+            # They're usually self-disambiguating. This allows for
+            # author to almost 100% be treated like all other fields
+            author = Person.objects.filter(
+                authorized_name__iexact=data['author']
+            ).filter(
+                personbook__isnull=False
+            )
+            if author.exists():
+                self.author = author[0]
+            else:
                 self.author = None
             del data['author']
 
