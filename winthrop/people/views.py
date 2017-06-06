@@ -34,8 +34,10 @@ class PersonAutocomplete(autocomplete.Select2QuerySetView):
     # NOTE staff restrection applied in url config
 
     def get_queryset(self):
-        winthrop_only = self.request.GET.get('winthrop', None)
+        annotator_only = ''
+        if len(self.args) > 0:
+            annotator_only = self.args[0]
         people = Person.objects.filter(authorized_name__icontains=self.q)
-        if winthrop_only:
+        if annotator_only == 'annotator':
                 people = people.filter(personbook__isnull=False)
         return people

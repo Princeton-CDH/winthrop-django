@@ -345,8 +345,9 @@ class TestPersonViews(TestCase):
         laski = Person.objects.get(authorized_name__icontains='Jan')
         PersonBook.objects.create(book=Book.objects.get(pk=1), person=laski,
             relationship_type=PersonBookRelationshipType.objects.get(pk=1))
-        result = self.client.get(pub_autocomplete_url,
-            {'q': 'a', 'winthrop': True})
+        annotator_url = reverse('people:autocomplete', args=['annotator'])
+        result = self.client.get(annotator_url, {'q': 'Jan'})
         data = json.loads(result.content.decode('utf-8'))
-        # Jan should come first
+        # Jan should be listed but Abelin shouldn't even be listed
         assert data['results'][0]['text'] == laski.authorized_name
+        assert len(data['results']) == 1
