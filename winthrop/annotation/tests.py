@@ -85,7 +85,6 @@ class TestAnnotation(TestCase):
 
 
         # test setting anchor_language (including not setting a language not in database)
-        # IDEA: Keep it DRY with a function to run this on both similar fields?
         languages = ['English', 'Latin', 'Ancient Greek', 'Lojban']
         annotation.handle_extra_data({'anchorLanguages': languages}, Mock())
         assert annotation.anchor_languages.count() == 3
@@ -102,10 +101,12 @@ class TestAnnotation(TestCase):
                            annotation.anchor_languages.all()]
         assert 'Ancient Greek' not in assoc_languages
 
-        # test setting of local text fields
+        # test setting of local text fields and removal of quote/text
         text_dict = {
             'translation': 'text of translation',
             'anchorTranslation': 'text of anchor translation',
+            'quote': 'foo',
+            'text': 'bar'
         }
         # make a copy because the expected behavior is to delete the dict
         copy = text_dict.copy()
