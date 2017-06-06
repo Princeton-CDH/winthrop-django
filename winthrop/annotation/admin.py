@@ -59,15 +59,16 @@ class AnnotationAdminForm(forms.ModelForm):
                 attrs={'data-placeholder': 'Start typing canvas name or uri to search...'}),
 
         }
-        fields = ('text', 'tags', 'text_translation', 'languages', 'subjects', 'canvas',
-            'author', 'quote', 'anchor_translation', 'anchor_languages', 'user', 'extra_data', 'uri')
+        fields = ('text', 'tags', 'text_translation', 'languages',
+            'subjects', 'canvas','author', 'quote', 'anchor_translation',
+            'anchor_languages', 'user', 'extra_data', 'uri')
 
 
 class WinthropAnnotationAdmin(AnnotationAdmin):
     form = AnnotationAdminForm
     list_display = ('text_preview', 'author', 'canvas', 'admin_thumbnail')
     # NOTE: 'quote' == anchor text, and should be editable
-    readonly_fields = ('uri',)  #  maybe also 'extra_data' ?
+    readonly_fields = ('uri', 'extra_data')
 
 
 admin.site.unregister(Annotation)
