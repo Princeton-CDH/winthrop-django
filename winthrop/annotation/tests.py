@@ -122,8 +122,6 @@ class TestAnnotation(TestCase):
         text_dict = {
             'translation': 'text of translation',
             'anchor_translation': 'text of anchor translation',
-            'quote': 'foo',
-            'text': 'bar'
         }
         # make a copy because the expected behavior is to delete the dict
         copy = text_dict.copy()
