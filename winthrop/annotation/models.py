@@ -79,7 +79,6 @@ class Annotation(BaseAnnotation):
         # NOTE: Working on the presumption that any data not included in the
         # JSON Extra data should be removed if it's added to a Django database
         # field or model
-        print(data)
         if 'author' in data:
             # TODO: Should authorized names always be distinguishable?
             # They're usually self-disambiguating. This allows for
