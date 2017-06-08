@@ -103,7 +103,7 @@ class TestAnnotation(TestCase):
 
         # test setting anchor_language (including not setting a language not in database)
         languages = ['English', 'Latin', 'Ancient Greek', 'Lojban']
-        annotation.handle_extra_data({'anchorLanguages': languages}, Mock())
+        annotation.handle_extra_data({'anchor_languages': languages}, Mock())
         assert annotation.anchor_languages.count() == 3
         assoc_languages = [language.name for language in
                            annotation.anchor_languages.all()]
@@ -111,7 +111,7 @@ class TestAnnotation(TestCase):
         # order unimportant call sort() method
         assert assoc_languages.sort() == languages[:-1].sort()
         languages = languages[0:2]  # subset to English and locations
-        annotation.handle_extra_data({'anchorLanguages': languages}, Mock())
+        annotation.handle_extra_data({'anchor_languages': languages}, Mock())
         # Ancient Greek should have been removed
         assert annotation.anchor_languages.count() == 2
         assoc_languages = [language.name for language in
@@ -121,7 +121,7 @@ class TestAnnotation(TestCase):
         # test setting of local text fields and removal of quote/text
         text_dict = {
             'translation': 'text of translation',
-            'anchorTranslation': 'text of anchor translation',
+            'anchor_translation': 'text of anchor translation',
             'quote': 'foo',
             'text': 'bar'
         }
@@ -130,7 +130,7 @@ class TestAnnotation(TestCase):
         annotation.handle_extra_data(copy, Mock())
         # all of the object fields should equal their dict equivalent
         assert annotation.text_translation == text_dict['translation']
-        assert annotation.anchor_translation == text_dict['anchorTranslation']
+        assert annotation.anchor_translation == text_dict['anchor_translation']
         # if a field is deleted from the dict, it should be deleted from object
         # by hande_extra_data
         # remove translation
@@ -138,7 +138,7 @@ class TestAnnotation(TestCase):
         copy = text_dict.copy()
         annotation.handle_extra_data(copy, Mock())
         assert not annotation.text_translation
-        assert annotation.anchor_translation == text_dict['anchorTranslation']
+        assert annotation.anchor_translation == text_dict['anchor_translation']
         # check that copy dict is empty
         assert not copy
 
@@ -175,11 +175,11 @@ class TestAnnotation(TestCase):
         languages = ['English', 'Latin', 'German']
         annotation.anchor_languages.set(Language.objects.filter(name__in=languages))
         # anchorLanguage key should exist
-        assert annotation.info()['anchorLanguages']
+        assert annotation.info()['anchor_languages']
         # it should have all three languages
-        assert len(annotation.info()['anchorLanguages']) == 3
+        assert len(annotation.info()['anchor_languages']) == 3
         # it should have those specific languages, order unimportant so sort()
-        assert annotation.info()['anchorLanguages'].sort() == languages.sort()
+        assert annotation.info()['anchor_languages'].sort() == languages.sort()
 
         # set local text fields
         # NOTE: Not quote, because that's part of the built in functionality
@@ -190,7 +190,7 @@ class TestAnnotation(TestCase):
         }
         annotation = Annotation.objects.create(**text_dict)
         assert annotation.info()['translation'] == text_dict['text_translation']
-        assert annotation.info()['anchorTranslation'] == text_dict['anchor_translation']
+        assert annotation.info()['anchor_translation'] == text_dict['anchor_translation']
 
 
 class TestTag(TestCase):

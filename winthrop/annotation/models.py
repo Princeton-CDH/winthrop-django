@@ -79,6 +79,7 @@ class Annotation(BaseAnnotation):
         # NOTE: Working on the presumption that any data not included in the
         # JSON Extra data should be removed if it's added to a Django database
         # field or model
+        print(data)
         if 'author' in data:
             # TODO: Should authorized names always be distinguishable?
             # They're usually self-disambiguating. This allows for
@@ -106,11 +107,11 @@ class Annotation(BaseAnnotation):
             self.languages.set(langs)
             del data['languages']
 
-        if 'anchorLanguages' in data:
+        if 'anchor_languages' in data:
             anchor_langs = Language.objects.filter(
-                name__in=data['anchorLanguages'])
+                name__in=data['anchor_languages'])
             self.anchor_languages.set(anchor_langs)
-            del data['anchorLanguages']
+            del data['anchor_languages']
 
         if 'subjects' in data:
             subjects = Subject.objects.filter(name__in=data['subjects'])
@@ -123,9 +124,9 @@ class Annotation(BaseAnnotation):
             del data['translation']
         else:
             self.text_translation = ''
-        if 'anchorTranslation' in data:
-            self.anchor_translation = data['anchorTranslation']
-            del data['anchorTranslation']
+        if 'anchor_translation' in data:
+            self.anchor_translation = data['anchor_translation']
+            del data['anchor_translation']
         else:
             self.anchor_translation = ''
 
@@ -149,13 +150,13 @@ class Annotation(BaseAnnotation):
         info.update({
             'tags': [tag.name for tag in self.tags.all()],
             'languages': [language.name for language in self.languages.all()],
-            'anchorLanguages': [language.name for language in self.anchor_languages.all()],
+            'anchor_languages': [language.name for language in self.anchor_languages.all()],
             'subjects': [subject.name for subject in self.subjects.all()]
         })
         if self.text_translation:
             info['translation'] = self.text_translation
         if self.anchor_translation:
-            info['anchorTranslation'] = self.anchor_translation
+            info['anchor_translation'] = self.anchor_translation
         return info
 
     img_info_to_iiif = {'w': 'width', 'h': 'height', 'x': 'x', 'y': 'y'}
