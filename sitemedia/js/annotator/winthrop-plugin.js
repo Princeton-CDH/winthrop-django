@@ -63,7 +63,6 @@ var winthrop = {
 
     // Generic functionality for field setter
     function makeSetField(conf, input) {
-
       return function(field, annotation) {
         // set the annotation object with an empty string
         annotation[conf.name] = '';
@@ -78,7 +77,6 @@ var winthrop = {
           } else {
             annotation[conf.name] = input.val();
           }
-          console.log(conf.name+": "+annotation[conf.name]);
         }
       }
     }
@@ -122,12 +120,10 @@ var winthrop = {
         var fields = e.fields
         // Add the load and submit functions now that
         // we have an input DOM object
-        for (var j in fields) {
-          if (fields[j].label == confs[i].label || fields[j].label == confs[i].placeholder) {
-            fields[j].load = makeUpdateField(confs[i], input);
-            fields[j].submit = makeSetField(confs[i], input);
-          }
-        }
+        // field will always be last added to array
+        fields[fields.length-1].load = makeUpdateField(confs[i], input);
+        fields[fields.length-1].submit = makeSetField(confs[i], input);
+
         // Give a label field to the input too
         input.parent().prepend('<label class="field-label">'+confs[i].label+'</label>');
 
