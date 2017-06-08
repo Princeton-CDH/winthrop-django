@@ -114,7 +114,6 @@ class Annotation(BaseAnnotation):
 
         if 'subjects' in data:
             subjects = Subject.objects.filter(name__in=data['subjects'])
-            print(subjects)
             self.subjects.set(subjects)
             del data['subjects']
 
