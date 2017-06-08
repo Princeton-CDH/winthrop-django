@@ -4,6 +4,8 @@
 {% block head_extras %}
     <link rel="stylesheet" type="text/css" href="{% static "css/local.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% static "css/test-banner.css" %}" />
+    {# Include analytics if INCLUDE_ANALYTICS is set to True #}
+    {% include 'snippets/analytics.html' %}
 {% endblock %}
 
 {% block page-title %}{% block page-subtitle %}{% endblock %}Winthrop{% endblock %}
@@ -16,4 +18,3 @@
 {% block navbar-extra %}
     {% include 'snippets/test_banner.html' %}
 {% endblock %}
-
