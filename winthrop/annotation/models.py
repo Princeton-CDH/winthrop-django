@@ -130,13 +130,6 @@ class Annotation(BaseAnnotation):
         else:
             self.anchor_translation = ''
 
-        # NOTE: No use for these in extra_data because they're set
-        # by annotator_store
-        if 'text' in data:
-            del data['text']
-        if 'quote' in data:
-            del data['quote']
-
         return data
 
     def info(self):
