@@ -43,10 +43,6 @@ class Annotation(BaseAnnotation):
         verbose_name='Annotation text translation')
     anchor_translation = models.TextField(blank=True,
         verbose_name='Anchor text translation')
-    # Override since we want this to be potentially optional
-    # No unit tests because these should be set by django-annotator-store
-    quote = models.TextField(blank=True)
-    text = models.TextField(blank=True)
     # Annotations are connected to subjects in roughly the same way as Books
     subjects = models.ManyToManyField(Subject)
     # Annotations and tags about their characteristics associated with Tags
