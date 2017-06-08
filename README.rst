@@ -55,8 +55,6 @@ Initial setup and installation:
 -  copy sample local settings and configure for your environment
    ``cp winthrop/local_settings.py.sample winthrop/local_settings.py``
 
-(documentation TODO) - install & configure git commit hook for Asana
-integration
 
 Unit Tests
 ~~~~~~~~~~
