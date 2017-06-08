@@ -225,4 +225,4 @@ class PersonBook(Notable, DateRange):
         dates = ''
         if self.dates:
             dates = ' (%s)' % self.dates
-        return '%s - %s%s' % (self.person, self.book, dates)
+        return '%s: %s of %s%s' % (self.person, self.relationship_type, self.book, dates)

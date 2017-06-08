@@ -60,8 +60,8 @@ class AnnotationAdminForm(forms.ModelForm):
 
         }
         fields = ('text', 'tags', 'text_translation', 'languages',
-            'subjects', 'canvas','author', 'quote', 'anchor_translation',
-            'anchor_languages', 'user', 'extra_data', 'uri')
+                  'subjects', 'canvas','author', 'quote', 'anchor_translation',
+                  'anchor_languages', 'user', 'extra_data', 'uri')
 
 
 class WinthropAnnotationAdmin(AnnotationAdmin):
