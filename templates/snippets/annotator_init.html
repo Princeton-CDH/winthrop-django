@@ -89,57 +89,49 @@ $.ajaxSetup({
         };
     };
 
-  // Override marginalia viewer function for winthrop
-  var winthrop_viewer = function(annotation) {
-    if (annotation.text) {
-        return annotator.util.escapeHtml(annotation.text);
-      } else {
-        return "<i>" + _t('No text') + "</i>";
-      }
-  }
-
+  
   var languageAutocomplete = "{% url 'books:language-autocomplete' %}"
   var annotatorAutocomplete = "{% url 'people:autocomplete' 'annotator' %}"
   var subjectAutocomplete = "{% url 'books:subject-autocomplete' %}"
   var confs = [
     { name: 'translation',
-      label: 'Annotation translation',
+      label: 'Translation',
       size: 'textarea'
     },
     {
       name: 'languages',
-      label: 'Annotation language(s)',
-      placeholder: 'Enter languages separated by commas...',
+      label: 'Languages(s)',
+      placeholder: 'Type or click to select languages',
       list: true,
       autocompleteUrl: languageAutocomplete
     },
     {
       name: 'author',
       label: 'Annotator',
-      placeholder: 'Choose person w/ person-book interactions',
+      placeholder: 'Type or click to select annotator',
       autocompleteUrl: annotatorAutocomplete
     },
     {
       name: 'subjects',
-      label: 'Annotation subjects',
-      placeholder: 'Enter subjects separated by commas',
+      label: 'Subjects',
+      placeholder: 'Type or click to select subjects',
       list: true,
       autocompleteUrl: subjectAutocomplete
     },
     {
-      name: 'quotes',
+      name: 'quote',
       label: 'Anchor text',
       size: 'textarea'
     },
     {
       name: 'anchor_translation',
-      label: 'Anchor text translation',
+      label: 'Anchor translation',
       size: 'textarea'
     },
     {
       name: 'anchor_languages',
       label: 'Anchor language(s)',
-      placeholder: 'Enter languages separated by commas...',
+      placeholder: 'Type or click to select languages',
       list: true,
       autocompleteUrl: languageAutocomplete
     }
