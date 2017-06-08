@@ -110,20 +110,20 @@ $.ajaxSetup({
       name: 'languages',
       label: 'Annotation language(s)',
       placeholder: 'Enter languages separated by commas...',
-      type: 'list',
+      list: true,
       autocompleteUrl: languageAutocomplete
     },
     {
       name: 'author',
       label: 'Annotator',
       placeholder: 'Choose person w/ person-book interactions',
-      autocompleteUrl: annotatorAutocomplete,
+      autocompleteUrl: annotatorAutocomplete
     },
     {
       name: 'subjects',
       label: 'Annotation subjects',
       placeholder: 'Enter subjects separated by commas',
-      type: 'list',
+      list: true,
       autocompleteUrl: subjectAutocomplete
     },
     {
@@ -134,13 +134,13 @@ $.ajaxSetup({
     {
       name: 'anchorTranslation',
       label: 'Anchor text translation',
-      size: 'textarea',
+      size: 'textarea'
     },
     {
       name: 'anchorLanguages',
       label: 'Anchor language(s)',
       placeholder: 'Enter languages separated by commas...',
-      type: 'list',
+      list: true,
       autocompleteUrl: languageAutocomplete
     }
   ]

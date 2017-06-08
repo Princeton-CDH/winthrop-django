@@ -67,7 +67,7 @@ var winthrop = {
         // set the annotation object with an empty string
         annotation[conf.name] = '';
         if (input.val() != '') {
-          if (conf.type == 'list') {
+          if (conf.list) {
             values = input.val().split(',');
             for (i in values) {
               // set an array of values, trimming any stray commas
@@ -89,7 +89,7 @@ var winthrop = {
         // If the property exists on the object and isn't a falsy value
         // use the type property to determine how to set the field values
         if (annotation[conf.name] || annotation[conf.name == 0]) {
-          if (conf.type == 'list') {
+          if (conf.list) {
             input.val(annotation[conf.name].join(', '));
           } else {
             input.val(annotation[conf.name]);
@@ -121,11 +121,11 @@ var winthrop = {
         // Add the load and submit functions now that
         // we have an input DOM object
         // field will always be last added to array
-        fields[fields.length-1].load = makeUpdateField(confs[i], input);
-        fields[fields.length-1].submit = makeSetField(confs[i], input);
+        fields[fields.length - 1].load = makeUpdateField(confs[i], input);
+        fields[fields.length - 1].submit = makeSetField(confs[i], input);
 
         // Give a label field to the input too
-        input.parent().prepend('<label class="field-label">'+confs[i].label+'</label>');
+        input.parent().prepend('<label class="field-label">' + confs[i].label + '</label>');
 
         /*
         The following code does the following:
@@ -142,7 +142,7 @@ var winthrop = {
         }
 
         function makeSearchFunction(conf) {
-        // Configure the ajax query using GET shorthand
+          // Configure the ajax query using GET shorthand
           return function(request, response) {
             term = parseRecent(request.term);
             // autoCompleteUrl from conf function
@@ -160,64 +160,51 @@ var winthrop = {
                 }));
               });
           }
-      }
+        }
 
-      // Function that triggers on select to add an item to a list
-      function SelectFunc(obj, ui) {
+        // Function that triggers on select to add an item to a list
+        function SelectFunc(obj, ui) {
           var val = obj.val();
           // comma list style handling
-            if (val.indexOf(',') == -1) {
-              val = ui.item.value + ', ';
-            } else {
-              val = val.replace(/,[^,]+$/, "") + ", " + ui.item.value + ', ';
-            }
-        // Regardless, set the object
-        obj.val(val);
-      }
+          if (val.indexOf(',') == -1) {
+            val = ui.item.value + ', ';
+          } else {
+            val = val.replace(/,[^,]+$/, "") + ", " + ui.item.value + ', ';
+          }
+          // Regardless, set the object
+          obj.val(val);
+        }
 
         // Actually configure and bind the autocomplete
         if (confs[i].autocompleteUrl) {
-          if (confs[i].name != 'author') {
+          input.autocomplete({
+            source: makeSearchFunction(confs[i]),
+            minLength: 0,
+            focus: function(event, ui) {
+              event.preventDefault();
+            },
+            open: function(event, ui) {
+              // annotator purposely sets the editor at a very high z-index;
+              // set autocomplete still higher so it isn't obscured by annotator buttons
+              $('.ui-autocomplete')
+                .css('z-index', $('.annotator-editor').css('z-index') + 1);
+            },
+          })
+
+          if (confs[i].list) {
             input.autocomplete({
-              source: makeSearchFunction(confs[i]),
-              minLength: 0,
               select: function(event, ui) {
                 SelectFunc($(this), ui);
                 event.preventDefault();
-              },
-              focus: function(event, ui) {
-                event.preventDefault();
-              },
-              open: function(event, ui) {
-                // annotator purposely sets the editor at a very high z-index;
-                // set autocomplete still higher so it isn't obscured by annotator buttons
-                $('.ui-autocomplete')
-                  .css('z-index', $('.annotator-editor').css('z-index') + 1);
-              },
+              }
             });
           }
-          // Special handling for author as the odd field out
-          // since it's not a parsed list
-          else {
-            input.autocomplete({
-              source: makeSearchFunction(confs[i]),
-              minLength: 0,
-              focus: function(event, ui) {
-                event.preventDefault();
-              },
-              open: function(event, ui) {
-                // annotator purposely sets the editor at a very high z-index;
-                // set autocomplete still higher so it isn't obscured by annotator buttons
-                $('.ui-autocomplete')
-                  .css('z-index', $('.annotator-editor').css('z-index') + 1);
-              },
-            });
-          }
+
           // Bind a element to make the autocomplete window pop up on focus
-          input.bind('focus', function () {
+          input.bind('focus', function() {
             $(this).autocomplete("search");
           })
-      }
+        }
 
       }
     }
