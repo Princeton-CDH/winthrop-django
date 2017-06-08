@@ -89,10 +89,13 @@ $.ajaxSetup({
         };
     };
 
-  
-  var languageAutocomplete = "{% url 'books:language-autocomplete' %}"
-  var annotatorAutocomplete = "{% url 'people:autocomplete' 'annotator' %}"
-  var subjectAutocomplete = "{% url 'books:subject-autocomplete' %}"
+  var autocomplete_url = {
+    language: "{% url 'books:language-autocomplete' %}",
+    annotator: "{% url 'people:autocomplete' 'annotator' %}",
+    subject:  "{% url 'books:subject-autocomplete' %}",
+    tag: "{% url 'tag-autocomplete' %}"
+  };
+
   var confs = [
     { name: 'translation',
       label: 'Translation',
@@ -100,23 +103,23 @@ $.ajaxSetup({
     },
     {
       name: 'languages',
-      label: 'Languages(s)',
+      label: 'Languages',
       placeholder: 'Type or click to select languages',
       list: true,
-      autocompleteUrl: languageAutocomplete
+      autocompleteUrl: autocomplete_url.language
     },
     {
       name: 'author',
       label: 'Annotator',
       placeholder: 'Type or click to select annotator',
-      autocompleteUrl: annotatorAutocomplete
+      autocompleteUrl: autocomplete_url.annotator
     },
     {
       name: 'subjects',
       label: 'Subjects',
       placeholder: 'Type or click to select subjects',
       list: true,
-      autocompleteUrl: subjectAutocomplete
+      autocompleteUrl: autocomplete_url.subject
     },
     {
       name: 'quote',
@@ -125,15 +128,15 @@ $.ajaxSetup({
     },
     {
       name: 'anchor_translation',
-      label: 'Anchor translation',
+      label: 'Anchor text translation',
       size: 'textarea'
     },
     {
       name: 'anchor_languages',
-      label: 'Anchor language(s)',
+      label: 'Anchor text languages',
       placeholder: 'Type or click to select languages',
       list: true,
-      autocompleteUrl: languageAutocomplete
+      autocompleteUrl: autocomplete_url.language
     }
   ]
   var marginalia_opts = {
@@ -197,8 +200,8 @@ $.ajaxSetup({
   app.ident.is_superuser = {{ request.user.is_superuser|lower }}
 
   // Bind tag autocomplete and add more useful label
-  resetTagAutocomplete("{% url 'tag-autocomplete' %}", "#annotator-field-1");
-  // Replace comment text (card text is handled in render method of plugin)
+  resetTagAutocomplete(autocomplete_url.tag, "#annotator-field-1");
+  // Replace cmment text (card text is handled in render method of plugin)
   fixComment('#annotator-field-0');
 });
 

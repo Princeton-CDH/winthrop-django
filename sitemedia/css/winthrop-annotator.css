@@ -1,5 +1,24 @@
-.annotator-anchortext {
-  border-top: 1px solid #e4e4e4;
+/* local overrides for annotator.js editor and annotator marginalia display */
+
+/* tweak some djiffy/annotator styles for display */
+.inner {
+  display: inline-block; /* match page image size exactly */
+}
+.margin-container-show aside.margin-container { right: -5px;}
+.marginalia-item > div {
+    padding-left: 20px;
+}
+.marginalia-item label {
+    padding-right: 5px;
+}
+
+
+/* set anchor text fields apart */
+.annotator-quote {
+  border-top: double;
+}
+.annotator-quote, *[class^="annotator-anchor_"] {
+  background-color: #efefef;
 }
 
 /* This styles the labels for annotator editor fields.
@@ -12,7 +31,7 @@
   text-align: right !important;
   color: black !important;
   font-weight: bold !important;
-  background: lightgrey !important;
+  background: lightgray !important;
   height: 2px;
   width: 100% !important;
 }

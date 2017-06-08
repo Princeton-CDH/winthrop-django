@@ -1,23 +1,8 @@
 {% extends 'djiffy/canvas_detail.html' %}
 {% load static %}
 {% block css %}
-<style type="text/css">
-{# tweak some djiffy/annotator styles for display #}
-.inner { display: inline-block; } {# match page image size exactly #}
-.margin-container-show aside.margin-container { right: -5px;}
-.marginalia-item > div {
-    padding-left: 20px;
-}
-.marginalia-item label {
-    padding-right: 5px;
-}
-</style>
-
-{# Add the overrides for the annotator in Winthrop #}
-<link rel='stylesheet'
-  type='text/css'
-  href='{% static "css/winthrop-annotator-overrides.css" %}' />
-
+{# Include local style overrides for the annotator in Winthrop #}
+<link rel='stylesheet' type='text/css' href='{% static "css/winthrop-annotator.css" %}' />
 {% endblock %}
 
 {% block javascript %}
