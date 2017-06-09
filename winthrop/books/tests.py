@@ -411,8 +411,6 @@ class TestBookViews(TestCase):
         data = json.loads(result.content.decode('utf-8'))
         assert data['results'][0]['text'] == 'Chronology'
 
-    # FIXME: this test is failing on travis-ci; why?
-    @pytest.mark.skip
     def test_canvas_autocomplete(self):
         canvas_autocomplete_url = reverse('books:canvas-autocomplete')
 
@@ -428,11 +426,11 @@ class TestBookViews(TestCase):
         result = self.client.get(canvas_autocomplete_url, {'q': '000150'})
         assert result.status_code == 200
         data = json.loads(result.content.decode('utf-8'))
-        assert data['results'][0]['id'] == 10465
+        assert data['results'][0]['id'] == '10465'
         # search by partial uri
         result = self.client.get(canvas_autocomplete_url, {'q': 'pqn59s484h'})
         data = json.loads(result.content.decode('utf-8'))
-        assert data['results'][0]['id'] == 10465
+        assert data['results'][0]['id'] == '10465'
 
 
 class TestWinthropManifestImporter(TestCase):
