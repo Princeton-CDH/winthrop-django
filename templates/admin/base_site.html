@@ -20,6 +20,11 @@
     {{ block.super }}
  {% endblock %}
 
+{% block javascripts %}
+ {# Include Google Analytics code if SHOW_ANALYTICS is enabled #}
+ {% include 'snippets/analytics.html' %}
+{% endblock%}
+
 {% block extrastyle %}
     <link rel="stylesheet" type="text/css" href="{% static "css/local.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% static "css/test-banner.css" %}" />

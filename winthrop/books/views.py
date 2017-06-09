@@ -14,13 +14,10 @@ class PublisherAutocomplete(autocomplete.Select2QuerySetView):
 
 
 class CanvasAutocomplete(autocomplete.Select2QuerySetView):
-    # basic publisher autocomplete lookup, based on
-    # django-autocomplete-light tutorial
-    # restricted to staff only in url config
-
+    '''Canvas lookup for admin interface'''
     def get_queryset(self):
         return Canvas.objects.filter(
-            Q(name__icontains=self.q) |
+            Q(label__icontains=self.q) |
             Q(uri__contains=self.q)
         )
 

@@ -76,10 +76,8 @@ class Command(BaseCommand):
 
         # all books will be catalogued with NYSL, so look for
         # owning instution object first
-        try:
-            self.nysl = OwningInstitution.objects.get(short_name='NYSL')
-        except OwningInstitution.DoesNotExist:
-            raise CommandError("Owning institution NYSL was not found")
+        # (no need to check because NYSL is preloaded by migrations)
+        self.nysl = OwningInstitution.objects.get(short_name='NYSL')
 
         self.stats = defaultdict(int)
         if not kwargs['just_sammel']:

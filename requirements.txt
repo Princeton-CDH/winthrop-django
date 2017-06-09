@@ -1,4 +1,4 @@
-django
+django>=1.11
 mysqlclient
 django-grappelli
 django-autocomplete-light
@@ -9,4 +9,4 @@ git+https://github.com/Princeton-CDH/django-pucas.git@0.5#egg=pucas
 git+https://github.com/Princeton-CDH/piffle.git@feature/python3-compatibility#egg=piffle
 # ditty for develop branch of djiffy
 git+https://github.com/Princeton-CDH/djiffy.git@develop#egg=djiffy
-git+https://github.com/Princeton-CDH/django-annotator-store.git@feature/optional-permissions#egg=annotator_store
+git+https://github.com/Princeton-CDH/django-annotator-store.git@develop#egg=annotator_store

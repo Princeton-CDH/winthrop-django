@@ -1,7 +1,5 @@
 import json
 import os
-import pytest
-import rdflib
 import requests
 from unittest.mock import patch
 
@@ -10,13 +8,15 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.urls import reverse
-
+from django.utils import safestring
+import rdflib
 
 from winthrop.books.models import Book, PersonBook, PersonBookRelationshipType
 from winthrop.places.models import Place
 from .models import Person, Residence, RelationshipType, Relationship
 from .viaf import ViafAPI, ViafEntity
-from rdflib import Graph
+from .admin import ViafWidget
+
 
 # Get the fixtures dir for this app
 FIXTURES_PATH = os.path.join(settings.BASE_DIR, 'winthrop', 'people', 'fixtures')
@@ -115,7 +115,7 @@ class TestResidence(TestCase):
         assert '%s %s' % (self.person, self.place) == str(self.res)
         # include date if there is one
         self.res.start_year = 1900
-        assert '%s %s (%s)' % (self.person, self.place, self.res.dates)
+        assert '%s %s (1900-)' % (self.person, self.place)
 
 
 class TestRelationshipType(TestCase):
@@ -178,7 +178,7 @@ class TestViafAPI(TestCase):
         with open(fixture_file, 'r') as fixture:
             self.mock_rdf = fixture.read()
 
-        graph = Graph()
+        graph = rdflib.Graph()
         self.empty_rdf = graph.serialize()
 
     @patch('winthrop.people.viaf.requests')
@@ -263,6 +263,25 @@ class TestViafAutoSuggest(TestCase):
         assert data['id'] == 'http://viaf.org/viaf/102333412'
         assert data['text'] == 'Austen, Jane, 1775-1817'
 
+        # test that non-personal names are filtered out
+        mock_response = [{
+            "term": "Jersey",
+            "displayForm": "Jersey",
+            "nametype": "geographic",
+            "lc": "n79086822",
+            "dnb": "000438200",
+            "selibr": "149410",
+            "bne": "xx5289012",
+            "viafid": "142485803",
+            "score": "2567",
+            "recordID": "142485803"
+        }]
+        mockviafapi.return_value.suggest.return_value = mock_response
+        result = self.client.get(viaf_autosuggest_url, {'q': 'jersey'})
+        # should return an empty list because no personal names were returned
+        data = json.loads(result.content.decode('utf-8'))
+        assert not data['results']
+
 
 class TestViafEntity(TestCase):
 
@@ -345,8 +364,30 @@ class TestPersonViews(TestCase):
         laski = Person.objects.get(authorized_name__icontains='Jan')
         PersonBook.objects.create(book=Book.objects.get(pk=1), person=laski,
             relationship_type=PersonBookRelationshipType.objects.get(pk=1))
-        result = self.client.get(pub_autocomplete_url,
-            {'q': 'a', 'winthrop': True})
+        annotator_url = reverse('people:autocomplete', args=['annotator'])
+        result = self.client.get(annotator_url, {'q': 'Jan'})
         data = json.loads(result.content.decode('utf-8'))
-        # Jan should come first
+        # Jan should be listed but Abelin shouldn't even be listed
         assert data['results'][0]['text'] == laski.authorized_name
+        assert len(data['results']) == 1
+
+
+class TestViafWidget(TestCase):
+
+    def test_render(self):
+        widget = ViafWidget()
+        # no value set - should not error
+        rendered = widget.render('person', None, {'id': 123})
+        assert '<p><br /><a id="viaf_uri" target="_blank" href=""></a></p>' \
+            in rendered
+        # rendered widget includes help text
+        assert 'will automatically set the birth' in rendered
+        # test marked as "safe"?
+
+        # uri value set - should be included in generated link
+        uri = 'http://viaf.org/viaf/13103985/'
+        rendered = widget.render('person', uri, {'id': 1234})
+        assert '<a id="viaf_uri" target="_blank" href="%(uri)s">%(uri)s</a>' \
+            % {'uri': uri} in rendered
+
+

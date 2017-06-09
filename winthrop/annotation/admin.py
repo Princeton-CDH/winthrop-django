@@ -5,7 +5,7 @@ from dal import autocomplete
 from djiffy.models import Canvas
 from annotator_store.admin import AnnotationAdmin
 
-from .models import Annotation, AnnotationSubject, AnnotationTag, Tag
+from .models import Annotation, Tag
 
 
 class CollapsibleTabularInline(admin.TabularInline):
@@ -25,9 +25,13 @@ class CanvasLinkWidget(autocomplete.ModelSelect2):
 
     def render(self, name, value, attrs=None):
         widget = super(CanvasLinkWidget, self).render(name, value, attrs)
+        # if no canvas id is set, return widget as is
+        if not value:
+            return widget
+
+        # otherwise, add a link to view the canvas on the site;
+        # borrowing grappelli style for main "view on site" button
         canvas = Canvas.objects.get(id=value)
-        # add a link to view the canvas on the site; borrowing grappelli
-        # styltexes for main "view on site" button
         return mark_safe(u'''%s
             <ul class="canvas-link grp-object-tools">
                 <li><a href="%s" target="_blank" class="grp-state-focus">View canvas on site</a>
@@ -43,6 +47,7 @@ class AnnotationAdminForm(forms.ModelForm):
         labels = {
             # the quoted text in standard annotator.js parlance is the anchor
             # text for our annotation/marginalia
+            'tags': 'Annotation type',
             'quote': 'Anchor text',
         }
         widgets = {
@@ -54,25 +59,16 @@ class AnnotationAdminForm(forms.ModelForm):
                 attrs={'data-placeholder': 'Start typing canvas name or uri to search...'}),
 
         }
-        fields = ('text', 'text_translation', 'user', 'extra_data', 'canvas',
-            'author', 'quote', 'anchor_translation', 'uri')
+        fields = ('text', 'tags', 'text_translation', 'languages',
+                  'subjects', 'canvas', 'author', 'quote', 'anchor_translation',
+                  'anchor_languages', 'user', 'extra_data', 'uri')
 
-
-class SubjectInline(CollapsibleTabularInline):
-    model = AnnotationSubject
-    fields = ('subject', 'is_primary', 'notes')
-
-
-class TagInline(CollapsibleTabularInline):
-    model = AnnotationTag
-    fields = ('tag', 'notes')
 
 class WinthropAnnotationAdmin(AnnotationAdmin):
     form = AnnotationAdminForm
-    inlines = [SubjectInline, TagInline]
     list_display = ('text_preview', 'author', 'canvas', 'admin_thumbnail')
     # NOTE: 'quote' == anchor text, and should be editable
-    readonly_fields = ('uri',)  #  maybe also 'extra_data' ?
+    readonly_fields = ('uri', 'extra_data')
 
 
 admin.site.unregister(Annotation)

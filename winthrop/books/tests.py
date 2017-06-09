@@ -1,24 +1,23 @@
 from collections import defaultdict
 import csv
+from io import StringIO
+import json
+from unittest.mock import patch
+import os
+
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.utils.safestring import mark_safe
 from django.test import TestCase
-try:
-    # django 1.10
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
-import json
-from unittest.mock import patch
-import os
-from io import StringIO
+from django.urls import reverse
 from djiffy.models import Manifest
+import pytest
 
 from winthrop.places.models import Place
 from winthrop.people.models import Person
 from .models import OwningInstitution, Book, Publisher, Catalogue, \
-    Creator, CreatorType
+    Creator, CreatorType, Subject, BookSubject, Language, BookLanguage, \
+    PersonBook, PersonBookRelationshipType
 from .management.commands import import_nysl, import_digitaleds
 
 
@@ -146,6 +145,16 @@ class TestBook(TestCase):
         assert Creator.objects.filter(creator_type__name='Translator',
             person=abelin, book=de_christelicke).count() == 1
 
+    def test_is_digitized(self):
+        # is digitized property based on digital edition
+        de_christelicke = Book.objects.get(short_title__contains="De Christelicke")
+        # no digital edition associated
+        assert not de_christelicke.is_digitized()
+
+        # add digital edition
+        de_christelicke.digital_edition = Manifest.objects.first()
+        assert de_christelicke.is_digitized()
+
 
 class TestCatalogue(TestCase):
 
@@ -169,11 +178,58 @@ class TestCatalogue(TestCase):
         cat.start_year = 1891
         assert '%s / %s (1891-)' % (bk, inst) == str(cat)
 
+## tests for through models
 
-# TODO: do we want/need tests for through models?
-# book-subject, book-language, creator, person-book
-# Expect to have more sophisticated/meaningful things to test
-# as we add functionality.
+class TestBookSubject(TestCase):
+    fixtures = ['sample_book_data.json']
+
+    def test_str(self):
+        book = Book.objects.first()
+        subj = Subject.objects.first()
+        # non-primary subject
+        bksubj = BookSubject(book=book, subject=subj)
+        assert str(bksubj) == '%s %s' % (book, subj)
+        # primary subject
+        bksubj.is_primary = True
+        assert str(bksubj) == '%s %s (primary)' % (book, subj)
+
+
+class TestBookLanguage(TestCase):
+    fixtures = ['sample_book_data.json']
+
+    def test_str(self):
+        book = Book.objects.first()
+        lang = Language.objects.first()
+        # non-primary language
+        bklang = BookLanguage(book=book, language=lang)
+        assert str(bklang) == '%s %s' % (book, lang)
+        # primary subject
+        bklang.is_primary = True
+        assert str(bklang) == '%s %s (primary)' % (book, lang)
+
+
+class TestCreator(TestCase):
+    fixtures = ['sample_book_data.json']
+
+    def test_str(self):
+        creator = Creator.objects.first()
+        assert str(creator) == \
+            '%s %s %s' % (creator.person, creator.creator_type, creator.book)
+
+
+class TestPersonBook(TestCase):
+    fixtures = ['sample_book_data.json']
+
+    def test_str(self):
+        interaction = PersonBook(person=Person.objects.first(),
+            book=Book.objects.first(),
+            relationship_type=PersonBookRelationshipType.objects.first())
+        # no dates set
+        expected_str = '%s: %s of %s' % (interaction.person, interaction.relationship_type, interaction.book)
+        assert str(interaction) == expected_str
+        # with date
+        interaction.start_year = 1901
+        assert str(interaction) == '%s (1901-)' % expected_str
 
 
 @patch('winthrop.people.models.Person.set_birth_death_years')  # skip viaf
@@ -322,6 +378,59 @@ class TestBookViews(TestCase):
         # decode response to inspect
         data = json.loads(result.content.decode('utf-8'))
         assert data['results'][0]['text'] == 'E. van der Erve'
+
+    def test_language_autocomplete(self):
+        language_autocomplete_url = reverse('books:language-autocomplete')
+        result = self.client.get(language_autocomplete_url,
+            params={'q': 'latin'})
+        # not allowed to anonymous user
+        assert result.status_code == 302
+
+        # login as an admin user
+        self.client.login(username=self.admin.username, password=self.password)
+
+        result = self.client.get(language_autocomplete_url, {'q': 'lat'})
+        assert result.status_code == 200
+        # decode response to inspect
+        data = json.loads(result.content.decode('utf-8'))
+        assert data['results'][0]['text'] == 'Latin'
+
+    def test_subject_autocomplete(self):
+        subject_autocomplete_url = reverse('books:subject-autocomplete')
+        result = self.client.get(subject_autocomplete_url,
+            params={'q': 'chron'})
+        # not allowed to anonymous user
+        assert result.status_code == 302
+
+        # login as an admin user
+        self.client.login(username=self.admin.username, password=self.password)
+
+        result = self.client.get(subject_autocomplete_url, {'q': 'chron'})
+        assert result.status_code == 200
+        # decode response to inspect
+        data = json.loads(result.content.decode('utf-8'))
+        assert data['results'][0]['text'] == 'Chronology'
+
+    def test_canvas_autocomplete(self):
+        canvas_autocomplete_url = reverse('books:canvas-autocomplete')
+
+        result = self.client.get(canvas_autocomplete_url,
+            params={'q': '00000150'})
+        # not allowed to anonymous user
+        assert result.status_code == 302
+
+        # login as an admin user
+        self.client.login(username=self.admin.username, password=self.password)
+
+        # search by partial label
+        result = self.client.get(canvas_autocomplete_url, {'q': '000150'})
+        assert result.status_code == 200
+        data = json.loads(result.content.decode('utf-8'))
+        assert data['results'][0]['id'] == '10465'
+        # search by partial uri
+        result = self.client.get(canvas_autocomplete_url, {'q': 'pqn59s484h'})
+        data = json.loads(result.content.decode('utf-8'))
+        assert data['results'][0]['id'] == '10465'
 
 
 class TestWinthropManifestImporter(TestCase):

@@ -10,7 +10,7 @@
 
 */
 
-var bindTagAutocomplete = function(autocomplete_url, id_string) {
+var resetTagAutocomplete = function(autocomplete_url, id_string) {
   // Function to parse a list of tags and only autocomplete on what's after the
   // comma.
   var parseRecentTag = function(str) {
@@ -38,11 +38,12 @@ var bindTagAutocomplete = function(autocomplete_url, id_string) {
   // Bind an autocomplete to tags field
       $(id_string).autocomplete({
           source: tagAutocompleteSearch,
+          minLength: 0,
           focus: function(event, ui) {
             event.preventDefault();
           },
           select: function(event, ui) {
-            var val = $('#annotator-field-1').val()
+            var val = $(id_string).val()
             if (val.indexOf(',') == -1) {
               val = ui.item.value + ', ';
             } else {
@@ -59,4 +60,12 @@ var bindTagAutocomplete = function(autocomplete_url, id_string) {
               $('.ui-autocomplete').css('z-index', $('.annotator-editor').css('z-index') + 1);
           },
       });
+
+      $(id_string).bind('focus', function () {
+        $(this).autocomplete("search");
+      });
+
+      var parent = $(id_string).parent()
+      $(id_string).parent().prepend('<label class="field-label">Annotation type</label>');
+
 }

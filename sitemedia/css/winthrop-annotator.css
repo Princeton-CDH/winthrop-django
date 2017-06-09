@@ -1,0 +1,47 @@
+/* local overrides for annotator.js editor and annotator marginalia display */
+
+/* tweak some djiffy/annotator styles for display */
+.inner {
+  display: inline-block; /* match page image size exactly */
+}
+.margin-container-show aside.margin-container { right: -5px;}
+.marginalia-item > div {
+    padding-left: 20px;
+}
+.marginalia-item label {
+    padding-right: 5px;
+}
+
+
+/* set anchor text fields apart */
+.annotator-quote {
+  border-top: double;
+}
+.annotator-quote, *[class^="annotator-anchor_"] {
+  background-color: #efefef;
+}
+
+/* This styles the labels for annotator editor fields.
+   The !important labels are meant to make sure marginalia doesn't override
+   fields it sets.
+*/
+.field-label {
+  position: relative;
+  right: 0px;
+  text-align: right !important;
+  color: black !important;
+  font-weight: bold !important;
+  background: lightgray !important;
+  height: 2px;
+  width: 100% !important;
+}
+
+/*
+  Override for jQuery autocomplete menu. Creates a box-shadow to highlight the
+  autocomplete menu when it appears.
+*/
+.ui-menu {
+      box-shadow: 0px 0px 10px blue;
+      -moz-box-shadow: 0px 0px 10px blue;
+      -webkit-box-shadow: 0px 0px 10px blue;
+}

@@ -47,9 +47,13 @@ var author = {
             // initialize input value & id when annotation.author is present
             if (annotation.author) {
                 input.val(annotation.author.name)
-                     .attr('data-author-id', annotation.author.id)
+                     .attr('data-author-id', annotation.author.id);
             } else {
-                input.val('').removeAttr('data-author-id');
+            // TODO: Better way to flag help?  
+                input.val('').removeAttr('data-author-id').
+                  attr('placeholder',
+                  'Author (type to autocomplete from people associated with books)'
+                  );
             }
 
             // configure autocomplete to look up authors from persons in the db

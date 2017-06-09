@@ -13,15 +13,13 @@ class ViafAutoSuggest(autocomplete.Select2ListView):
         """Return JSON with suggested VIAF ids and display names."""
         viaf = ViafAPI()
         result = viaf.suggest(self.q)
-        # Strip names that are not personal
-        for item in result:
-            if item['nametype'] is not 'personal':
-                del item
+
         return JsonResponse({
             'results': [dict(
                 id=viaf.uri_from_id(item['viafid']),
                 text=(item['displayForm']),
-            ) for item in result],
+            # exclude any names that are not personal
+            ) for item in result if item['nametype'] == 'personal'],
         })
 
 
@@ -34,8 +32,10 @@ class PersonAutocomplete(autocomplete.Select2QuerySetView):
     # NOTE staff restrection applied in url config
 
     def get_queryset(self):
-        winthrop_only = self.request.GET.get('winthrop', None)
+        annotator_only = ''
+        if len(self.args) > 0:
+            annotator_only = self.args[0]
         people = Person.objects.filter(authorized_name__icontains=self.q)
-        if winthrop_only:
+        if annotator_only == 'annotator':
                 people = people.filter(personbook__isnull=False)
         return people

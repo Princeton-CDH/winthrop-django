@@ -8,7 +8,7 @@ from winthrop.books.views import PublisherAutocomplete, CanvasAutocomplete, \
 urlpatterns = [
     url(r'^autocomplete/publisher/$', staff_member_required(PublisherAutocomplete.as_view()),
         name='publisher-autocomplete'),
-    url(r'^canvas/publisher/$', staff_member_required(CanvasAutocomplete.as_view()),
+    url(r'^autocomplete/canvas/$', staff_member_required(CanvasAutocomplete.as_view()),
         name='canvas-autocomplete'),
     url(r'^autocomplete/language/$', staff_member_required(LanguageAutocomplete.as_view()),
         name='language-autocomplete'),
