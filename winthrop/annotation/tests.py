@@ -319,6 +319,7 @@ class TestCanvasLinkWidget(TestCase):
 
 
 class TestAnnotationViews(TestCase):
+    fixtures = ['sample_book_data.json']
 
     def setUp(self):
         # create an admin user to test autocomplete views
@@ -342,8 +343,33 @@ class TestAnnotationViews(TestCase):
         data = json.loads(result.content.decode('utf-8'))
         assert data['results'][0]['text'] == 'cipher'
 
+    def test_canvas_detail(self):
+        # canvas detail logic is tested in djiffy,
+        # but test local customization to catch any
+        # breaks in the template rendering
+        canvas = Canvas.objects.all().first()
+        canvas_url = reverse('djiffy:canvas',
+            kwargs={'manifest_id': canvas.manifest.short_id, 'id': canvas.short_id})
+        response = self.client.get(canvas_url)
+        self.assertTemplateUsed(response, 'djiffy/canvas_detail.html')
+        self.assertNotContains(response, 'annotator.min.js',
+            msg_prefix='Annotator not enabled for user without annotation add permission')
 
-# TODO: should probably have tests for customized djiffy canvas detail view,
-# at least to check that appropriate autocomplete urls are included
-# and the page renders
+        # login as an admin user
+        self.client.login(username=self.admin.username, password=self.password)
+        response = self.client.get(canvas_url)
+        self.assertContains(response, 'css/winthrop-annotator.css',
+            msg_prefix='canvas detail page includes local annotator styles')
+        # check that expected autocomplete urls are present
+        self.assertContains(response, reverse('books:language-autocomplete'),
+            msg_prefix='annotator init includes language autocomplete url')
+        self.assertContains(response, reverse('books:subject-autocomplete'),
+            msg_prefix='annotator init includes subject autocomplete url')
+        self.assertContains(response, reverse('people:autocomplete', args=['annotator']),
+            msg_prefix='annotator init includes annotator autocomplete url')
+        self.assertContains(response, reverse('annotation:tag-autocomplete'),
+            msg_prefix='annotator init includes tag autocomplete url')
+        self.assertContains(response,
+            'app.ident.identity = "%s";' % self.admin.username,
+            msg_prefix='Logged in user username passed to annotator')
 
