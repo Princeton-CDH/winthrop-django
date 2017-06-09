@@ -93,7 +93,7 @@ $.ajaxSetup({
     language: "{% url 'books:language-autocomplete' %}",
     annotator: "{% url 'people:autocomplete' 'annotator' %}",
     subject:  "{% url 'books:subject-autocomplete' %}",
-    tag: "{% url 'tag-autocomplete' %}"
+    tag: "{% url 'annotation:tag-autocomplete' %}"
   };
 
   var confs = [

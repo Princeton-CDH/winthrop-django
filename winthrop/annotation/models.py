@@ -1,15 +1,17 @@
-
+from annotator_store.models import BaseAnnotation
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.http.request import HttpRequest
 from django.utils.safestring import mark_safe
-from annotator_store.models import BaseAnnotation
+from django.urls import reverse
 from djiffy.models import Canvas
+
 from winthrop.common.models import Named, Notable
 from winthrop.people.models import Person
 from winthrop.books.models import Subject, Language
 
 
+# FIXME: is this actually used/needed anywhere?
 class AnnotationCount(models.Model):
     '''Mix-in for models related to annotations; adds annotation count property
     and link to associated annotations'''
@@ -173,5 +175,3 @@ class Annotation(BaseAnnotation):
     admin_thumbnail.short_description = 'Thumbnail'
     admin_thumbnail.allow_tags = True
 
-    def __str__(self):
-        return '%s' % (self.text)

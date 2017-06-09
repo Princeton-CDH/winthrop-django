@@ -13,15 +13,13 @@ class ViafAutoSuggest(autocomplete.Select2ListView):
         """Return JSON with suggested VIAF ids and display names."""
         viaf = ViafAPI()
         result = viaf.suggest(self.q)
-        # Strip names that are not personal
-        for item in result:
-            if item['nametype'] is not 'personal':
-                del item
+
         return JsonResponse({
             'results': [dict(
                 id=viaf.uri_from_id(item['viafid']),
                 text=(item['displayForm']),
-            ) for item in result],
+            # exclude any names that are not personal
+            ) for item in result if item['nametype'] == 'personal'],
         })
 
 

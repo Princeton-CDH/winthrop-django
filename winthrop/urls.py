@@ -24,11 +24,12 @@ urlpatterns = [
     url(r'^places/', include('winthrop.places.urls', namespace='places')),
     url(r'^books/', include('winthrop.books.urls', namespace='books')),
     url(r'^iiif-books/', include('djiffy.urls', namespace='djiffy')),
-    # annotations
+    # annotations api
     url(r'^annotations/api/', include('annotator_store.urls', namespace='annotation-api')),
     # annotatorjs doesn't handle trailing slash in api prefix url
     url(r'^annotations/api', annotator_views.AnnotationIndex.as_view(), name='annotation-api-prefix'),
-    url(r'^annotations/autocomplete/tag/$', staff_member_required(TagAutocomplete.as_view()), name='tag-autocomplete'),
+    # local annotation urls
+    url(r'^annotations/', include('winthrop.annotation.urls', namespace='annotation')),
 ]
 
 if settings.DEBUG:

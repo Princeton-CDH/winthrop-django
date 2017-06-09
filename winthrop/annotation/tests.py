@@ -1,8 +1,15 @@
+import json
+from unittest.mock import Mock, patch
+
+from django.contrib.auth import get_user_model
 from django.test import TestCase
-from unittest.mock import Mock
+from django.urls import reverse
+from djiffy.models import Manifest, Canvas
 
 from .models import Annotation, Tag
-from winthrop.books.models import Book, Language, PersonBook, PersonBookRelationshipType
+from .admin import CanvasLinkWidget
+from winthrop.books.models import Book, Language, PersonBook, \
+    PersonBookRelationshipType
 from winthrop.people.models import Person
 
 
@@ -15,6 +22,27 @@ class TestAnnotation(TestCase):
         self.author = Person.objects.create(authorized_name='Bar, Foo')
         self.pb = PersonBook.objects.create(book=book, person=self.author,
             relationship_type=PersonBookRelationshipType.objects.get(pk=1))
+
+    def test_save(self):
+        # canvas automatically associated by uri on save
+        manif = Manifest.objects.create()
+        canvas = Canvas.objects.create(uri='http://so.me/iiif/id/',
+            order=0, manifest=manif)
+        note = Annotation.objects.create(uri=canvas.uri)
+        assert note.canvas == canvas
+
+        # how to check that canvas db lookup is skipped when not needed?
+        with patch('winthrop.annotation.models.Canvas') as mockcanvas:
+            mockcanvas.DoesNotExist = Canvas.DoesNotExist
+            note.save()
+            mockcanvas.objects.get.assert_not_called()
+
+            # if uri changes, canvas should be cleared
+            mockcanvas.objects.get.side_effect = Canvas.DoesNotExist
+            note.uri = 'http://some.thing/else'
+            note.save()
+            assert not note.canvas
+            mockcanvas.objects.get.assert_called_with(uri=note.uri)
 
 
     def test_handle_extra_data(self):
@@ -140,6 +168,23 @@ class TestAnnotation(TestCase):
         # check that copy dict is empty
         assert not copy
 
+        # test setting subjects (including not setting a subject not in database)
+        subjects = ['Phrenology', 'Chronology', 'Commentary']
+        annotation.handle_extra_data({'subjects': subjects}, Mock())
+        assert annotation.subjects.count() == 2
+        assoc_subjects = [subject.name for subject in
+                      annotation.subjects.all()]
+        # test subject names against expected from list (all but first)
+        # (using set to compare without order)
+        assert set(assoc_subjects) == set(subjects[1:])
+        subjects = ['Commentary']
+        annotation.handle_extra_data({'subjects': subjects}, Mock())
+        # Chronology should have been removed
+        assert annotation.subjects.count() == 1
+        assoc_subjects = [subject.name for subject in
+                           annotation.subjects.all()]
+        assert 'Chronology' not in assoc_subjects
+
     def test_info(self):
         annotation = Annotation.objects.create()
         # tags should be an empty list when none are set
@@ -190,6 +235,52 @@ class TestAnnotation(TestCase):
         assert annotation.info()['translation'] == text_dict['text_translation']
         assert annotation.info()['anchor_translation'] == text_dict['anchor_translation']
 
+    def test_iiif_image_selection(self):
+        annotation = Annotation()
+        # no canvas or image selection
+        assert not annotation.iiif_image_selection()
+
+        annotation.canvas = Canvas()
+        # canvas set but no image region
+        assert not annotation.iiif_image_selection()
+
+        # both canvas and image region set
+        annotation.extra_data['image_selection'] = {
+            'x': "21.58%",
+            'y': "49.40%",
+            'h': "13.50%",
+            'w': "24.68%"
+        }
+        img = annotation.iiif_image_selection()
+        # should return a piffle iiif image object
+        assert img
+        iiif_region_info = img.region.as_dict()
+        assert iiif_region_info['percent']
+        assert iiif_region_info['x'] == 21.58
+        assert iiif_region_info['y'] == 49.4
+        assert iiif_region_info['width'] == 24.68
+        assert iiif_region_info['height'] == 13.5
+
+    def test_admin_thumbnail(self):
+        annotation = Annotation()
+        # no canvas or image selection
+        assert not annotation.admin_thumbnail()
+
+        annotation.canvas = Canvas()
+        # canvas set but no image region
+        assert annotation.admin_thumbnail() == \
+            '<img src="%s" />' % annotation.canvas.image.mini_thumbnail()
+
+        # both canvas and image region set
+        annotation.extra_data['image_selection'] = {
+            'x': "21.58%",
+            'y': "49.40%",
+            'h': "13.50%",
+            'w': "24.68%"
+        }
+        assert annotation.admin_thumbnail() == \
+            '<img src="%s" />' % annotation.iiif_image_selection().mini_thumbnail()
+
 
 class TestTag(TestCase):
 
@@ -209,3 +300,50 @@ class TestTag(TestCase):
         test_annotation = Annotation.objects.create(**self.basic_annotation_dict)
         test_annotation.tags.add(tag)
         assert test_annotation.tags.first() == tag
+
+
+class TestCanvasLinkWidget(TestCase):
+    fixtures = ['sample_book_data.json']
+
+    def test_render(self):
+        widget = CanvasLinkWidget()
+        # no value set - should not error or include canvas
+        rendered = widget.render('canvas', None, {'id': 1})
+        assert 'canvas-link' not in rendered
+
+        # canvas id set - should includ link
+        canvas = Canvas.objects.all().first()
+        rendered = widget.render('person', canvas.id, {'id': 1234})
+        assert 'View canvas on site' in rendered
+        assert canvas.get_absolute_url() in rendered
+
+
+class TestAnnotationViews(TestCase):
+
+    def setUp(self):
+        # create an admin user to test autocomplete views
+        self.password = 'pass!@#$'
+        self.admin = get_user_model().objects.create_superuser('testadmin',
+            'test@example.com', self.password)
+
+    def test_tag_autocomplete(self):
+        tag_autocomplete_url = reverse('annotation:tag-autocomplete')
+        result = self.client.get(tag_autocomplete_url,
+            params={'q': 'ciph'})
+        # not allowed to anonymous user
+        assert result.status_code == 302
+
+        # login as an admin user
+        self.client.login(username=self.admin.username, password=self.password)
+
+        result = self.client.get(tag_autocomplete_url, {'q': 'ciph'})
+        assert result.status_code == 200
+        # decode response to inspect
+        data = json.loads(result.content.decode('utf-8'))
+        assert data['results'][0]['text'] == 'cipher'
+
+
+# TODO: should probably have tests for customized djiffy canvas detail view,
+# at least to check that appropriate autocomplete urls are included
+# and the page renders
+
