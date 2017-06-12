@@ -32,14 +32,5 @@ class Migration(migrations.Migration):
             name='subjects',
             field=models.ManyToManyField(blank=True, to='books.Subject'),
         ),
-        migrations.AlterField(
-            model_name='annotation',
-            name='tags',
-            field=models.ManyToManyField(blank=True, to='annotation.Tag'),
-        ),
-        migrations.AlterField(
-            model_name='annotation',
-            name='text',
-            field=models.TextField(),
-        ),
+        
     ]
