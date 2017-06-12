@@ -131,24 +131,23 @@ class TestRelationship(TestCase):
         '''Build a test relationship for use'''
         father = Person(authorized_name='Joe Schmoe')
         son = Person(authorized_name='Joe Schmoe Jr.')
-        parent = RelationshipType(name='parent')
+        parent, created = RelationshipType.objects.get_or_create(name='Parent')
 
         father.save()
         son.save()
-        parent.save()
 
         rel = Relationship(from_person=father, to_person=son,
             relationship_type=parent)
         rel.save()
 
     def test_str(self):
-        rel = Relationship.objects.get(pk=1)
-        assert str(rel) == 'Joe Schmoe parent Joe Schmoe Jr.'
+        rel = Relationship.objects.all().first()
+        assert str(rel) == 'Joe Schmoe Parent Joe Schmoe Jr.'
 
     def test_through_relationships(self):
         '''Make sure from/to sets make sense and follow consistent naming'''
-        father = Person.objects.get(pk=1)
-        son = Person.objects.get(pk=2)
+        father = Person.objects.get(authorized_name='Joe Schmoe')
+        son = Person.objects.get(authorized_name='Joe Schmoe Jr.')
 
         # Not reciprocal, so from_relationships but not to_relationships
         query = father.from_relationships.all()
@@ -389,5 +388,3 @@ class TestViafWidget(TestCase):
         rendered = widget.render('person', uri, {'id': 1234})
         assert '<a id="viaf_uri" target="_blank" href="%(uri)s">%(uri)s</a>' \
             % {'uri': uri} in rendered
-
-
