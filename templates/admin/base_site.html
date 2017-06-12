@@ -21,6 +21,7 @@
  {% endblock %}
 
 {% block javascripts %}
+  {{ block.super }}
  {# Include Google Analytics code if SHOW_ANALYTICS is enabled #}
  {% include 'snippets/analytics.html' %}
 {% endblock%}
