@@ -74,6 +74,12 @@ class Annotation(BaseAnnotation):
         '''Handle any "extra" data that is not part of the stock annotation
         data model.  Use this method to customize the logic for updating
         an annotation from json request data (as sent by annotator.js).'''
+
+
+        # Catch any SQL Foreign Key issues by saving before processing the
+        # extra data using super()
+        super(Annotation, self).save()
+
         # NOTE: Working on the presumption that any data not included in the
         # JSON Extra data should be removed if it's added to a Django database
         # field or model
@@ -174,4 +180,3 @@ class Annotation(BaseAnnotation):
             return u'<img src="%s" />' % self.canvas.image.mini_thumbnail()
     admin_thumbnail.short_description = 'Thumbnail'
     admin_thumbnail.allow_tags = True
-

@@ -47,10 +47,11 @@ class TestAnnotation(TestCase):
 
     def test_handle_extra_data(self):
 
-        ## -- test tag handling
-        annotation = Annotation.objects.create()
-        # must be saved to test related object handling
-
+        # Create a blank annotation object
+        # Don't save it because we want to check that handle_extra_data()
+        # calls the save before adding tags
+        
+        annotation = Annotation()
         # test adding new tags
         # - using three existing tags and one nonexistent
         tags = ['manicule', 'underlining', 'dash', 'bogus']
@@ -372,4 +373,3 @@ class TestAnnotationViews(TestCase):
         self.assertContains(response,
             'app.ident.identity = "%s";' % self.admin.username,
             msg_prefix='Logged in user username passed to annotator')
-
