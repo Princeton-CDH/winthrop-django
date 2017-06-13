@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('djiffy', '0002_manifest_extra_data'),
+        ('djiffy', '0001_initial'),
         ('books', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('people', '0007_set_from_to_person_for_easy_templating'),

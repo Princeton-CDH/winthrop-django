@@ -9,11 +9,11 @@ class WinthropManifestImporter(ManifestImporter):
     logic for associating the imported :class:`djiffy.models.Manifest`
     with an existing :class:`winthrop.books.models.Book`'''
 
-    def import_book(self, manifest, path):
+    def import_manifest(self, manifest, path):
         # parent method returns newly created db manifest
         # or None if there was an error or manifest was already imported
         db_manifest = super(WinthropManifestImporter, self) \
-            .import_book(manifest, path)
+            .import_manifest(manifest, path)
         if not db_manifest:
             return
 
