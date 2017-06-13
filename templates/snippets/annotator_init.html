@@ -199,12 +199,15 @@ $.ajaxSetup({
   // (enforced at application level, only affects what is displayed)
   app.ident.is_superuser = {{ request.user.is_superuser|lower }}
 
+  /* Shim overrides for annotator or marginalia integrated fields */
   // Bind tag autocomplete and add more useful label
   resetTagAutocomplete(autocomplete_url.tag, "#annotator-field-1");
-  // Replace cmment text (card text is handled in render method of plugin)
+  // Replace comment text (card text is handled in render method of plugin)
   fixComment('#annotator-field-0');
   // Bind listener for mouse downs on controls for grab hand icon
   grabbyControls('.annotator-controls');
+  // Add annotator text label;
+  annotationLabel('#annotator-field-0');
 });
 
 
