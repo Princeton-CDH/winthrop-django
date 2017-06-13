@@ -1,3 +1,24 @@
+'''
+Manage command to import digitized book content viaf IIIF.  It takes
+both files and URLs, and supports both IIIF Collections and single
+Manifests.  If a collection is specified, all supported manifests in the
+system will be loaded.  If a manifest is already loaded, it will be
+skipped (updating manifests is not yet supported).  For convenience, you
+use the preset path "NYSL" to load the Princeton University Libraries
+collection of Winthrop NYSL materials.
+
+Example use::
+
+    python manage.py import_digitaleds https://plum.princeton.edu/collections/p4j03fz143/manifest
+    python manage.py import_digitaleds https://plum.princeton.edu/concern/scanned_resources/pb2775t87z/manifest
+    python manage.py import_digitaleds manifest1.json manifest2.json
+    python manage.py import_digitaleds NYSL
+
+When a local identifier is present in manifest metadata, it will be used
+to link the cached manifest in the django database with the appropriate
+:class:`winthrop.books.models.Book`.
+'''
+
 from django.core.management.base import BaseCommand
 from djiffy.importer import ManifestImporter
 
