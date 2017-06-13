@@ -49,6 +49,19 @@ Views
 .. automodule:: winthrop.books.views
     :members:
 
+Manage Commands
+^^^^^^^^^^^^^^^
+
+import NYSL data
+~~~~~~~~~~~~~~~~
+
+.. automodule:: winthrop.books.management.commands.import_nysl
+
+import digital editions (IIIF)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. automodule:: winthrop.books.management.commands.import_digitaleds
+
 Annotation
 ----------
 .. automodule:: winthrop.annotation
@@ -64,24 +77,6 @@ Views
 .. automodule:: winthrop.annotation.views
     :members:
 
-import_nysl
-^^^^^^^^^^^
-.. automodule:: winthrop.books.management.commands.import_nysl
-
-  Import command for Winthrop team's spreadsheet. It can be invoked using::
-
-    python manage.py import_nysql [--justsammel] /path/to/csv
-
-  The ``--justsammel`` flag skips import of records to avoid
-  reproducing duplicates, but rebuilds the ```is_sammelband`` flag set and
-  produces an output list.
-
-  The expect behavior is designed for a once-off import and will produce
-  duplicate book entries (but not duplicates of any entries created
-  as part of book creation).
-
-  All persons created attempt to have a VIAF uri associated and all places
-  have a Geonames ID assigned if possible.
 
 People
 ------
