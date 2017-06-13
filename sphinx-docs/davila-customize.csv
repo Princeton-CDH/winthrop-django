@@ -19,6 +19,8 @@ url|http://digitalhumanities.princeton.edu
 
 #creators|PEOPLE INVOLVED
 creators|Database design: Jean Bauer
+creators|Primary investigator: Anthony Grafton
+creators|Lead Developer: Rebecca Koeser
 
 #This next group of lines allows you to color code your modules and indicate which entity is the central node of that module
 #The central node allows you to choose whether to display all the entities in the module, or just the central entity and module name to save space
@@ -27,11 +29,14 @@ creators|Database design: Jean Bauer
 #Probably best to limit your diagram to 5 or 6 modules, otherwise it can get confusing
 
 #module|NAME OF MODULE|HEX COLOR|CENTRAL ENTITY OF THAT MODULE
+module|annotation|#FFBE33|annotation_annotation
 module|books|#5B8CEE|books_book
 module|footnotes|#9A68B7|footnotes_footnote
 module|people|#EF2E42|people_person
 module|places|#EEC25E|places_place
 module|django|#5B806B|django_content_type
+module|djiffy|#0EE1D1|djiffy_manifest
+module|annotatorstore|#6E5E8F|annotator_store_annotation
 #module|organizational|#BFA778|organizations
 #module|correspondence|#888888|letters
 #module|places|#422E14|locations
@@ -46,6 +51,17 @@ license|This work is licensed under the Creative Commons Attribution-Share-Alike
 #The structure is as follows
 
 #ENTITY NAME(*exactly* as it appears in your schema)|MODULE NAME|BRIEF DESCRIPTION OF ENTITY
+
+annotation_annotation|annotation|
+annotation_annotation_anchor_languages|annotation|
+annotation_annotation_languages|annotation|
+annotation_annotation_subjects|annotation|
+annotation_annotation_tags|annotation|
+annotator_store_annotation|annotatorstore|
+annotator_store_annotationgroup|annotatorstore|
+annotation_tag|annotatorstore|
+djiffy_canvas|djiffy|
+djiffy_manifest|djiffy|
 books_book|books|
 books_booklanguage|books|
 books_language|books|
@@ -56,6 +72,7 @@ books_creator|books|
 books_creatortype|books|
 books_owninginstitution|books|
 books_personbook|books|
+books_personbookrelationshiptype|books|
 books_publisher|books|
 people_person|people|
 people_relationship|people|
@@ -78,5 +95,7 @@ django_comments|django|
 django_content_type|django|
 django_migrations|django|
 django_redirect|django|
+django_cas_ng_sessionticket|django|
+django_cas_ng_proxygrantingticket|django|
 django_session|django|
 django_site|django|

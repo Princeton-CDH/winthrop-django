@@ -61,7 +61,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Winthrop'
-copyright = '2017, CDH @ Princeton'
+copyright = '2017, CDH @ Princeton & Trustees of Princeton University'
 author = 'CDH @ Princeton'
 
 # The version info for the project you're documenting, acts as replacement for

@@ -49,6 +49,21 @@ Views
 .. automodule:: winthrop.books.views
     :members:
 
+Annotation
+----------
+.. automodule:: winthrop.annotation
+    :members:
+
+Models
+^^^^^^
+.. automodule:: winthrop.annotation.models
+    :members:
+
+Views
+^^^^^
+.. automodule:: winthrop.annotation.views
+    :members:
+
 import_nysl
 ^^^^^^^^^^^
 .. automodule:: winthrop.books.management.commands.import_nysl
