@@ -203,6 +203,8 @@ $.ajaxSetup({
   resetTagAutocomplete(autocomplete_url.tag, "#annotator-field-1");
   // Replace cmment text (card text is handled in render method of plugin)
   fixComment('#annotator-field-0');
+  // Bind listener for mouse downs on controls for grab hand icon
+  grabbyControls('.annotator-controls');
 });
 
 

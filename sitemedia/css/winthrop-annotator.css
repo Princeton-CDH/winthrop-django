@@ -20,6 +20,10 @@
 .annotator-quote, *[class^="annotator-anchor_"] {
   background-color: #efefef;
 }
+/* Grab hand over editor control so that you know it can be used to move */
+.annotator-controls {
+  cursor: grab;
+}
 
 /* This styles the labels for annotator editor fields.
    The !important labels are meant to make sure marginalia doesn't override
