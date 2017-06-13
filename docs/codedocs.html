@@ -1,0 +1,783 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Code Documentation &#8212; Winthrop 0.6.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.6.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="CHANGELOG" href="changelog.html" />
+    <link rel="prev" title="Architecture" href="architecture.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="code-documentation">
+<h1>Code Documentation<a class="headerlink" href="#code-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="module-winthrop.common">
+<span id="common"></span><h2>Common<a class="headerlink" href="#module-winthrop.common" title="Permalink to this headline">¶</a></h2>
+<p>Django app for shared code and functionality used
+across other applications within the project.  Currently includes
+abstract database models with common functionality or fields that are
+used by models in multiple apps within the project.</p>
+<div class="section" id="module-winthrop.common.models">
+<span id="models"></span><h3>Models<a class="headerlink" href="#module-winthrop.common.models" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="winthrop.common.models.DateRange">
+<em class="property">class </em><code class="descclassname">winthrop.common.models.</code><code class="descname">DateRange</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/common/models.html#DateRange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.common.models.DateRange" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract model with optional start and end years, and a
+custom dates property to display the date range nicely.  Includes
+validation that requires end year falls after start year.</p>
+<dl class="attribute">
+<dt id="winthrop.common.models.DateRange.dates">
+<code class="descname">dates</code><a class="headerlink" href="#winthrop.common.models.DateRange.dates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Date or date range as a string for display</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="winthrop.common.models.DateRange.end_year">
+<code class="descname">end_year</code><a class="headerlink" href="#winthrop.common.models.DateRange.end_year" title="Permalink to this definition">¶</a></dt>
+<dd><p>end year (optional)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="winthrop.common.models.DateRange.start_year">
+<code class="descname">start_year</code><a class="headerlink" href="#winthrop.common.models.DateRange.start_year" title="Permalink to this definition">¶</a></dt>
+<dd><p>start year (optional)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.common.models.Named">
+<em class="property">class </em><code class="descclassname">winthrop.common.models.</code><code class="descname">Named</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/common/models.html#Named"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.common.models.Named" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract model with a &#8216;name&#8217; field; by default, name is used as
+the string display.</p>
+<dl class="attribute">
+<dt id="winthrop.common.models.Named.name">
+<code class="descname">name</code><a class="headerlink" href="#winthrop.common.models.Named.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>unique name (required)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.common.models.Notable">
+<em class="property">class </em><code class="descclassname">winthrop.common.models.</code><code class="descname">Notable</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/common/models.html#Notable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.common.models.Notable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract model with an optional notes text field</p>
+<dl class="method">
+<dt id="winthrop.common.models.Notable.has_notes">
+<code class="descname">has_notes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/common/models.html#Notable.has_notes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.common.models.Notable.has_notes" title="Permalink to this definition">¶</a></dt>
+<dd><p>boolean flag indicating if notes are present, for display
+in admin lists</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="winthrop.common.models.Notable.notes">
+<code class="descname">notes</code><a class="headerlink" href="#winthrop.common.models.Notable.notes" title="Permalink to this definition">¶</a></dt>
+<dd><p>optional notes</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-winthrop.places">
+<span id="places"></span><h2>Places<a class="headerlink" href="#module-winthrop.places" title="Permalink to this headline">¶</a></h2>
+<p>Django app for functionality related to places.</p>
+<div class="section" id="id1">
+<h3>Models<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-winthrop.places.models"></span><dl class="class">
+<dt id="winthrop.places.models.Place">
+<em class="property">class </em><code class="descclassname">winthrop.places.models.</code><code class="descname">Place</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/places/models.html#Place"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.places.models.Place" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple model for tracking places and associated with
+people and books.</p>
+<dl class="attribute">
+<dt id="winthrop.places.models.Place.geonames_id">
+<code class="descname">geonames_id</code><a class="headerlink" href="#winthrop.places.models.Place.geonames_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>geonames URI</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="winthrop.places.models.Place.latitude">
+<code class="descname">latitude</code><a class="headerlink" href="#winthrop.places.models.Place.latitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>latitude</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="winthrop.places.models.Place.longitude">
+<code class="descname">longitude</code><a class="headerlink" href="#winthrop.places.models.Place.longitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>longitude</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-winthrop.places.views">
+<span id="views"></span><h3>Views<a class="headerlink" href="#module-winthrop.places.views" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="winthrop.places.views.GeonamesLookup">
+<em class="property">class </em><code class="descclassname">winthrop.places.views.</code><code class="descname">GeonamesLookup</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/places/views.html#GeonamesLookup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.places.views.GeonamesLookup" title="Permalink to this definition">¶</a></dt>
+<dd><p>GeoNames ajax lookup for use as autocomplete.
+Currently restricted to staff only.</p>
+<dl class="method">
+<dt id="winthrop.places.views.GeonamesLookup.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>request</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/places/views.html#GeonamesLookup.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.places.views.GeonamesLookup.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#8220;Return option list json response.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.places.views.PlaceAutocomplete">
+<em class="property">class </em><code class="descclassname">winthrop.places.views.</code><code class="descname">PlaceAutocomplete</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/places/views.html#PlaceAutocomplete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.places.views.PlaceAutocomplete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic place ajax autocomplete lookup, based on
+django-autocomplete-light.
+Currently restricted to staff only.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-winthrop.places.geonames">
+<span id="geonames"></span><h3>GeoNames<a class="headerlink" href="#module-winthrop.places.geonames" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="winthrop.places.geonames.GeoNamesAPI">
+<em class="property">class </em><code class="descclassname">winthrop.places.geonames.</code><code class="descname">GeoNamesAPI</code><a class="reference internal" href="_modules/winthrop/places/geonames.html#GeoNamesAPI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.places.geonames.GeoNamesAPI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimal wrapper around GeoNames API.  Currently supports simple
+searching by name and generating a uri from an id.  Expects
+<strong>GEONAMES_USERNAME</strong> to be configured in django settings.</p>
+<dl class="method">
+<dt id="winthrop.places.geonames.GeoNamesAPI.search">
+<code class="descname">search</code><span class="sig-paren">(</span><em>query</em>, <em>max_rows=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/places/geonames.html#GeoNamesAPI.search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.places.geonames.GeoNamesAPI.search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for places and return the list of results</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="winthrop.places.geonames.GeoNamesAPI.uri_from_id">
+<em class="property">classmethod </em><code class="descname">uri_from_id</code><span class="sig-paren">(</span><em>geonames_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/places/geonames.html#GeoNamesAPI.uri_from_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.places.geonames.GeoNamesAPI.uri_from_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a GeoNames id into a GeoNames URI</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-winthrop.books">
+<span id="books"></span><h2>Books<a class="headerlink" href="#module-winthrop.books" title="Permalink to this headline">¶</a></h2>
+<p>Django app for Winthrop book metadata and cataloguing information.</p>
+<div class="section" id="id2">
+<h3>Models<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-winthrop.books.models"></span><dl class="class">
+<dt id="winthrop.books.models.Book">
+<em class="property">class </em><code class="descclassname">winthrop.books.models.</code><code class="descname">Book</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/models.html#Book"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.models.Book" title="Permalink to this definition">¶</a></dt>
+<dd><p>An individual book or volume</p>
+<dl class="method">
+<dt id="winthrop.books.models.Book.add_author">
+<code class="descname">add_author</code><span class="sig-paren">(</span><em>person</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/models.html#Book.add_author"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.models.Book.add_author" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the specified person as an author of this book</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="winthrop.books.models.Book.add_creator">
+<code class="descname">add_creator</code><span class="sig-paren">(</span><em>person</em>, <em>creator_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/models.html#Book.add_creator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.models.Book.add_creator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Associate the specified person as a creator of this book
+using the specified type (e.g., author, editor, etc.).
+Will throw an exception if creator type is not valid.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="winthrop.books.models.Book.add_editor">
+<code class="descname">add_editor</code><span class="sig-paren">(</span><em>person</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/models.html#Book.add_editor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.models.Book.add_editor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the specified person as an editor of this book</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="winthrop.books.models.Book.add_translator">
+<code class="descname">add_translator</code><span class="sig-paren">(</span><em>person</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/models.html#Book.add_translator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.models.Book.add_translator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the specified person as an translator of this book</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="winthrop.books.models.Book.author_names">
+<code class="descname">author_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/models.html#Book.author_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.models.Book.author_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display author names; convenience access for display in admin</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="winthrop.books.models.Book.catalogue_call_numbers">
+<code class="descname">catalogue_call_numbers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/models.html#Book.catalogue_call_numbers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.models.Book.catalogue_call_numbers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience access to catalogue call numbers, for display in admin</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.books.models.BookCount">
+<em class="property">class </em><code class="descclassname">winthrop.books.models.</code><code class="descname">BookCount</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/models.html#BookCount"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.models.BookCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mix-in for models related to books; adds book count property and link to
+associated books</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.books.models.BookLanguage">
+<em class="property">class </em><code class="descclassname">winthrop.books.models.</code><code class="descname">BookLanguage</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/models.html#BookLanguage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.models.BookLanguage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Through-model for book-language relationship, to allow designating
+one language as primary or adding notes.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.books.models.BookSubject">
+<em class="property">class </em><code class="descclassname">winthrop.books.models.</code><code class="descname">BookSubject</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/models.html#BookSubject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.models.BookSubject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Through-model for book-subject relationship, to allow designating
+a particular subject as primary or adding notes.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.books.models.Catalogue">
+<em class="property">class </em><code class="descclassname">winthrop.books.models.</code><code class="descname">Catalogue</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/models.html#Catalogue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.models.Catalogue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Location of a book in the real world, associating it with an
+owning instutition and also handling books that are bound together.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.books.models.Creator">
+<em class="property">class </em><code class="descclassname">winthrop.books.models.</code><code class="descname">Creator</code><span class="sig-paren">(</span><em>id</em>, <em>notes</em>, <em>creator_type</em>, <em>person</em>, <em>book</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/models.html#Creator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.models.Creator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="winthrop.books.models.CreatorType">
+<em class="property">class </em><code class="descclassname">winthrop.books.models.</code><code class="descname">CreatorType</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/models.html#CreatorType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.models.CreatorType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type of creator role a person can have to a book - author,
+editor, translator, etc.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.books.models.Language">
+<em class="property">class </em><code class="descclassname">winthrop.books.models.</code><code class="descname">Language</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/models.html#Language"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.models.Language" title="Permalink to this definition">¶</a></dt>
+<dd><p>Language that a book is written in or a language included in a book</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.books.models.OwningInstitution">
+<em class="property">class </em><code class="descclassname">winthrop.books.models.</code><code class="descname">OwningInstitution</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/models.html#OwningInstitution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.models.OwningInstitution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Institution that owns the extant copy of a book</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.books.models.PersonBook">
+<em class="property">class </em><code class="descclassname">winthrop.books.models.</code><code class="descname">PersonBook</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/models.html#PersonBook"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.models.PersonBook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interactions or connections between books and people other than
+annotation.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.books.models.PersonBookRelationshipType">
+<em class="property">class </em><code class="descclassname">winthrop.books.models.</code><code class="descname">PersonBookRelationshipType</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/models.html#PersonBookRelationshipType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.models.PersonBookRelationshipType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type of non-annotation relationship assocating a person
+with a book.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.books.models.Publisher">
+<em class="property">class </em><code class="descclassname">winthrop.books.models.</code><code class="descname">Publisher</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/models.html#Publisher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.models.Publisher" title="Permalink to this definition">¶</a></dt>
+<dd><p>Publisher of a book</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.books.models.Subject">
+<em class="property">class </em><code class="descclassname">winthrop.books.models.</code><code class="descname">Subject</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/models.html#Subject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.models.Subject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subject categorization for books</p>
+</dd></dl>
+
+</div>
+<div class="section" id="id3">
+<h3>Views<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-winthrop.books.views"></span><dl class="class">
+<dt id="winthrop.books.views.CanvasAutocomplete">
+<em class="property">class </em><code class="descclassname">winthrop.books.views.</code><code class="descname">CanvasAutocomplete</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/views.html#CanvasAutocomplete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.views.CanvasAutocomplete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Canvas lookup for admin interface</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.books.views.LanguageAutocomplete">
+<em class="property">class </em><code class="descclassname">winthrop.books.views.</code><code class="descname">LanguageAutocomplete</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/views.html#LanguageAutocomplete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.views.LanguageAutocomplete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Autocomplete for languages in the controlled vocabulary list</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.books.views.PublisherAutocomplete">
+<em class="property">class </em><code class="descclassname">winthrop.books.views.</code><code class="descname">PublisherAutocomplete</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/views.html#PublisherAutocomplete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.views.PublisherAutocomplete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic publisher autocomplete lookup, for use with
+django-autocomplete-light.  Restricted to staff only.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.books.views.SubjectAutocomplete">
+<em class="property">class </em><code class="descclassname">winthrop.books.views.</code><code class="descname">SubjectAutocomplete</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/books/views.html#SubjectAutocomplete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.books.views.SubjectAutocomplete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic autocomplete view for Subjects</p>
+</dd></dl>
+
+</div>
+<div class="section" id="manage-commands">
+<h3>Manage Commands<a class="headerlink" href="#manage-commands" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="module-winthrop.books.management.commands.import_nysl">
+<span id="import-nysl-data"></span><h4>import NYSL data<a class="headerlink" href="#module-winthrop.books.management.commands.import_nysl" title="Permalink to this headline">¶</a></h4>
+<p>Import command for Winthrop team&#8217;s spreadsheet. It can be invoked using:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">import_nysql</span> <span class="p">[</span><span class="o">--</span><span class="n">justsammel</span><span class="p">]</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">csv</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">--justsammel</span></code> flag skips import of records to avoid
+reproducing duplicates, but rebuilds the <code class="docutils literal"><span class="pre">is_sammelband</span></code> flag set and
+produces an output list.</p>
+<p>The expect behavior is designed for a once-off import and will produce
+duplicate book entries (but not duplicates of any entries created
+as part of book creation).</p>
+<p>All persons created attempt to have a VIAF uri associated and all places
+have a Geonames ID assigned if possible.</p>
+</div>
+<div class="section" id="module-winthrop.books.management.commands.import_digitaleds">
+<span id="import-digital-editions-iiif"></span><h4>import digital editions (IIIF)<a class="headerlink" href="#module-winthrop.books.management.commands.import_digitaleds" title="Permalink to this headline">¶</a></h4>
+<p>Manage command to import digitized book content viaf IIIF.  It takes
+both files and URLs, and supports both IIIF Collections and single
+Manifests.  If a collection is specified, all supported manifests in the
+system will be loaded.  If a manifest is already loaded, it will be
+skipped (updating manifests is not yet supported).  For convenience, you
+use the preset path &#8220;NYSL&#8221; to load the Princeton University Libraries
+collection of Winthrop NYSL materials.</p>
+<p>Example use:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">import_digitaleds</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">plum</span><span class="o">.</span><span class="n">princeton</span><span class="o">.</span><span class="n">edu</span><span class="o">/</span><span class="n">collections</span><span class="o">/</span><span class="n">p4j03fz143</span><span class="o">/</span><span class="n">manifest</span>
+<span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">import_digitaleds</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">plum</span><span class="o">.</span><span class="n">princeton</span><span class="o">.</span><span class="n">edu</span><span class="o">/</span><span class="n">concern</span><span class="o">/</span><span class="n">scanned_resources</span><span class="o">/</span><span class="n">pb2775t87z</span><span class="o">/</span><span class="n">manifest</span>
+<span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">import_digitaleds</span> <span class="n">manifest1</span><span class="o">.</span><span class="n">json</span> <span class="n">manifest2</span><span class="o">.</span><span class="n">json</span>
+<span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">import_digitaleds</span> <span class="n">NYSL</span>
+</pre></div>
+</div>
+<p>When a local identifier is present in manifest metadata, it will be used
+to link the cached manifest in the django database with the appropriate
+<a class="reference internal" href="#winthrop.books.models.Book" title="winthrop.books.models.Book"><code class="xref py py-class docutils literal"><span class="pre">winthrop.books.models.Book</span></code></a>.</p>
+</div>
+</div>
+</div>
+<div class="section" id="module-winthrop.annotation">
+<span id="annotation"></span><h2>Annotation<a class="headerlink" href="#module-winthrop.annotation" title="Permalink to this headline">¶</a></h2>
+<p>Django app for managing Winthrop annotation data.</p>
+<div class="section" id="id4">
+<h3>Models<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-winthrop.annotation.models"></span><dl class="class">
+<dt id="winthrop.annotation.models.Annotation">
+<em class="property">class </em><code class="descclassname">winthrop.annotation.models.</code><code class="descname">Annotation</code><span class="sig-paren">(</span><em>id</em>, <em>created</em>, <em>updated</em>, <em>text</em>, <em>quote</em>, <em>uri</em>, <em>user</em>, <em>extra_data</em>, <em>canvas</em>, <em>author</em>, <em>text_translation</em>, <em>anchor_translation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/annotation/models.html#Annotation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.annotation.models.Annotation" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="winthrop.annotation.models.Annotation.handle_extra_data">
+<code class="descname">handle_extra_data</code><span class="sig-paren">(</span><em>data</em>, <em>request</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/annotation/models.html#Annotation.handle_extra_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.annotation.models.Annotation.handle_extra_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle any &#8220;extra&#8221; data that is not part of the stock annotation
+data model.  Use this method to customize the logic for updating
+an annotation from json request data (as sent by annotator.js).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="winthrop.annotation.models.Annotation.info">
+<code class="descname">info</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/annotation/models.html#Annotation.info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.annotation.models.Annotation.info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Passes fields that are included on the annotation model into the
+JSON object representation of the annotation</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.annotation.models.AnnotationCount">
+<em class="property">class </em><code class="descclassname">winthrop.annotation.models.</code><code class="descname">AnnotationCount</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/annotation/models.html#AnnotationCount"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.annotation.models.AnnotationCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mix-in for models related to annotations; adds annotation count property
+and link to associated annotations</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.annotation.models.Tag">
+<em class="property">class </em><code class="descclassname">winthrop.annotation.models.</code><code class="descname">Tag</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/annotation/models.html#Tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.annotation.models.Tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stub model for tag</p>
+</dd></dl>
+
+</div>
+<div class="section" id="id5">
+<h3>Views<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-winthrop.annotation.views"></span><dl class="class">
+<dt id="winthrop.annotation.views.TagAutocomplete">
+<em class="property">class </em><code class="descclassname">winthrop.annotation.views.</code><code class="descname">TagAutocomplete</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/annotation/views.html#TagAutocomplete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.annotation.views.TagAutocomplete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic autocomplete view for Tags</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-winthrop.people">
+<span id="people"></span><h2>People<a class="headerlink" href="#module-winthrop.people" title="Permalink to this headline">¶</a></h2>
+<p>Django app to track and display information about people associated with
+the Winthrop family library, including both Winthrop family members and
+associates as well as authors and editors of books in the library.</p>
+<div class="section" id="id6">
+<h3>Models<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-winthrop.people.models"></span><dl class="class">
+<dt id="winthrop.people.models.AliasIntegerField">
+<em class="property">class </em><code class="descclassname">winthrop.people.models.</code><code class="descname">AliasIntegerField</code><span class="sig-paren">(</span><em>verbose_name=None</em>, <em>name=None</em>, <em>primary_key=False</em>, <em>max_length=None</em>, <em>unique=False</em>, <em>blank=False</em>, <em>null=False</em>, <em>db_index=False</em>, <em>rel=None</em>, <em>default=&lt;class 'django.db.models.fields.NOT_PROVIDED'&gt;</em>, <em>editable=True</em>, <em>serialize=True</em>, <em>unique_for_date=None</em>, <em>unique_for_month=None</em>, <em>unique_for_year=None</em>, <em>choices=None</em>, <em>help_text=''</em>, <em>db_column=None</em>, <em>db_tablespace=None</em>, <em>auto_created=False</em>, <em>validators=()</em>, <em>error_messages=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/people/models.html#AliasIntegerField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.people.models.AliasIntegerField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias field adapted from <a class="reference external" href="https://djangosnippets.org/snippets/10440/">https://djangosnippets.org/snippets/10440/</a>
+to allow accessing an existing db field by a different name, both
+for user display and in model and queryset use.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.people.models.Person">
+<em class="property">class </em><code class="descclassname">winthrop.people.models.</code><code class="descname">Person</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/people/models.html#Person"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.people.models.Person" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="winthrop.people.models.Person.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/people/models.html#Person.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.people.models.Person.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds birth and death dates if they aren&#8217;t already set
+and there&#8217;s a viaf id for the record</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="winthrop.people.models.Person.set_birth_death_years">
+<code class="descname">set_birth_death_years</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/people/models.html#Person.set_birth_death_years"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.people.models.Person.set_birth_death_years" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set local birth and death dates based on information from VIAF</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.people.models.Relationship">
+<em class="property">class </em><code class="descclassname">winthrop.people.models.</code><code class="descname">Relationship</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/people/models.html#Relationship"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.people.models.Relationship" title="Permalink to this definition">¶</a></dt>
+<dd><p>A specific relationship between two people.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.people.models.RelationshipType">
+<em class="property">class </em><code class="descclassname">winthrop.people.models.</code><code class="descname">RelationshipType</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/people/models.html#RelationshipType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.people.models.RelationshipType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Types of relationships between people</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.people.models.Residence">
+<em class="property">class </em><code class="descclassname">winthrop.people.models.</code><code class="descname">Residence</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/people/models.html#Residence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.people.models.Residence" title="Permalink to this definition">¶</a></dt>
+<dd><p>A residence where a person lived at some point in time</p>
+</dd></dl>
+
+</div>
+<div class="section" id="id7">
+<h3>Views<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-winthrop.people.views"></span><dl class="class">
+<dt id="winthrop.people.views.PersonAutocomplete">
+<em class="property">class </em><code class="descclassname">winthrop.people.views.</code><code class="descname">PersonAutocomplete</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/people/views.html#PersonAutocomplete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.people.views.PersonAutocomplete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic person autocomplete lookup, for use with
+django-autocomplete-light.  Restricted to staff only.
+Also includes optional winthrop query string that sets whether
+to prioritize Winthrops based on search criteria in function. Can
+be extended by Q objects if necesary for more complex searches.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.people.views.ViafAutoSuggest">
+<em class="property">class </em><code class="descclassname">winthrop.people.views.</code><code class="descname">ViafAutoSuggest</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/people/views.html#ViafAutoSuggest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.people.views.ViafAutoSuggest" title="Permalink to this definition">¶</a></dt>
+<dd><p>View to provide VIAF suggestions for autocomplete info</p>
+<dl class="method">
+<dt id="winthrop.people.views.ViafAutoSuggest.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>request</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/people/views.html#ViafAutoSuggest.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.people.views.ViafAutoSuggest.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return JSON with suggested VIAF ids and display names.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-winthrop.people.viaf">
+<span id="viaf"></span><h3>VIAF<a class="headerlink" href="#module-winthrop.people.viaf" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="winthrop.people.viaf.ViafAPI">
+<em class="property">class </em><code class="descclassname">winthrop.people.viaf.</code><code class="descname">ViafAPI</code><a class="reference internal" href="_modules/winthrop/people/viaf.html#ViafAPI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.people.viaf.ViafAPI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper for VIAF API.</p>
+<p><a class="reference external" href="https://platform.worldcat.org/api-explorer/apis/VIAF">https://platform.worldcat.org/api-explorer/apis/VIAF</a></p>
+<dl class="attribute">
+<dt id="winthrop.people.viaf.ViafAPI.api_base">
+<code class="descname">api_base</code><em class="property"> = 'https://www.viaf.org/viaf'</em><a class="headerlink" href="#winthrop.people.viaf.ViafAPI.api_base" title="Permalink to this definition">¶</a></dt>
+<dd><p>base url for VIAF API methods</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="winthrop.people.viaf.ViafAPI.suggest">
+<code class="descname">suggest</code><span class="sig-paren">(</span><em>query</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/people/viaf.html#ViafAPI.suggest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.people.viaf.ViafAPI.suggest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get VIAF suggestions for the specified query string.
+For ease of processing, returns an empty list if no suggestions
+are found or something goes wrong.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="winthrop.people.viaf.ViafAPI.uri_base">
+<code class="descname">uri_base</code><em class="property"> = 'http://viaf.org/viaf'</em><a class="headerlink" href="#winthrop.people.viaf.ViafAPI.uri_base" title="Permalink to this definition">¶</a></dt>
+<dd><p>base url for VIAF URIs</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="winthrop.people.viaf.ViafAPI.uri_from_id">
+<em class="property">classmethod </em><code class="descname">uri_from_id</code><span class="sig-paren">(</span><em>viaf_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/people/viaf.html#ViafAPI.uri_from_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.people.viaf.ViafAPI.uri_from_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a VIAF URI for the specified id</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.people.viaf.ViafEntity">
+<em class="property">class </em><code class="descclassname">winthrop.people.viaf.</code><code class="descname">ViafEntity</code><span class="sig-paren">(</span><em>viaf_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/people/viaf.html#ViafEntity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.people.viaf.ViafEntity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Object for working with a single VIAF entity.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>viaf_id</strong> &#8211; viaf identifier (either integer or uri)</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="winthrop.people.viaf.ViafEntity.birthdate">
+<code class="descname">birthdate</code><a class="headerlink" href="#winthrop.people.viaf.ViafEntity.birthdate" title="Permalink to this definition">¶</a></dt>
+<dd><p>schema birthdate as <code class="xref py py-class docutils literal"><span class="pre">rdflib.Literal</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="winthrop.people.viaf.ViafEntity.birthyear">
+<code class="descname">birthyear</code><a class="headerlink" href="#winthrop.people.viaf.ViafEntity.birthyear" title="Permalink to this definition">¶</a></dt>
+<dd><p>birth year</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="winthrop.people.viaf.ViafEntity.deathdate">
+<code class="descname">deathdate</code><a class="headerlink" href="#winthrop.people.viaf.ViafEntity.deathdate" title="Permalink to this definition">¶</a></dt>
+<dd><p>schema deathdate as <code class="xref py py-class docutils literal"><span class="pre">rdflib.Literal</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="winthrop.people.viaf.ViafEntity.deathyear">
+<code class="descname">deathyear</code><a class="headerlink" href="#winthrop.people.viaf.ViafEntity.deathyear" title="Permalink to this definition">¶</a></dt>
+<dd><p>death year</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="winthrop.people.viaf.ViafEntity.rdf">
+<code class="descname">rdf</code><a class="headerlink" href="#winthrop.people.viaf.ViafEntity.rdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>VIAF data for this entity as <code class="xref py py-class docutils literal"><span class="pre">rdflib.Graph</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="winthrop.people.viaf.ViafEntity.uriref">
+<code class="descname">uriref</code><a class="headerlink" href="#winthrop.people.viaf.ViafEntity.uriref" title="Permalink to this definition">¶</a></dt>
+<dd><p>VIAF URI reference as instance of <code class="xref py py-class docutils literal"><span class="pre">rdflib.URIRef</span></code></p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="winthrop.people.viaf.ViafEntity.year_from_isodate">
+<em class="property">classmethod </em><code class="descname">year_from_isodate</code><span class="sig-paren">(</span><em>date</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/people/viaf.html#ViafEntity.year_from_isodate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.people.viaf.ViafEntity.year_from_isodate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return just the year portion of an ISO8601 date.  Expects
+a string, returns an integer</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-winthrop.footnotes">
+<span id="footnotes"></span><h2>Footnotes<a class="headerlink" href="#module-winthrop.footnotes" title="Permalink to this headline">¶</a></h2>
+<p>Django app for footnotes that can be associated with any other
+content in the system, to provide supporting or contradictory source
+data associated with assertions made in the data.</p>
+<div class="section" id="id8">
+<h3>Models<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-winthrop.footnotes.models"></span><dl class="class">
+<dt id="winthrop.footnotes.models.Bibliography">
+<em class="property">class </em><code class="descclassname">winthrop.footnotes.models.</code><code class="descname">Bibliography</code><span class="sig-paren">(</span><em>id</em>, <em>notes</em>, <em>bibliographic_note</em>, <em>source_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/footnotes/models.html#Bibliography"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.footnotes.models.Bibliography" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="winthrop.footnotes.models.Bibliography.footnote_count">
+<code class="descname">footnote_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/footnotes/models.html#Bibliography.footnote_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.footnotes.models.Bibliography.footnote_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>number of footnotes this item is referenced in</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.footnotes.models.Footnote">
+<em class="property">class </em><code class="descclassname">winthrop.footnotes.models.</code><code class="descname">Footnote</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/footnotes/models.html#Footnote"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.footnotes.models.Footnote" title="Permalink to this definition">¶</a></dt>
+<dd><p>Footnote that can be associated with any other model via
+generic relationship.  Used to provide supporting documentation
+for or against information in the system.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="winthrop.footnotes.models.SourceType">
+<em class="property">class </em><code class="descclassname">winthrop.footnotes.models.</code><code class="descname">SourceType</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/footnotes/models.html#SourceType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.footnotes.models.SourceType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type of source document.</p>
+<dl class="method">
+<dt id="winthrop.footnotes.models.SourceType.item_count">
+<code class="descname">item_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/footnotes/models.html#SourceType.item_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.footnotes.models.SourceType.item_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>number of associated bibliographic items</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Winthrop</a></h1>
+
+
+
+<p class="blurb">Django web application for "The Winthrop Family on the Page" CDH project</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=Princeton-CDH&repo=winthrop-django&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a href="https://travis-ci.org/Princeton-CDH/winthrop-django">
+    <img
+        alt="https://secure.travis-ci.org/Princeton-CDH/winthrop-django.svg?branch=master"
+        src="https://secure.travis-ci.org/Princeton-CDH/winthrop-django.svg?branch=master"
+    />
+</a>
+</p>
+
+
+
+
+    
+
+<p>
+<a href="https://codecov.io/github/Princeton-CDH/winthrop-django">
+    <img
+    alt="https://codecov.io/github/Princeton-CDH/winthrop-django/coverage.svg?branch=master"
+    src="https://codecov.io/github/Princeton-CDH/winthrop-django/coverage.svg?branch=master"
+    />
+</a>
+</p>
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
+</ul>
+
+
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Code Documentation</a><ul>
+<li><a class="reference internal" href="#module-winthrop.common">Common</a><ul>
+<li><a class="reference internal" href="#module-winthrop.common.models">Models</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-winthrop.places">Places</a><ul>
+<li><a class="reference internal" href="#id1">Models</a></li>
+<li><a class="reference internal" href="#module-winthrop.places.views">Views</a></li>
+<li><a class="reference internal" href="#module-winthrop.places.geonames">GeoNames</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-winthrop.books">Books</a><ul>
+<li><a class="reference internal" href="#id2">Models</a></li>
+<li><a class="reference internal" href="#id3">Views</a></li>
+<li><a class="reference internal" href="#manage-commands">Manage Commands</a><ul>
+<li><a class="reference internal" href="#module-winthrop.books.management.commands.import_nysl">import NYSL data</a></li>
+<li><a class="reference internal" href="#module-winthrop.books.management.commands.import_digitaleds">import digital editions (IIIF)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-winthrop.annotation">Annotation</a><ul>
+<li><a class="reference internal" href="#id4">Models</a></li>
+<li><a class="reference internal" href="#id5">Views</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-winthrop.people">People</a><ul>
+<li><a class="reference internal" href="#id6">Models</a></li>
+<li><a class="reference internal" href="#id7">Views</a></li>
+<li><a class="reference internal" href="#module-winthrop.people.viaf">VIAF</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-winthrop.footnotes">Footnotes</a><ul>
+<li><a class="reference internal" href="#id8">Models</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, CDH @ Princeton & Trustees of Princeton University.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/codedocs.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
