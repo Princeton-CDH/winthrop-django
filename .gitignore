@@ -75,7 +75,9 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
+sphinx-docs/_build/
+sphinx-docs/html/
+sphinx-docs/doctrees
 # remove only for master builds
 # release build for master disabled
 # docs
