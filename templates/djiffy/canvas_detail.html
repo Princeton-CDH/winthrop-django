@@ -1,9 +1,4 @@
 {% extends 'djiffy/canvas_detail.html' %}
-{% load static %}
-{% block css %}
-{# Include local style overrides for the annotator in Winthrop #}
-<link rel='stylesheet' type='text/css' href='{% static "css/winthrop-annotator.css" %}' />
-{% endblock %}
 
 {% block javascript %}
     {{ block.super }}

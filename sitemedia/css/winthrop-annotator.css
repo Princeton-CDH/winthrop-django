@@ -20,9 +20,18 @@
 .annotator-quote, *[class^="annotator-anchor_"] {
   background-color: #efefef;
 }
+
 /* Grab hand over editor control so that you know it can be used to move */
 .annotator-controls {
-  cursor: grab;
+  cursor: move;
+}
+/* override default style for editor labels */
+.annotator-editor .annotator-item label {
+  cursor: default;
+}
+
+.annotator-widget {
+  min-width: 375px;
 }
 
 /* This styles the labels for annotator editor fields.

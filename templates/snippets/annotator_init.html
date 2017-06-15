@@ -18,7 +18,12 @@
 
   <link rel="stylesheet" type="text/css" href="{% static 'ext/annotator/annotator.min.css' %}"/>
   {# <link rel="stylesheet" type="text/css" href="//emory-lits-labs.github.io/annotator-meltdown/build/0.3.0/annotator.meltdown.min.css" /> #}
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+   <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+  {# Include local style overrides for the annotator in Winthrop #}
+  <link rel='stylesheet' type='text/css' href='{% static "css/winthrop-annotator.css" %}' />
+
+
 {# Initialize annotator.js *#}
 <script type="text/javascript" charset="utf-8">
 
@@ -109,17 +114,17 @@ $.ajaxSetup({
       autocompleteUrl: autocomplete_url.language
     },
     {
-      name: 'author',
-      label: 'Annotator',
-      placeholder: 'Type or click to select annotator',
-      autocompleteUrl: autocomplete_url.annotator
-    },
-    {
       name: 'subjects',
       label: 'Subjects',
       placeholder: 'Type or click to select subjects',
       list: true,
       autocompleteUrl: autocomplete_url.subject
+    },
+    {
+      name: 'author',
+      label: 'Annotator',
+      placeholder: 'Type or click to select annotator',
+      autocompleteUrl: autocomplete_url.annotator
     },
     {
       name: 'quote',
