@@ -35,8 +35,7 @@ class Tag(Named, Notable):
     class Meta:
         # Matching tags to annotator.js editor field names
         verbose_name = 'Annotation Type'
-        verbose_name_plural = 'Annotation Types'
-
+        
 
 class Annotation(BaseAnnotation):
     # NOTE: do we want to associate explicitly with canvas in the db?
