@@ -31,7 +31,11 @@ class AnnotationCount(models.Model):
 
 class Tag(Named, Notable):
     '''Stub model for tag'''
-    pass
+
+    class Meta:
+        # Matching tags to annotator.js editor field names
+        verbose_name = 'Annotation Type'
+        verbose_name_plural = 'Annotation Types'
 
 
 class Annotation(BaseAnnotation):
