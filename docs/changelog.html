@@ -1,0 +1,254 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>CHANGELOG &#8212; Winthrop 0.6.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.6.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Code Documentation" href="codedocs.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="changelog">
+<span id="id1"></span><h1>CHANGELOG<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="annotation-interface">
+<h2>0.6 Annotation Interface<a class="headerlink" href="#annotation-interface" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="annotation">
+<h3>Annotation<a class="headerlink" href="#annotation" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>As an annotation data editor, I want to select marginalia on a page image and enter a transcription of the marginal text so I can document the annotation and where it occurs.</li>
+<li>As an annotation data editor, I want to associate an annotation with the person who wrote it so that I can document the author when that information is known.</li>
+<li>As an annotation data editor, I want to edit any of the text fields (transcription, translation, anchor text, tags etc) so that I can correct mistakes or make updates.</li>
+<li>As an annotation data editor, I want the option of leaving all fields blank so that I can accurately describe non-verbal annotations or annotations that don’t relate to anchor text.</li>
+<li>As an annotation data editor, I want the option to enter a translation of marginal text so that I can provide an English version when the original is in another language.</li>
+<li>As an annotation data editor, I want the option to enter the anchor text and anchor text translation so that I can describe the content that the marginalia references.</li>
+<li>As an annotation data editor, I want to document the language of anchor text and annotation text so that I can track use of languages across annotations.</li>
+<li>As an annotation data editor, I want the option of associating tags with an annotation so that I can categorize marginalia consisting of visual elements.</li>
+<li>As an annotation data editor, I want the option of associating annotations with any of the subjects in the database that are used for labeling books.</li>
+</ul>
+</div>
+<div class="section" id="misc-improvements">
+<h3>Misc. improvements<a class="headerlink" href="#misc-improvements" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Fixes footnote generic relationships to any objects with admin display</li>
+<li>Fixes jQuery autocomplete for annotator fields so that keystroke down works for lists.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="bio-bibliographical-admin-interface">
+<h2>0.5 Bio/Bibliographical Admin interface<a class="headerlink" href="#bio-bibliographical-admin-interface" title="Permalink to this headline">¶</a></h2>
+<p>Initial project release implements the bio/bibliographical portion of
+the database and customized Django admin interface for data import
+and managment of biographical and bibliographic data.</p>
+<div class="section" id="places">
+<h3>Places<a class="headerlink" href="#places" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>As a data editor, I want to add or edit a place and associate it with a GeoNames ID so that I can link books and people to places that can be plotted on a map.</li>
+<li>As a data editor, when I’m editing a place I want to be able to look up the GeoNames ID by name and select from suggestions so that I can select the appropriate name within the system.</li>
+</ul>
+</div>
+<div class="section" id="book-metadata">
+<h3>Book metadata<a class="headerlink" href="#book-metadata" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>As a data editor, I want to add a new or edit an existing language so that I can document the languages used in books in a standard way.</li>
+<li>As a data editor, I want to add a new or edit an existing subject so that I can document the relevant subjects of a book in a standard way.</li>
+<li>As a data editor, I want to add a new or edit an existing publisher so that I can track books by publisher in a standard way.</li>
+<li>As a data editor, I want to add a new or edit an existing owning institution so that I can document the current or previously known location of extant books.</li>
+<li>As a data editor, when I’m browsing the list of subjects, languages, publishers, or owning institution, I want to see a count of the number of books associated with each subject, language, publisher, or owning institution so I can get a sense of the distribution of books.</li>
+<li>As a data editor, I want to add a new or edit an existing book so that I can document the publication data, annotation data, and other relevant details.</li>
+<li>As a data editor, when I’m editing a book I want to document the people who interacted with it in ways other than annotation so that I can track which books they owned, read, etc.</li>
+<li>As a data editor, when I’m editing a book I want to be able to associate languages, subjects, and owning institutions on the same page so that I don’t have to edit book information in multiple places.</li>
+<li>As a data editor, when I’m editing a book I want to be able to associate people involved in creating the book so that I can document information about authors and editors.</li>
+<li>As a data editor, when I’m browsing the list of books I want to filter by subject or language or whether extant, annotated, digitized, so that I can quickly look at a particular subset of books.</li>
+<li>As a data editor, when I’m browsing the list of books I want to see the author, short title, publication year, owning institution call number, and whether a book is extant, annotated, and/or digitized so that I can get a quick overview of volumes.</li>
+<li>As a data editor, when I search for books in the admin interface I want to search on title, author, call number, publisher name and notes so that I can find specific items.</li>
+<li>As a data editor, I want to link books that were bound together in a volume held by a particular institution so that I can link a catalog record to individual titles and indicate in which order the associated books/titles were bound.</li>
+</ul>
+</div>
+<div class="section" id="people">
+<h3>People<a class="headerlink" href="#people" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>As a data editor, I want to add a new or edit an existing person so that I can document people associated with the Winthrop Family and their books.</li>
+<li>As a data editor, I want to add a new or edit an existing relationship type so that I can document the kinds of relationships between people associated with the project.</li>
+<li>As a data editor, I want to add a new or edit an existing relationship type so that I can document the kinds of relationships between people associated with the project.</li>
+<li>As a data editor, when I’m editing a person I want to be able to document known residences and dates on the same page so that I don’t have to edit person information in multiple places.</li>
+<li>As a data editor, when I’m editing a person I want to relate them to other people on the same page so that I don’t have to edit person information in multiple places.</li>
+<li>As a data editor, when I’m editing a person I want to be able to look up the VIAF ID by name and select from suggestions so that I can select the appropriate name within the system.</li>
+<li>As a data editor, when I edit a person and add or change the VIAF ID, I want the birth and death dates and sex in the system populated from data available in VIAF in order to make data entry more efficient.</li>
+<li>As a data editor, when I’m viewing the list of people I want to see authorized name, sort name, birth and death dates, viaf id, and family group so that I can quickly get a sense of the records I’m looking at.</li>
+<li>As a data editor, when I’m editing a person I want to view the list of books they interacted with in ways other than annotation so that I can track which books they owned, read, etc.</li>
+<li>As a data editor, when I’m editing a person I want to view a list of people who are related to the current person so I can compare relationships.</li>
+<li>As a data editor, when I’m browsing the list of people I want to filter by family group so that I can quickly look at a particular group of people.</li>
+</ul>
+</div>
+<div class="section" id="footnotes">
+<h3>Footnotes<a class="headerlink" href="#footnotes" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>As a data editor, I want to add a new or edit an existing source type so that I can track the kinds of source documents used as evidence in the system.</li>
+<li>As a data editor, I want to add a new or edit an existing footnote and associate it with any other kind of record in the system so that I can document evidence related to assertions made elsewhere in the data.</li>
+<li>As a data editor, when I’m editing a book or a book-person relationship, I want to be able to add footnotes on the same page so that I can add documentation on the same page.</li>
+</ul>
+</div>
+<div class="section" id="data-import">
+<h3>Data Import<a class="headerlink" href="#data-import" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>As a data editor, I want a one-time import of books (with associated people, places, publishers, and NYSL cataloguing information) from spreadsheet data into the system so that I can refine and augment the initial person data that’s already been collected.</li>
+<li>As a data editor, when people are imported from spreadsheet data, I want them automatically linked to a VIAF record if possible, so that I don’t have to manually look up matches that can be made automatically.</li>
+<li>As a data editor, when people are imported from spreadsheet data, I want birth and death dates to be added to the record where they can be inferred from the authorized name so that I don’t have to re-enter this data.</li>
+<li>As a data editor, when a standard place name is imported from spreadsheet data, I want it to be associated with a Geonames URI, if possible, to ease data entry.</li>
+<li>As a data editor, after the book data is imported, I want sammelbound titles to be marked based on NYSL call numbers.</li>
+</ul>
+</div>
+<div class="section" id="accounts-permissions">
+<h3>Accounts &amp; Permissions<a class="headerlink" href="#accounts-permissions" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>As a project team member, I want to login with my Princeton CAS account so that I can use existing my existing credentials and not have to keep track of a separate username and password.</li>
+<li>As an admin, I want to edit user and group permissions so I can manage project team member access within the system.</li>
+<li>As an admin, I want an easy way to give project team members data editing permissions to that I don’t have to keep track of all the individual required permissions.</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Winthrop</a></h1>
+
+
+
+<p class="blurb">Django web application for "The Winthrop Family on the Page" CDH project</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=Princeton-CDH&repo=winthrop-django&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a href="https://travis-ci.org/Princeton-CDH/winthrop-django">
+    <img
+        alt="https://secure.travis-ci.org/Princeton-CDH/winthrop-django.svg?branch=master"
+        src="https://secure.travis-ci.org/Princeton-CDH/winthrop-django.svg?branch=master"
+    />
+</a>
+</p>
+
+
+
+
+    
+
+<p>
+<a href="https://codecov.io/github/Princeton-CDH/winthrop-django">
+    <img
+    alt="https://codecov.io/github/Princeton-CDH/winthrop-django/coverage.svg?branch=master"
+    src="https://codecov.io/github/Princeton-CDH/winthrop-django/coverage.svg?branch=master"
+    />
+</a>
+</p>
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codedocs.html">Code Documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Change Log</a></li>
+</ul>
+
+
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">CHANGELOG</a><ul>
+<li><a class="reference internal" href="#annotation-interface">0.6 Annotation Interface</a><ul>
+<li><a class="reference internal" href="#annotation">Annotation</a></li>
+<li><a class="reference internal" href="#misc-improvements">Misc. improvements</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bio-bibliographical-admin-interface">0.5 Bio/Bibliographical Admin interface</a><ul>
+<li><a class="reference internal" href="#places">Places</a></li>
+<li><a class="reference internal" href="#book-metadata">Book metadata</a></li>
+<li><a class="reference internal" href="#people">People</a></li>
+<li><a class="reference internal" href="#footnotes">Footnotes</a></li>
+<li><a class="reference internal" href="#data-import">Data Import</a></li>
+<li><a class="reference internal" href="#accounts-permissions">Accounts &amp; Permissions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, CDH @ Princeton & Trustees of Princeton University.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/changelog.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

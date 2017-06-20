@@ -4,7 +4,7 @@ from django.db import models
 
 from winthrop.common.models import Named, Notable, DateRange
 from winthrop.places.models import Place
-from .viaf import ViafAPI
+from .viaf import ViafAPI, ViafEntity
 
 # Generic footnote imports
 from django.contrib.contenttypes.fields import GenericRelation
@@ -47,20 +47,27 @@ class Person(Notable, DateRange):
         ordering = ['authorized_name']
 
     def save(self, *args, **kwargs):
-        '''Adds birth and death dates if they aren't in kwargs
+        '''Adds birth and death dates if they aren't already set
         and there's a viaf id for the record'''
 
         if self.viaf_id and not self.birth and not self.death:
-            # Parse out the ID from the URI
-            id_num = (re.search(r'\d+', self.viaf_id)).group(0)
-            viaf = ViafAPI()
-            viaf_rdf = viaf.get_RDF(id_num)
-            self.birth, self.death = viaf.get_years(viaf_rdf)
-        # Call save normally
+            self.set_birth_death_years()
+
         super(Person, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.authorized_name
+
+    @property
+    def viaf(self):
+        if self.viaf_id:
+            return ViafEntity(self.viaf_id)
+
+    def set_birth_death_years(self):
+        '''Set local birth and death dates based on information from VIAF'''
+        if self.viaf_id:
+            self.birth = self.viaf.birthyear
+            self.death = self.viaf.deathyear
 
 
 class Residence(Notable, DateRange):

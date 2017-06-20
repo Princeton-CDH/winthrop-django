@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from djiffy.models import Manifest
 
 from winthrop.common.models import Named, Notable, DateRange
 from winthrop.places.models import Place
@@ -67,7 +68,6 @@ class Book(Notable):
     # is positive integer enough, or do we need more validation here?
     is_extant = models.BooleanField(default=False)
     is_annotated = models.BooleanField(default=False)
-    is_digitized = models.BooleanField(default=False)
     red_catalog_number = models.CharField(max_length=255, blank=True)
     ink_catalog_number = models.CharField(max_length=255, blank=True)
     pencil_catalog_number = models.CharField(max_length=255, blank=True)
@@ -83,6 +83,9 @@ class Book(Notable):
     owning_institutions = models.ManyToManyField(OwningInstitution,
         through='Catalogue')
 
+    digital_edition = models.ForeignKey(Manifest, blank=True, null=True,
+        help_text='Digitized edition of this book, if available')
+
     # proof-of-concept generic relation to footnotes
     # (actual models that need this still TBD)
     footnotes = GenericRelation(Footnote)
@@ -90,9 +93,12 @@ class Book(Notable):
     class Meta:
         ordering = ['title']
 
-
     def __str__(self):
         return '%s (%s)' % (self.short_title, self.pub_year)
+
+    def is_digitized(self):
+        return self.digital_edition != None
+    is_digitized.boolean = True
 
     def catalogue_call_numbers(self):
         'Convenience access to catalogue call numbers, for display in admin'
@@ -172,10 +178,8 @@ class BookLanguage(Notable):
     book = models.ForeignKey(Book)
     is_primary = models.BooleanField()
 
-
     class Meta:
         unique_together = ('book', 'language')
-
 
     def __str__(self):
         return '%s %s%s' % (self.book, self.language,
@@ -206,7 +210,11 @@ class PersonBook(Notable, DateRange):
     '''Interactions or connections between books and people other than
     annotation.'''
     # FIXME: better name? concept/thing/model
-    person = models.ForeignKey(Person)
+    person = models.ForeignKey(
+        Person,
+        help_text=('This association also determines if a person is added to '
+                   'the annotator autocomplete.')
+    )
     book = models.ForeignKey(Book)
     relationship_type = models.ForeignKey(PersonBookRelationshipType)
 
@@ -217,4 +225,4 @@ class PersonBook(Notable, DateRange):
         dates = ''
         if self.dates:
             dates = ' (%s)' % self.dates
-        return '%s - %s%s' % (self.person, self.book, dates)
+        return '%s: %s of %s%s' % (self.person, self.relationship_type, self.book, dates)

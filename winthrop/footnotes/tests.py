@@ -35,4 +35,18 @@ class TestBibliography(TestCase):
         assert bibl.footnote_count() == 1
 
 
+class TestFootnote(TestCase):
 
+    def test_str(self):
+        src_type = SourceType.objects.first()
+        bibl = Bibliography.objects.create(bibliographic_note='citation',
+            source_type=src_type)
+
+        # use source type as test content object to attach a footnote to
+        # - find content type for SourceType model
+        srctype_content_type = ContentType.objects.get(app_label="footnotes",
+            model="sourcetype")
+        fnote = Footnote.objects.create(bibliography=bibl, content_type=srctype_content_type,
+            object_id=src_type.id, is_agree=False)
+
+        assert str(fnote) == 'Footnote on %s' % src_type

@@ -28,7 +28,6 @@
     "pub_year": 1563,
     "is_extant": true,
     "is_annotated": false,
-    "is_digitized": false,
     "red_catalog_number": "",
     "ink_catalog_number": "",
     "pencil_catalog_number": "",
@@ -48,7 +47,6 @@
     "pub_year": 1632,
     "is_extant": true,
     "is_annotated": true,
-    "is_digitized": false,
     "red_catalog_number": "258",
     "ink_catalog_number": "",
     "pencil_catalog_number": "",
@@ -169,6 +167,56 @@
     "call_number": "Win 4",
     "is_sammelband": false,
     "bound_order": null
+  }
+},
+{
+  "model": "books.language",
+  "pk": 1,
+  "fields": {
+    "name": "Latin",
+    "notes": ""
+  }
+},
+{
+  "model": "books.language",
+  "pk": 2,
+  "fields": {
+    "name": "Dutch",
+    "notes": ""
+  }
+},
+{
+  "model": "books.language",
+  "pk": 3,
+  "fields": {
+    "name": "English",
+    "notes": ""
+  }
+},
+{
+  "model": "djiffy.manifest",
+  "pk": 126,
+  "fields": {
+    "label": "The triall of vvitch-craft shewing the true and right methode of the discouery: with a confutation of erroneous wayes. By Iohn Cotta, Doctor in Physicke",
+    "short_id": "pks65kd99m",
+    "uri": "https://plum.princeton.edu/concern/scanned_resources/pks65kd99m/manifest",
+    "metadata": "{\"Creator\":[\"Cotta, John, 1575?-1650?\"],\"Published/Created\":[\"London :Printed by George Purslowe for Samuel Rand, and are to be solde at his shop neere Holburne-bridge, 1616.\"],\"Language\":[\"English\"],\"Abstract\":[\"Running title reads: The tryall of witch-craft, with the true discouerie thereof.\"],\"Local identifier\":[\"Win 78\"],\"Format\":[\"Data file\"],\"Extent\":[\"[8], 128, [2] p.\"],\"Call number\":[\"Electronic Resource\"],\"Author\":[\"Cotta, John, 1575?-1650?\"],\"Collection\":[\"Winthrop\"]}",
+    "created": "2017-05-11",
+    "last_modified": "2017-05-11",
+    "extra_data": "{\"description\":[\"Winthrop Project\",\"Win 78\"],\"creator\":\"Cotta, John, 1575?-1650?\",\"abstract\":\"Running title reads: The tryall of witch-craft, with the true discouerie thereof.\",\"call_number\":\"Electronic Resource\",\"publisher\":\"London :Printed by George Purslowe for Samuel Rand, and are to be solde at his shop neere Holburne-bridge, 1616.\",\"memberOf\":[{\"title\":\"Winthrop\",\"@id\":\"https://plum.princeton.edu/collections/p4j03fz143\"}],\"title_sort\":\"triall of vvitch-craft shewing the true and right methode of the discouery: with a confutation of erroneous wayes. By Iohn Cotta, Doctor in Physicke.\",\"title\":{\"@language\":\"eng\",\"@value\":\"The triall of vvitch-craft shewing the true and right methode of the discouery: with a confutation of erroneous wayes. By Iohn Cotta, Doctor in Physicke\"},\"@id\":\"https://plum.princeton.edu/concern/scanned_resources/pks65kd99m\",\"edm_rights\":[\"http://rightsstatements.org/vocab/NKC/1.0/\"],\"identifier\":[\"ark:/88435/tm70mz058\"],\"extent\":\"[8], 128, [2] p.\",\"@context\":\"https://bibdata.princeton.edu/context.json\",\"language\":\"eng\",\"author\":\"Cotta, John, 1575?-1650?\",\"format\":\"Data file\"}"
+  }
+},
+{
+  "model": "djiffy.canvas",
+  "pk": 10465,
+  "fields": {
+    "label": "00000150.tif",
+    "short_id": "pqn59s484h",
+    "uri": "https://plum.princeton.edu/concern/scanned_resources/pks65kd99m/manifest/canvas/pqn59s484h",
+    "iiif_image_id": "https://libimages1.princeton.edu/loris/plum_prod/pq%2Fn5%2F9s%2F48%2F4h-intermediate_file.jp2",
+    "manifest": 126,
+    "thumbnail": false,
+    "order": 149
   }
 }
 ]

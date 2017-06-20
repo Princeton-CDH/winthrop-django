@@ -8,6 +8,7 @@ import json
 from .models import Place
 from .geonames import GeoNamesAPI
 from .views import GeonamesLookup
+from .admin import GeonamesLookupWidget
 
 
 class TestPlace(TestCase):
@@ -119,4 +120,20 @@ class TestPlaceViews(TestCase):
         del item['countryName']
         # and just name, if no country is available
         assert geo_lookup.get_label(item) == 'New York City'
+
+
+class TestGeonamesLookupWidget(TestCase):
+
+    def test_render(self):
+        widget = GeonamesLookupWidget()
+        # no value set - should not error
+        rendered = widget.render('place', None, {'id': 'place'})
+        assert u'<div id="geonames_map"></div>' in rendered
+        assert u'<p><a id="geonames_uri" target="_blank" href=""></a></p>' \
+            in rendered
+        # uri value set - should be included in generated link
+        uri = 'http://sws.geonames.org/2759794/'
+        rendered = widget.render('place', uri, {'id': 'place'})
+        assert u'<a id="geonames_uri" target="_blank" href="%(uri)s">%(uri)s</a>' \
+            % {'uri': uri} in rendered
 

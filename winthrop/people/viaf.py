@@ -1,7 +1,10 @@
 import re
 import requests
+from django.utils.functional import cached_property
+import rdflib
+
 from rdflib.graph import Graph
-from .namespaces import schema
+from .namespaces import SCHEMA
 
 
 class ViafAPI(object):
@@ -15,7 +18,7 @@ class ViafAPI(object):
     #: base url for VIAF API methods
     api_base = "https://www.viaf.org/viaf"
     #: base url for VIAF URIs
-    uri_base = "https://viaf.org/viaf"
+    uri_base = "http://viaf.org/viaf"
 
     def suggest(self, query):
         """Get VIAF suggestions for the specified query string.
@@ -29,51 +32,65 @@ class ViafAPI(object):
             return resp.json().get('result', None) or []
         return []
 
-    def get_RDF(self, viaf_id):
-        """Get RDF record using known viaf_id to pull other information
-        Uses requests to standardize pulling the response stream"""
-        url = '/'.join([self.api_base, viaf_id])
-        headers = {'accept': 'application/rdf+xml'}
-        resp = requests.get(url, headers=headers)
-
-        # Returns an empty XML graph if bad result, to mimic behavior of suggest
-        if resp.status_code == requests.codes.ok:
-            return resp.text
-        graph = Graph()
-        return graph.serialize()
-
-    @staticmethod
-    def parse_date(graph, pred):
-        """Parse the date using a regex to pull the year and return as an
-        integer. If ambiguous (i.e. more than one!), return None instead"""
-        regex = re.compile(r'\d+?(?=-|$)')
-        date_list = []
-        for subj, pred, obj in graph.triples((None, pred, None)):
-            # Dates come in YYYY-MM-DD or just YYYY for antiquity
-            date_list.append(obj)
-        if (len(date_list) > 1) or not date_list:
-            date = None
-        else:
-            date = re.search(regex, date_list[0])
-            if date:
-                date = int(date.group(0))
-
-        return date
-
-    def get_years(self, rdf):
-        """Take RDF XML string/file-like and attempt to parse out birth and death dates
-        Returns birth, death as integers or tuple with year only, None on bad
-        match"""
-
-        graph = Graph()
-        graph.parse(data=rdf)
-
-        birthdate = self.parse_date(graph, schema.birthDate)
-        deathdate = self.parse_date(graph, schema.deathDate)
-
-        return birthdate, deathdate
-
     @classmethod
     def uri_from_id(cls, viaf_id):
         """Generate a VIAF URI for the specified id"""
-        return "%s/%s/" % (cls.uri_base, viaf_id)
+        return "%s/%s" % (cls.uri_base, viaf_id)
+
+
+class ViafEntity(object):
+    '''Object for working with a single VIAF entity.
+
+    :param viaf_id: viaf identifier (either integer or uri)
+    '''
+    def __init__(self, viaf_id):
+        try:
+            int(viaf_id)
+            self.uri = ViafAPI.uri_from_id(viaf_id)
+        except ValueError:
+            # NOTE: do we need to canonicalize the URI in any way to
+            # ensure RDF queries work properly?
+            self.uri = viaf_id
+
+    @property
+    def uriref(self):
+        '''VIAF URI reference as instance of :class:`rdflib.URIRef`'''
+        return rdflib.URIRef(self.uri)
+
+    @cached_property
+    def rdf(self):
+        '''VIAF data for this entity as :class:`rdflib.Graph`'''
+        graph = rdflib.Graph()
+        graph.parse(self.uri)
+        return graph
+
+    # person-specific properties
+
+    @property
+    def birthdate(self):
+        '''schema birthdate as :class:`rdflib.Literal`'''
+        return self.rdf.value(self.uriref, SCHEMA.birthDate)
+
+    @property
+    def deathdate(self):
+        '''schema deathdate as :class:`rdflib.Literal`'''
+        return self.rdf.value(self.uriref, SCHEMA.deathDate)
+
+    @property
+    def birthyear(self):
+        '''birth year'''
+        if self.birthdate:
+            return self.year_from_isodate(str(self.birthdate))
+
+    @property
+    def deathyear(self):
+        '''death year'''
+        if self.deathdate:
+            return self.year_from_isodate(str(self.deathdate))
+
+    # utility method for date parsing
+    @classmethod
+    def year_from_isodate(cls, date):
+        '''Return just the year portion of an ISO8601 date.  Expects
+        a string, returns an integer'''
+        return int(date.split('-')[0])

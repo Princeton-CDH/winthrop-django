@@ -19,7 +19,7 @@ class RelationshipInlineForm(forms.ModelForm):
             'end_year', 'notes')
         widgets = {
             'to_person': autocomplete.ModelSelect2(
-                url='people:person-autocomplete',
+                url='people:autocomplete',
                 attrs={'data-placeholder': 'Start typing a name to search...'}
             )
         }
