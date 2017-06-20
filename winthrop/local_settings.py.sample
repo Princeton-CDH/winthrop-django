@@ -7,6 +7,9 @@ DEBUG = True
 # Turn this on in test/QA site to show test banner
 SHOW_TEST_WARNING = True
 
+# Add analytics code (for CDH reference)
+INCLUDE_ANALYTICS = True
+
 ALLOWED_HOSTS = []
 
 
