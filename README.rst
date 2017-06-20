@@ -9,20 +9,20 @@ project.
 
 Python 3.5 / Django 1.10
 
-.. image:: https://travis-ci.org/Princeton-CDH/winthrop-django.svg?branch=develop
+.. image:: https://travis-ci.org/Princeton-CDH/winthrop-django.svg?branch=master
     :target: https://travis-ci.org/Princeton-CDH/winthrop-django
     :alt: Build status
 
-.. image:: https://codecov.io/gh/Princeton-CDH/winthrop-django/branch/develop/graph/badge.svg
-    :target: https://codecov.io/gh/Princeton-CDH/winthrop-django/branch/develop
+.. image:: https://codecov.io/gh/Princeton-CDH/winthrop-django/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/Princeton-CDH/winthrop-django/branch/master
     :alt: Code coverage
 
-.. image:: https://landscape.io/github/Princeton-CDH/winthrop-django/develop/landscape.svg?style=flat
-    :target: https://landscape.io/github/Princeton-CDH/winthrop-django/develop
+.. image:: https://landscape.io/github/Princeton-CDH/winthrop-django/master/landscape.svg?style=flat
+    :target: https://landscape.io/github/Princeton-CDH/winthrop-django/master
     :alt: Code Health
 
-.. image:: https://landscape.io/github/Princeton-CDH/winthrop-django/develop/landscape.svg?style=flat
-    :target: https://requires.io/github/Princeton-CDH/winthrop-django/requirements/?branch=develop
+.. image:: https://landscape.io/github/Princeton-CDH/winthrop-django/master/landscape.svg?style=flat
+    :target: https://requires.io/github/Princeton-CDH/winthrop-django/requirements/?branch=master
     :alt: Requirements Status
 
 
@@ -45,15 +45,16 @@ Development instructions
 
 Initial setup and installation:
 
--  recommended: create and activate a python 3.5 virtualenv
-   ``virtualenv winthrop -p python3.5`` ``source winthrop/bin/activate``
+-  recommended: create and activate a python 3.5 virtualenv::
+   virtualenv winthrop -p python3.5
+   source winthrop/bin/activate
 
--  pip install required python dependencies
-   ``pip install -r requirements.txt``
-   ``pip install -r dev-requirements.txt``
+-  pip install required python dependencies::
+   pip install -r requirements.txt
+   pip install -r dev-requirements.txt
 
--  copy sample local settings and configure for your environment
-   ``cp winthrop/local_settings.py.sample winthrop/local_settings.py``
+-  copy sample local settings and configure for your environment::
+   cp winthrop/local_settings.py.sample winthrop/local_settings.py
 
 
 Unit Tests
@@ -83,4 +84,4 @@ directory::
     cd docs
     make html
 
-You can also view documentation for the current master branch `on GitHub Pages <https://princeton-cdh.github.io/winthrop-django/html/>`__
+You can also view documentation for the current master branch `on GitHub Pages <https://princeton-cdh.github.io/winthrop-django/>`__

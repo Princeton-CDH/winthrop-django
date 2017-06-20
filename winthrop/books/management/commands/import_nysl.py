@@ -1,3 +1,20 @@
+'''
+Import command for Winthrop team's spreadsheet. It can be invoked using::
+
+    python manage.py import_nysql [--justsammel] /path/to/csv
+
+The ``--justsammel`` flag skips import of records to avoid
+reproducing duplicates, but rebuilds the ``is_sammelband`` flag set and
+produces an output list.
+
+The expect behavior is designed for a once-off import and will produce
+duplicate book entries (but not duplicates of any entries created
+as part of book creation).
+
+All persons created attempt to have a VIAF uri associated and all places
+have a Geonames ID assigned if possible.
+'''
+
 from collections import defaultdict
 from itertools import chain
 import csv
@@ -13,7 +30,8 @@ from winthrop.places.geonames import GeoNamesAPI
 
 
 class Command(BaseCommand):
-    help = 'Import NYSL book data into the database from a CSV file'
+    '''Import NYSL book data into the database from a CSV file'''
+    help = __doc__
 
     #: mapping of book model fields that can be filled in exactly as is
     #: from corresponding columns in the spreadsheet data

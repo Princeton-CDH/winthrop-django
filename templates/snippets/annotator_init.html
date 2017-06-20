@@ -18,7 +18,12 @@
 
   <link rel="stylesheet" type="text/css" href="{% static 'ext/annotator/annotator.min.css' %}"/>
   {# <link rel="stylesheet" type="text/css" href="//emory-lits-labs.github.io/annotator-meltdown/build/0.3.0/annotator.meltdown.min.css" /> #}
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+   <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+  {# Include local style overrides for the annotator in Winthrop #}
+  <link rel='stylesheet' type='text/css' href='{% static "css/winthrop-annotator.css" %}' />
+
+
 {# Initialize annotator.js *#}
 <script type="text/javascript" charset="utf-8">
 
@@ -109,17 +114,17 @@ $.ajaxSetup({
       autocompleteUrl: autocomplete_url.language
     },
     {
-      name: 'author',
-      label: 'Annotator',
-      placeholder: 'Type or click to select annotator',
-      autocompleteUrl: autocomplete_url.annotator
-    },
-    {
       name: 'subjects',
       label: 'Subjects',
       placeholder: 'Type or click to select subjects',
       list: true,
       autocompleteUrl: autocomplete_url.subject
+    },
+    {
+      name: 'author',
+      label: 'Annotator',
+      placeholder: 'Type or click to select annotator',
+      autocompleteUrl: autocomplete_url.annotator
     },
     {
       name: 'quote',
@@ -199,10 +204,15 @@ $.ajaxSetup({
   // (enforced at application level, only affects what is displayed)
   app.ident.is_superuser = {{ request.user.is_superuser|lower }}
 
+  /* Shim overrides for annotator or marginalia integrated fields */
   // Bind tag autocomplete and add more useful label
   resetTagAutocomplete(autocomplete_url.tag, "#annotator-field-1");
-  // Replace cmment text (card text is handled in render method of plugin)
+  // Replace comment text (card text is handled in render method of plugin)
   fixComment('#annotator-field-0');
+  // Bind listener for mouse downs on controls for grab hand icon
+  grabbyControls('.annotator-controls');
+  // Add annotator text label;
+  annotationLabel('#annotator-field-0');
 });
 
 

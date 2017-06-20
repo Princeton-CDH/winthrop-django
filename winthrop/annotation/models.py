@@ -31,8 +31,11 @@ class AnnotationCount(models.Model):
 
 class Tag(Named, Notable):
     '''Stub model for tag'''
-    pass
 
+    class Meta:
+        # Matching tags to annotator.js editor field names
+        verbose_name = 'Annotation Type'
+        
 
 class Annotation(BaseAnnotation):
     # NOTE: do we want to associate explicitly with canvas in the db?
@@ -46,12 +49,12 @@ class Annotation(BaseAnnotation):
     anchor_translation = models.TextField(blank=True,
         verbose_name='Anchor text translation')
     # Annotations are connected to subjects in roughly the same way as Books
-    subjects = models.ManyToManyField(Subject)
+    subjects = models.ManyToManyField(Subject, blank=True)
     # Annotations and tags about their characteristics associated with Tags
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, blank=True)
     # language and anchor text language
-    languages = models.ManyToManyField(Language)
-    anchor_languages = models.ManyToManyField(Language, related_name='+')
+    languages = models.ManyToManyField(Language, blank=True)
+    anchor_languages = models.ManyToManyField(Language, related_name='+', blank=True)
 
     def save(self, *args, **kwargs):
         # for image annotation, URI should be set to canvas URI; look up

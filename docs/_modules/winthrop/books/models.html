@@ -1,0 +1,358 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>winthrop.books.models &#8212; Winthrop 0.6.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.6.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for winthrop.books.models</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="k">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.contrib.contenttypes.fields</span> <span class="k">import</span> <span class="n">GenericRelation</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="k">import</span> <span class="n">reverse</span>
+<span class="kn">from</span> <span class="nn">django.utils.safestring</span> <span class="k">import</span> <span class="n">mark_safe</span>
+<span class="kn">from</span> <span class="nn">djiffy.models</span> <span class="k">import</span> <span class="n">Manifest</span>
+
+<span class="kn">from</span> <span class="nn">winthrop.common.models</span> <span class="k">import</span> <span class="n">Named</span><span class="p">,</span> <span class="n">Notable</span><span class="p">,</span> <span class="n">DateRange</span>
+<span class="kn">from</span> <span class="nn">winthrop.places.models</span> <span class="k">import</span> <span class="n">Place</span>
+<span class="kn">from</span> <span class="nn">winthrop.people.models</span> <span class="k">import</span> <span class="n">Person</span>
+<span class="kn">from</span> <span class="nn">winthrop.footnotes.models</span> <span class="k">import</span> <span class="n">Footnote</span>
+
+
+<div class="viewcode-block" id="BookCount"><a class="viewcode-back" href="../../../codedocs.html#winthrop.books.models.BookCount">[docs]</a><span class="k">class</span> <span class="nc">BookCount</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Mix-in for models related to books; adds book count property and link to</span>
+<span class="sd">    associated books&#39;&#39;&#39;</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">abstract</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">book_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">base_url</span> <span class="o">=</span> <span class="n">reverse</span><span class="p">(</span><span class="s1">&#39;admin:books_book_changelist&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mark_safe</span><span class="p">(</span><span class="s1">&#39;&lt;a href=&quot;</span><span class="si">%s</span><span class="s1">?</span><span class="si">%s</span><span class="s1">s__id__exact=</span><span class="si">%s</span><span class="s1">&quot;&gt;</span><span class="si">%s</span><span class="s1">&lt;/a&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                            <span class="n">base_url</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">book_set</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+                <span class="p">))</span>
+    <span class="n">book_count</span><span class="o">.</span><span class="n">short_description</span> <span class="o">=</span> <span class="s1">&#39;# books&#39;</span></div>
+
+
+<div class="viewcode-block" id="Subject"><a class="viewcode-back" href="../../../codedocs.html#winthrop.books.models.Subject">[docs]</a><span class="k">class</span> <span class="nc">Subject</span><span class="p">(</span><span class="n">Named</span><span class="p">,</span> <span class="n">Notable</span><span class="p">,</span> <span class="n">BookCount</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Subject categorization for books&#39;&#39;&#39;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Language"><a class="viewcode-back" href="../../../codedocs.html#winthrop.books.models.Language">[docs]</a><span class="k">class</span> <span class="nc">Language</span><span class="p">(</span><span class="n">Named</span><span class="p">,</span> <span class="n">Notable</span><span class="p">,</span> <span class="n">BookCount</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Language that a book is written in or a language included in a book&#39;&#39;&#39;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Publisher"><a class="viewcode-back" href="../../../codedocs.html#winthrop.books.models.Publisher">[docs]</a><span class="k">class</span> <span class="nc">Publisher</span><span class="p">(</span><span class="n">Named</span><span class="p">,</span> <span class="n">Notable</span><span class="p">,</span> <span class="n">BookCount</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Publisher of a book&#39;&#39;&#39;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="OwningInstitution"><a class="viewcode-back" href="../../../codedocs.html#winthrop.books.models.OwningInstitution">[docs]</a><span class="k">class</span> <span class="nc">OwningInstitution</span><span class="p">(</span><span class="n">Named</span><span class="p">,</span> <span class="n">Notable</span><span class="p">,</span> <span class="n">BookCount</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Institution that owns the extant copy of a book&#39;&#39;&#39;</span>
+    <span class="n">short_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="s1">&#39;Optional short name for admin display&#39;</span><span class="p">)</span>
+    <span class="n">contact_info</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">place</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Place</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">short_name</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span></div>
+
+
+<div class="viewcode-block" id="Book"><a class="viewcode-back" href="../../../codedocs.html#winthrop.books.models.Book">[docs]</a><span class="k">class</span> <span class="nc">Book</span><span class="p">(</span><span class="n">Notable</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;An individual book or volume&#39;&#39;&#39;</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">short_title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>
+    <span class="c1"># do we want any limit on short titles?</span>
+    <span class="n">original_pub_info</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;Original Publication Information&#39;</span><span class="p">)</span>
+    <span class="n">publisher</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Publisher</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">pub_place</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Place</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;Place of Publication&#39;</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">pub_year</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="s1">&#39;Publication Year&#39;</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># is positive integer enough, or do we need more validation here?</span>
+    <span class="n">is_extant</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">is_annotated</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">red_catalog_number</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ink_catalog_number</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">pencil_catalog_number</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">dimensions</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># expected length? is char sufficient or do we need text?</span>
+
+    <span class="n">subjects</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Subject</span><span class="p">,</span> <span class="n">through</span><span class="o">=</span><span class="s1">&#39;BookSubject&#39;</span><span class="p">)</span>
+    <span class="n">languages</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Language</span><span class="p">,</span> <span class="n">through</span><span class="o">=</span><span class="s1">&#39;BookLanguage&#39;</span><span class="p">)</span>
+
+    <span class="c1"># books are connected to owning institutions via the Catalogue</span>
+    <span class="c1"># model; mapping as a many-to-many with a through</span>
+    <span class="c1"># model in case we want to access owning instutions directly</span>
+    <span class="n">owning_institutions</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span><span class="n">OwningInstitution</span><span class="p">,</span>
+        <span class="n">through</span><span class="o">=</span><span class="s1">&#39;Catalogue&#39;</span><span class="p">)</span>
+
+    <span class="n">digital_edition</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Manifest</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="s1">&#39;Digitized edition of this book, if available&#39;</span><span class="p">)</span>
+
+    <span class="c1"># proof-of-concept generic relation to footnotes</span>
+    <span class="c1"># (actual models that need this still TBD)</span>
+    <span class="n">footnotes</span> <span class="o">=</span> <span class="n">GenericRelation</span><span class="p">(</span><span class="n">Footnote</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">ordering</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> (</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">short_title</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pub_year</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_digitized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">digital_edition</span> <span class="o">!=</span> <span class="kc">None</span>
+    <span class="n">is_digitized</span><span class="o">.</span><span class="n">boolean</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="Book.catalogue_call_numbers"><a class="viewcode-back" href="../../../codedocs.html#winthrop.books.models.Book.catalogue_call_numbers">[docs]</a>    <span class="k">def</span> <span class="nf">catalogue_call_numbers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s1">&#39;Convenience access to catalogue call numbers, for display in admin&#39;</span>
+        <span class="k">return</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">c</span><span class="o">.</span><span class="n">call_number</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">catalogue_set</span><span class="o">.</span><span class="n">all</span><span class="p">()])</span></div>
+    <span class="n">catalogue_call_numbers</span><span class="o">.</span><span class="n">short_description</span> <span class="o">=</span> <span class="s1">&#39;Call Numbers&#39;</span>
+
+    <span class="k">def</span> <span class="nf">authors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">creator_set</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">creator_type__name</span><span class="o">=</span><span class="s1">&#39;Author&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Book.author_names"><a class="viewcode-back" href="../../../codedocs.html#winthrop.books.models.Book.author_names">[docs]</a>    <span class="k">def</span> <span class="nf">author_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s1">&#39;Display author names; convenience access for display in admin&#39;</span>
+        <span class="c1"># NOTE: possibly might want to use last names here</span>
+        <span class="k">return</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">auth</span><span class="o">.</span><span class="n">person</span><span class="p">)</span> <span class="k">for</span> <span class="n">auth</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">authors</span><span class="p">())</span></div>
+    <span class="n">author_names</span><span class="o">.</span><span class="n">short_description</span> <span class="o">=</span> <span class="s1">&#39;Authors&#39;</span>
+    <span class="n">author_names</span><span class="o">.</span><span class="n">admin_order_field</span> <span class="o">=</span> <span class="s1">&#39;creator__person__authorized_name&#39;</span>
+
+<div class="viewcode-block" id="Book.add_author"><a class="viewcode-back" href="../../../codedocs.html#winthrop.books.models.Book.add_author">[docs]</a>    <span class="k">def</span> <span class="nf">add_author</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">person</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Add the specified person as an author of this book&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_creator</span><span class="p">(</span><span class="n">person</span><span class="p">,</span> <span class="s1">&#39;Author&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Book.add_editor"><a class="viewcode-back" href="../../../codedocs.html#winthrop.books.models.Book.add_editor">[docs]</a>    <span class="k">def</span> <span class="nf">add_editor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">person</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Add the specified person as an editor of this book&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_creator</span><span class="p">(</span><span class="n">person</span><span class="p">,</span> <span class="s1">&#39;Editor&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Book.add_translator"><a class="viewcode-back" href="../../../codedocs.html#winthrop.books.models.Book.add_translator">[docs]</a>    <span class="k">def</span> <span class="nf">add_translator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">person</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Add the specified person as an translator of this book&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_creator</span><span class="p">(</span><span class="n">person</span><span class="p">,</span> <span class="s1">&#39;Translator&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Book.add_creator"><a class="viewcode-back" href="../../../codedocs.html#winthrop.books.models.Book.add_creator">[docs]</a>    <span class="k">def</span> <span class="nf">add_creator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">person</span><span class="p">,</span> <span class="n">creator_type</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Associate the specified person as a creator of this book</span>
+<span class="sd">        using the specified type (e.g., author, editor, etc.).</span>
+<span class="sd">        Will throw an exception if creator type is not valid.&#39;&#39;&#39;</span>
+        <span class="n">creator_type</span> <span class="o">=</span> <span class="n">CreatorType</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">creator_type</span><span class="p">)</span>
+        <span class="n">Creator</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">person</span><span class="o">=</span><span class="n">person</span><span class="p">,</span> <span class="n">creator_type</span><span class="o">=</span><span class="n">creator_type</span><span class="p">,</span>
+            <span class="n">book</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Catalogue"><a class="viewcode-back" href="../../../codedocs.html#winthrop.books.models.Catalogue">[docs]</a><span class="k">class</span> <span class="nc">Catalogue</span><span class="p">(</span><span class="n">Notable</span><span class="p">,</span> <span class="n">DateRange</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Location of a book in the real world, associating it with an</span>
+<span class="sd">    owning instutition and also handling books that are bound together.&#39;&#39;&#39;</span>
+    <span class="n">institution</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">OwningInstitution</span><span class="p">)</span>
+    <span class="n">book</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Book</span><span class="p">)</span>
+    <span class="n">is_current</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">()</span>
+    <span class="c1"># using char instead of int because assuming  call numbers may contain</span>
+    <span class="c1"># strings as well as numbers</span>
+    <span class="n">call_number</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">is_sammelband</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">bound_order</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">dates</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">:</span>
+            <span class="n">dates</span> <span class="o">=</span> <span class="s1">&#39; (</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">dates</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> / </span><span class="si">%s%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">book</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">institution</span><span class="p">,</span> <span class="n">dates</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BookSubject"><a class="viewcode-back" href="../../../codedocs.html#winthrop.books.models.BookSubject">[docs]</a><span class="k">class</span> <span class="nc">BookSubject</span><span class="p">(</span><span class="n">Notable</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Through-model for book-subject relationship, to allow designating</span>
+<span class="sd">    a particular subject as primary or adding notes.&#39;&#39;&#39;</span>
+    <span class="n">subject</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Subject</span><span class="p">)</span>
+    <span class="n">book</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Book</span><span class="p">)</span>
+    <span class="n">is_primary</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">()</span>
+
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">unique_together</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;subject&#39;</span><span class="p">,</span> <span class="s1">&#39;book&#39;</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">book</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">subject</span><span class="p">,</span>
+            <span class="s1">&#39; (primary)&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_primary</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BookLanguage"><a class="viewcode-back" href="../../../codedocs.html#winthrop.books.models.BookLanguage">[docs]</a><span class="k">class</span> <span class="nc">BookLanguage</span><span class="p">(</span><span class="n">Notable</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Through-model for book-language relationship, to allow designating</span>
+<span class="sd">    one language as primary or adding notes.&#39;&#39;&#39;</span>
+    <span class="n">language</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Language</span><span class="p">)</span>
+    <span class="n">book</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Book</span><span class="p">)</span>
+    <span class="n">is_primary</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">()</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">unique_together</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;book&#39;</span><span class="p">,</span> <span class="s1">&#39;language&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">book</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">language</span><span class="p">,</span>
+            <span class="s1">&#39; (primary)&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_primary</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CreatorType"><a class="viewcode-back" href="../../../codedocs.html#winthrop.books.models.CreatorType">[docs]</a><span class="k">class</span> <span class="nc">CreatorType</span><span class="p">(</span><span class="n">Named</span><span class="p">,</span> <span class="n">Notable</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Type of creator role a person can have to a book - author,</span>
+<span class="sd">    editor, translator, etc.&#39;&#39;&#39;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Creator"><a class="viewcode-back" href="../../../codedocs.html#winthrop.books.models.Creator">[docs]</a><span class="k">class</span> <span class="nc">Creator</span><span class="p">(</span><span class="n">Notable</span><span class="p">):</span>
+    <span class="n">creator_type</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">CreatorType</span><span class="p">)</span>
+    <span class="n">person</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Person</span><span class="p">)</span>
+    <span class="n">book</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Book</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">person</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">creator_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">book</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PersonBookRelationshipType"><a class="viewcode-back" href="../../../codedocs.html#winthrop.books.models.PersonBookRelationshipType">[docs]</a><span class="k">class</span> <span class="nc">PersonBookRelationshipType</span><span class="p">(</span><span class="n">Named</span><span class="p">,</span> <span class="n">Notable</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Type of non-annotation relationship assocating a person</span>
+<span class="sd">    with a book.&#39;&#39;&#39;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="PersonBook"><a class="viewcode-back" href="../../../codedocs.html#winthrop.books.models.PersonBook">[docs]</a><span class="k">class</span> <span class="nc">PersonBook</span><span class="p">(</span><span class="n">Notable</span><span class="p">,</span> <span class="n">DateRange</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Interactions or connections between books and people other than</span>
+<span class="sd">    annotation.&#39;&#39;&#39;</span>
+    <span class="c1"># FIXME: better name? concept/thing/model</span>
+    <span class="n">person</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">Person</span><span class="p">,</span>
+        <span class="n">help_text</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;This association also determines if a person is added to &#39;</span>
+                   <span class="s1">&#39;the annotator autocomplete.&#39;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">book</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Book</span><span class="p">)</span>
+    <span class="n">relationship_type</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">PersonBookRelationshipType</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;Person/Book Interaction&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">dates</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">:</span>
+            <span class="n">dates</span> <span class="o">=</span> <span class="s1">&#39; (</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">dates</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1"> of </span><span class="si">%s%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">person</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">relationship_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">book</span><span class="p">,</span> <span class="n">dates</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Winthrop</a></h1>
+
+
+
+<p class="blurb">Django web application for "The Winthrop Family on the Page" CDH project</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=Princeton-CDH&repo=winthrop-django&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a href="https://travis-ci.org/Princeton-CDH/winthrop-django">
+    <img
+        alt="https://secure.travis-ci.org/Princeton-CDH/winthrop-django.svg?branch=master"
+        src="https://secure.travis-ci.org/Princeton-CDH/winthrop-django.svg?branch=master"
+    />
+</a>
+</p>
+
+
+
+
+    
+
+<p>
+<a href="https://codecov.io/github/Princeton-CDH/winthrop-django">
+    <img
+    alt="https://codecov.io/github/Princeton-CDH/winthrop-django/coverage.svg?branch=master"
+    src="https://codecov.io/github/Princeton-CDH/winthrop-django/coverage.svg?branch=master"
+    />
+</a>
+</p>
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../codedocs.html">Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Change Log</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, CDH @ Princeton & Trustees of Princeton University.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

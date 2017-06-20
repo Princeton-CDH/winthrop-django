@@ -2,8 +2,10 @@ import json
 from unittest.mock import Mock, patch
 
 from django.contrib.auth import get_user_model
+from django.contrib.admin.sites import AdminSite
 from django.test import TestCase
 from django.urls import reverse
+
 from djiffy.models import Manifest, Canvas
 
 from .models import Annotation, Tag
@@ -11,6 +13,7 @@ from .admin import CanvasLinkWidget
 from winthrop.books.models import Book, Language, PersonBook, \
     PersonBookRelationshipType
 from winthrop.people.models import Person
+from .admin import WinthropAnnotationAdmin
 
 
 class TestAnnotation(TestCase):
@@ -50,7 +53,7 @@ class TestAnnotation(TestCase):
         # Create a blank annotation object
         # Don't save it because we want to check that handle_extra_data()
         # calls the save before adding tags
-        
+
         annotation = Annotation()
         # test adding new tags
         # - using three existing tags and one nonexistent
@@ -373,3 +376,20 @@ class TestAnnotationViews(TestCase):
         self.assertContains(response,
             'app.ident.identity = "%s";' % self.admin.username,
             msg_prefix='Logged in user username passed to annotator')
+
+
+class TestWinthropAnnotationAdmin(TestCase):
+    def setUp(self):
+        self.author = Person.objects.create(authorized_name='Bar, Foo')
+        self.site = AdminSite()
+
+    def test_annotator(self):
+        # Make sure that the list view override is working as intended
+        # It should return 'Annotation Type' and set sorting based on
+        # author__authorized_name
+        annotation = Annotation(author=self.author)
+        admin = WinthropAnnotationAdmin(Annotation, self.site)
+        # Label is set to Annotator
+        assert admin.annotator.short_description == 'Annotator'
+        # Returns the author as the object to display
+        assert admin.annotator(annotation) == self.author

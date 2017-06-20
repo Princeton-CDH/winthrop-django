@@ -439,7 +439,7 @@ class TestWinthropManifestImporter(TestCase):
     def setUp(self):
         self.importer = import_digitaleds.WinthropManifestImporter()
 
-    @patch('winthrop.books.management.commands.import_digitaleds.ManifestImporter.import_book')
+    @patch('winthrop.books.management.commands.import_digitaleds.ManifestImporter.import_manifest')
     @patch('winthrop.books.management.commands.import_digitaleds.ManifestImporter.error_msg')
     def test_matching(self, mockerror_msg, mocksuperimport):
         manifest_uri = 'http://so.me/manifest/uri'
@@ -448,7 +448,7 @@ class TestWinthropManifestImporter(TestCase):
         # simulate import failed
         mocksuperimport.return_value = None
 
-        assert self.importer.import_book(manifest_uri, path) == None
+        assert self.importer.import_manifest(manifest_uri, path) == None
         mocksuperimport.assert_called_with(manifest_uri, path)
 
         # simulate import success but not local identifier
@@ -456,19 +456,19 @@ class TestWinthropManifestImporter(TestCase):
         # NOTE: using unsaved db manifest object to avoid import skipping
         # due to manifest uri already being in the database
         mocksuperimport.return_value = db_manif
-        assert self.importer.import_book(manifest_uri, path) == db_manif
+        assert self.importer.import_manifest(manifest_uri, path) == db_manif
         mockerror_msg.assert_called_with('No local identifier found')
 
         # local identifier but no match in local book db
         db_manif.metadata = {'Local identifier': ['Win 100']}
-        self.importer.import_book(manifest_uri, path)
+        self.importer.import_manifest(manifest_uri, path)
         mockerror_msg.assert_called_with('No match for Win 100')
 
         # local identifier matches book in fixture
         db_manif.metadata['Local identifier'] = ['Win 60']
         # must be saved in the db to link to book record
         db_manif.save()
-        self.importer.import_book(manifest_uri, path)
+        self.importer.import_manifest(manifest_uri, path)
         book = Book.objects.get(catalogue__call_number='Win 60')
         assert book.digital_edition == db_manif
 

@@ -3,6 +3,28 @@
 CHANGELOG
 =========
 
+0.6 Annotation Interface
+------------------------
+
+Annotation
+~~~~~~~~~~
+* As an annotation data editor, I want to select marginalia on a page image and enter a transcription of the marginal text so I can document the annotation and where it occurs.
+* As an annotation data editor, I want to associate an annotation with the person who wrote it so that I can document the author when that information is known.
+* As an annotation data editor, I want to edit any of the text fields (transcription, translation, anchor text, tags etc) so that I can correct mistakes or make updates.
+* As an annotation data editor, I want the option of leaving all fields blank so that I can accurately describe non-verbal annotations or annotations that don't relate to anchor text.
+* As an annotation data editor, I want the option to enter a translation of marginal text so that I can provide an English version when the original is in another language.
+* As an annotation data editor, I want the option to enter the anchor text and anchor text translation so that I can describe the content that the marginalia references.
+* As an annotation data editor, I want to document the language of anchor text and annotation text so that I can track use of languages across annotations.
+* As an annotation data editor, I want the option of associating tags with an annotation so that I can categorize marginalia consisting of visual elements.
+* As an annotation data editor, I want the option of associating annotations with any of the subjects in the database that are used for labeling books.
+
+Misc. improvements
+~~~~~~~~~~~~~~~~~~
+* Fixes footnote generic relationships to any objects with admin display
+* Fixes jQuery autocomplete for annotator fields so that keystroke down works for lists.
+
+
+
 0.5 Bio/Bibliographical Admin interface
 ---------------------------------------
 

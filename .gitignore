@@ -3,6 +3,8 @@ local_settings.py
 db.sqlite3
 dev.db
 
+# Mac cruft
+.DS_Store
 
 # Floobits
 .floo
@@ -73,7 +75,10 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
+sphinx-docs/_build/
+sphinx-docs/html/
+sphinx-docs/doctrees
+docs
 
 # PyBuilder
 target/

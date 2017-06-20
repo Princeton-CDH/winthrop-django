@@ -49,6 +49,7 @@ class AnnotationAdminForm(forms.ModelForm):
             # text for our annotation/marginalia
             'tags': 'Annotation type',
             'quote': 'Anchor text',
+            'author': 'Annotator',
         }
         widgets = {
             'author': autocomplete.ModelSelect2(
@@ -59,14 +60,21 @@ class AnnotationAdminForm(forms.ModelForm):
                 attrs={'data-placeholder': 'Start typing canvas name or uri to search...'}),
 
         }
-        fields = ('text', 'tags', 'text_translation', 'languages',
-                  'subjects', 'canvas', 'author', 'quote', 'anchor_translation',
+        fields = ('canvas', 'text', 'tags', 'text_translation', 'languages',
+                  'subjects', 'author', 'quote', 'anchor_translation',
                   'anchor_languages', 'user', 'extra_data', 'uri')
 
 
 class WinthropAnnotationAdmin(AnnotationAdmin):
+    # Override author field in list fiew to annotator
+    # and associate its sort with author.authorized_name
+    def annotator(self, obj):
+        return obj.author
+    annotator.short_description = 'Annotator'
+    annotator.admin_order_field = 'author__authorized_name'
+
     form = AnnotationAdminForm
-    list_display = ('text_preview', 'author', 'canvas', 'admin_thumbnail')
+    list_display = ('admin_thumbnail', 'text_preview', 'annotator', 'canvas')
     # NOTE: 'quote' == anchor text, and should be editable
     readonly_fields = ('uri', 'extra_data')
 

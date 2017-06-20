@@ -215,11 +215,28 @@ var winthrop = {
 }
 
 /*
-Winthrop Annotator Override
--A simple jQuery shim to fix the text on the 'Comment' box to something more
+Winthrop Annotator Overrides
+- fixComment: A simple jQuery shim to fix the text on the 'Comment' box to something more
 sensible
+- grabbyControls: jQuery call to bind cursor change on grab for .annotator-controls
+- annotationLabel: Add an annotation label based on textarea selector
 */
+
 function fixComment(field) {
-  // field - any valid jQuery selector for the annotation text field
+  // field - any valid jQuery selector string for the annotation text field
   $(field).attr('placeholder', 'Annotation text...');
+}
+
+function grabbyControls(field) {
+  // field - any valid jQuery selector string
+  $(field).mousedown(function() {
+      $(this).css('cursor', 'grabbing');
+  }).mouseup(function() {
+      $(this).css('cursor', 'grab');
+  });
+}
+
+function annotationLabel(field) {
+  // field - any valid jQuery selector string for the annotation textarea
+  $(field).parent().prepend('<label class="field-label">Text</label>')
 }
