@@ -66,8 +66,15 @@ class AnnotationAdminForm(forms.ModelForm):
 
 
 class WinthropAnnotationAdmin(AnnotationAdmin):
+    # Override author field in list fiew to annotator
+    # and associate its sort with author.authorized_name
+    def annotator(self, obj):
+        return obj.author
+    annotator.short_description = 'Annotator'
+    annotator.admin_order_field = 'author__authorized_name'
+
     form = AnnotationAdminForm
-    list_display = ('admin_thumbnail', 'text_preview', 'author', 'canvas')
+    list_display = ('admin_thumbnail', 'text_preview', 'annotator', 'canvas')
     # NOTE: 'quote' == anchor text, and should be editable
     readonly_fields = ('uri', 'extra_data')
 
