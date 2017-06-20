@@ -1,6 +1,6 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -35,7 +35,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -84,7 +84,7 @@ validation that requires end year falls after start year.</p>
 <dl class="class">
 <dt id="winthrop.common.models.Named">
 <em class="property">class </em><code class="descclassname">winthrop.common.models.</code><code class="descname">Named</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/common/models.html#Named"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.common.models.Named" title="Permalink to this definition">¶</a></dt>
-<dd><p>Abstract model with a &#8216;name&#8217; field; by default, name is used as
+<dd><p>Abstract model with a ‘name’ field; by default, name is used as
 the string display.</p>
 <dl class="attribute">
 <dt id="winthrop.common.models.Named.name">
@@ -156,7 +156,7 @@ Currently restricted to staff only.</p>
 <dl class="method">
 <dt id="winthrop.places.views.GeonamesLookup.get">
 <code class="descname">get</code><span class="sig-paren">(</span><em>request</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/places/views.html#GeonamesLookup.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.places.views.GeonamesLookup.get" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#8220;Return option list json response.</p>
+<dd><p>“Return option list json response.</p>
 </dd></dl>
 
 </dd></dl>
@@ -354,7 +354,7 @@ django-autocomplete-light.  Restricted to staff only.</p>
 <h3>Manage Commands<a class="headerlink" href="#manage-commands" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="module-winthrop.books.management.commands.import_nysl">
 <span id="import-nysl-data"></span><h4>import NYSL data<a class="headerlink" href="#module-winthrop.books.management.commands.import_nysl" title="Permalink to this headline">¶</a></h4>
-<p>Import command for Winthrop team&#8217;s spreadsheet. It can be invoked using:</p>
+<p>Import command for Winthrop team’s spreadsheet. It can be invoked using:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">import_nysql</span> <span class="p">[</span><span class="o">--</span><span class="n">justsammel</span><span class="p">]</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">csv</span>
 </pre></div>
 </div>
@@ -374,7 +374,7 @@ both files and URLs, and supports both IIIF Collections and single
 Manifests.  If a collection is specified, all supported manifests in the
 system will be loaded.  If a manifest is already loaded, it will be
 skipped (updating manifests is not yet supported).  For convenience, you
-use the preset path &#8220;NYSL&#8221; to load the Princeton University Libraries
+use the preset path “NYSL” to load the Princeton University Libraries
 collection of Winthrop NYSL materials.</p>
 <p>Example use:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">import_digitaleds</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">plum</span><span class="o">.</span><span class="n">princeton</span><span class="o">.</span><span class="n">edu</span><span class="o">/</span><span class="n">collections</span><span class="o">/</span><span class="n">p4j03fz143</span><span class="o">/</span><span class="n">manifest</span>
@@ -400,7 +400,7 @@ to link the cached manifest in the django database with the appropriate
 <dd><dl class="method">
 <dt id="winthrop.annotation.models.Annotation.handle_extra_data">
 <code class="descname">handle_extra_data</code><span class="sig-paren">(</span><em>data</em>, <em>request</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/annotation/models.html#Annotation.handle_extra_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.annotation.models.Annotation.handle_extra_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Handle any &#8220;extra&#8221; data that is not part of the stock annotation
+<dd><p>Handle any “extra” data that is not part of the stock annotation
 data model.  Use this method to customize the logic for updating
 an annotation from json request data (as sent by annotator.js).</p>
 </dd></dl>
@@ -447,7 +447,7 @@ associates as well as authors and editors of books in the library.</p>
 <h3>Models<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 <span class="target" id="module-winthrop.people.models"></span><dl class="class">
 <dt id="winthrop.people.models.AliasIntegerField">
-<em class="property">class </em><code class="descclassname">winthrop.people.models.</code><code class="descname">AliasIntegerField</code><span class="sig-paren">(</span><em>verbose_name=None</em>, <em>name=None</em>, <em>primary_key=False</em>, <em>max_length=None</em>, <em>unique=False</em>, <em>blank=False</em>, <em>null=False</em>, <em>db_index=False</em>, <em>rel=None</em>, <em>default=&lt;class 'django.db.models.fields.NOT_PROVIDED'&gt;</em>, <em>editable=True</em>, <em>serialize=True</em>, <em>unique_for_date=None</em>, <em>unique_for_month=None</em>, <em>unique_for_year=None</em>, <em>choices=None</em>, <em>help_text=''</em>, <em>db_column=None</em>, <em>db_tablespace=None</em>, <em>auto_created=False</em>, <em>validators=()</em>, <em>error_messages=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/people/models.html#AliasIntegerField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.people.models.AliasIntegerField" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">winthrop.people.models.</code><code class="descname">AliasIntegerField</code><span class="sig-paren">(</span><em>verbose_name=None</em>, <em>name=None</em>, <em>primary_key=False</em>, <em>max_length=None</em>, <em>unique=False</em>, <em>blank=False</em>, <em>null=False</em>, <em>db_index=False</em>, <em>rel=None</em>, <em>default=&lt;class ‘django.db.models.fields.NOT_PROVIDED’&gt;</em>, <em>editable=True</em>, <em>serialize=True</em>, <em>unique_for_date=None</em>, <em>unique_for_month=None</em>, <em>unique_for_year=None</em>, <em>choices=None</em>, <em>help_text=”</em>, <em>db_column=None</em>, <em>db_tablespace=None</em>, <em>auto_created=False</em>, <em>validators=()</em>, <em>error_messages=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/people/models.html#AliasIntegerField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.people.models.AliasIntegerField" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias field adapted from <a class="reference external" href="https://djangosnippets.org/snippets/10440/">https://djangosnippets.org/snippets/10440/</a>
 to allow accessing an existing db field by a different name, both
 for user display and in model and queryset use.</p>
@@ -459,8 +459,8 @@ for user display and in model and queryset use.</p>
 <dd><dl class="method">
 <dt id="winthrop.people.models.Person.save">
 <code class="descname">save</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/winthrop/people/models.html#Person.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#winthrop.people.models.Person.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds birth and death dates if they aren&#8217;t already set
-and there&#8217;s a viaf id for the record</p>
+<dd><p>Adds birth and death dates if they aren’t already set
+and there’s a viaf id for the record</p>
 </dd></dl>
 
 <dl class="method">
@@ -524,7 +524,7 @@ be extended by Q objects if necesary for more complex searches.</p>
 <p><a class="reference external" href="https://platform.worldcat.org/api-explorer/apis/VIAF">https://platform.worldcat.org/api-explorer/apis/VIAF</a></p>
 <dl class="attribute">
 <dt id="winthrop.people.viaf.ViafAPI.api_base">
-<code class="descname">api_base</code><em class="property"> = 'https://www.viaf.org/viaf'</em><a class="headerlink" href="#winthrop.people.viaf.ViafAPI.api_base" title="Permalink to this definition">¶</a></dt>
+<code class="descname">api_base</code><em class="property"> = ‘https://www.viaf.org/viaf’</em><a class="headerlink" href="#winthrop.people.viaf.ViafAPI.api_base" title="Permalink to this definition">¶</a></dt>
 <dd><p>base url for VIAF API methods</p>
 </dd></dl>
 
@@ -538,7 +538,7 @@ are found or something goes wrong.</p>
 
 <dl class="attribute">
 <dt id="winthrop.people.viaf.ViafAPI.uri_base">
-<code class="descname">uri_base</code><em class="property"> = 'http://viaf.org/viaf'</em><a class="headerlink" href="#winthrop.people.viaf.ViafAPI.uri_base" title="Permalink to this definition">¶</a></dt>
+<code class="descname">uri_base</code><em class="property"> = ‘http://viaf.org/viaf’</em><a class="headerlink" href="#winthrop.people.viaf.ViafAPI.uri_base" title="Permalink to this definition">¶</a></dt>
 <dd><p>base url for VIAF URIs</p>
 </dd></dl>
 
@@ -558,7 +558,7 @@ are found or something goes wrong.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>viaf_id</strong> &#8211; viaf identifier (either integer or uri)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>viaf_id</strong> – viaf identifier (either integer or uri)</td>
 </tr>
 </tbody>
 </table>
@@ -768,8 +768,8 @@ for or against information in the system.</p>
       &copy;2017, CDH @ Princeton & Trustees of Princeton University.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="_sources/codedocs.rst.txt"

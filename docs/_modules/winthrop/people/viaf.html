@@ -1,6 +1,6 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -33,7 +33,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -76,8 +76,8 @@
             <span class="k">return</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[]</span>
         <span class="k">return</span> <span class="p">[]</span></div>
 
-    <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="ViafAPI.uri_from_id"><a class="viewcode-back" href="../../../codedocs.html#winthrop.people.viaf.ViafAPI.uri_from_id">[docs]</a>    <span class="k">def</span> <span class="nf">uri_from_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">viaf_id</span><span class="p">):</span>
+<div class="viewcode-block" id="ViafAPI.uri_from_id"><a class="viewcode-back" href="../../../codedocs.html#winthrop.people.viaf.ViafAPI.uri_from_id">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">uri_from_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">viaf_id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generate a VIAF URI for the specified id&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">uri_base</span><span class="p">,</span> <span class="n">viaf_id</span><span class="p">)</span></div></div>
 
@@ -133,8 +133,8 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">year_from_isodate</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">deathdate</span><span class="p">))</span>
 
     <span class="c1"># utility method for date parsing</span>
-    <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="ViafEntity.year_from_isodate"><a class="viewcode-back" href="../../../codedocs.html#winthrop.people.viaf.ViafEntity.year_from_isodate">[docs]</a>    <span class="k">def</span> <span class="nf">year_from_isodate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
+<div class="viewcode-block" id="ViafEntity.year_from_isodate"><a class="viewcode-back" href="../../../codedocs.html#winthrop.people.viaf.ViafEntity.year_from_isodate">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">year_from_isodate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Return just the year portion of an ISO8601 date.  Expects</span>
 <span class="sd">        a string, returns an integer&#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span></div></div>
@@ -214,8 +214,8 @@
       &copy;2017, CDH @ Princeton & Trustees of Princeton University.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
     </div>
 

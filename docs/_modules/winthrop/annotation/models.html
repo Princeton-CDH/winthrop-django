@@ -1,6 +1,6 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -33,7 +33,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -75,8 +75,11 @@
 
 <div class="viewcode-block" id="Tag"><a class="viewcode-back" href="../../../codedocs.html#winthrop.annotation.models.Tag">[docs]</a><span class="k">class</span> <span class="nc">Tag</span><span class="p">(</span><span class="n">Named</span><span class="p">,</span> <span class="n">Notable</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Stub model for tag&#39;&#39;&#39;</span>
-    <span class="k">pass</span></div>
 
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="c1"># Matching tags to annotator.js editor field names</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;Annotation Type&#39;</span></div>
+        
 
 <div class="viewcode-block" id="Annotation"><a class="viewcode-back" href="../../../codedocs.html#winthrop.annotation.models.Annotation">[docs]</a><span class="k">class</span> <span class="nc">Annotation</span><span class="p">(</span><span class="n">BaseAnnotation</span><span class="p">):</span>
     <span class="c1"># NOTE: do we want to associate explicitly with canvas in the db?</span>
@@ -300,8 +303,8 @@
       &copy;2017, CDH @ Princeton & Trustees of Princeton University.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
     </div>
 
