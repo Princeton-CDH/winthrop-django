@@ -78,6 +78,11 @@ class TestAnnotation(TestCase):
         saved_tags = [tag.name for tag in annotation.tags.all()]
         assert 'underlining' not in saved_tags
 
+        # test that tags are stripped appropriately of trailing/heading spaces
+        tags = ['manicule', ' dash']
+        annotation.handle_extra_data({'tags': tags}, Mock())
+        assert annotation.tags.count() == 2
+
         # test removing existing tags
         annotation.handle_extra_data({'tags': []}, Mock())
         assert annotation.tags.count() == 0
