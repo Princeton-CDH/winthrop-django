@@ -3,6 +3,11 @@
 CHANGELOG
 =========
 
+0.6.1 Annotation Hotfix
+-----------------------
+* Fixes a bug where tags were parsed incorrectly, resulting in only the first tag setting
+
+
 0.6 Annotation Interface
 ------------------------
 
