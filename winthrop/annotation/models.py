@@ -35,7 +35,7 @@ class Tag(Named, Notable):
     class Meta:
         # Matching tags to annotator.js editor field names
         verbose_name = 'Annotation Type'
-        
+
 
 class Annotation(BaseAnnotation):
     # NOTE: do we want to associate explicitly with canvas in the db?
@@ -104,6 +104,8 @@ class Annotation(BaseAnnotation):
         if 'tags' in data:
             # NOTE: tag vocabulary is enforced; unrecognized tags
             # are ignored.
+            # Add shim to ensure strings are stripped
+            data['tags'] = [tag.strip() for tag in data['tags']]
             tags = Tag.objects.filter(name__in=data['tags'])
             self.tags.set(tags)
             del data['tags']
