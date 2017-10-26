@@ -161,6 +161,8 @@ class Annotation(BaseAnnotation, Notable):
             info['translation'] = self.text_translation
         if self.anchor_translation:
             info['anchor_translation'] = self.anchor_translation
+        if self.notes:
+            info['notes'] = self.notes
         return info
 
     img_info_to_iiif = {'w': 'width', 'h': 'height', 'x': 'x', 'y': 'y'}

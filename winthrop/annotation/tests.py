@@ -240,10 +240,13 @@ class TestAnnotation(TestCase):
         text_dict = {
             'text_translation': 'text of translation',
             'anchor_translation': 'text of anchor translation',
+            'notes': 'text of notes'
         }
         annotation = Annotation.objects.create(**text_dict)
         assert annotation.info()['translation'] == text_dict['text_translation']
         assert annotation.info()['anchor_translation'] == text_dict['anchor_translation']
+        assert annotation.info()['notes'] == text_dict['notes']
+
 
     def test_iiif_image_selection(self):
         annotation = Annotation()
