@@ -47,7 +47,6 @@ class TestAnnotation(TestCase):
             assert not note.canvas
             mockcanvas.objects.get.assert_called_with(uri=note.uri)
 
-
     def test_handle_extra_data(self):
 
         # Create a blank annotation object
@@ -159,6 +158,7 @@ class TestAnnotation(TestCase):
         text_dict = {
             'translation': 'text of translation',
             'anchor_translation': 'text of anchor translation',
+            'notes': 'notes',
         }
         # make a copy because the expected behavior is to delete the dict
         copy = text_dict.copy()
@@ -166,6 +166,7 @@ class TestAnnotation(TestCase):
         # all of the object fields should equal their dict equivalent
         assert annotation.text_translation == text_dict['translation']
         assert annotation.anchor_translation == text_dict['anchor_translation']
+        assert annotation.notes == text_dict['notes']
         # if a field is deleted from the dict, it should be deleted from object
         # by hande_extra_data
         # remove translation

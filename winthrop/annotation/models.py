@@ -37,7 +37,7 @@ class Tag(Named, Notable):
         verbose_name = 'Annotation Type'
 
 
-class Annotation(BaseAnnotation):
+class Annotation(BaseAnnotation, Notable):
     # NOTE: do we want to associate explicitly with canvas in the db?
     # could just use uri, but faster lookup if we associate...
     canvas = models.ForeignKey(Canvas, null=True, blank=True)
@@ -136,6 +136,10 @@ class Annotation(BaseAnnotation):
             del data['anchor_translation']
         else:
             self.anchor_translation = ''
+
+        if 'notes' in data:
+            self.notes = data['notes']
+            del data['notes']
 
         return data
 
