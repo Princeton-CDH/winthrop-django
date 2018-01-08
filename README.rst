@@ -26,20 +26,6 @@ Python 3.5 / Django 1.10
     :alt: Requirements Status
 
 
-Current development status
---------------------------
-
-.. image:: https://badge.waffle.io/Princeton-CDH/winthrop-django.svg?label=development+in+progress&title=In+Progress
-   :target: http://waffle.io/Princeton-CDH/winthrop-django
-   :alt: In Progress
-.. image:: https://badge.waffle.io/Princeton-CDH/winthrop-django.svg?label=development+complete&title=Development+Complete
-   :target: http://waffle.io/Princeton-CDH/winthrop-django
-   :alt: Development Complete
-.. image:: https://badge.waffle.io/Princeton-CDH/winthrop-django.svg?label=awaiting+testing&title=Awaiting+Testing
-   :target: http://waffle.io/Princeton-CDH/winthrop-django
-   :alt: Awaiting Testing
-
-
 Development instructions
 ------------------------
 
