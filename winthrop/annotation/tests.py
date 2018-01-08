@@ -294,6 +294,24 @@ class TestAnnotation(TestCase):
         assert annotation.admin_thumbnail() == \
             '<img src="%s" />' % annotation.iiif_image_selection().mini_thumbnail()
 
+    def test_str(self):
+        # no text or tags
+        annotation = Annotation.objects.create()
+        assert str(annotation) == 'annotation'
+
+        # tag but no text
+        tag = Tag.objects.create(name='squiggle')
+        annotation.tags.add(tag)
+        assert str(annotation) == 'squiggle annotation'
+
+        tag2, created = Tag.objects.get_or_create(name='dash')
+        annotation.tags.add(tag2)
+        assert str(annotation) == 'dash, squiggle annotation'
+
+        # use text if present
+        annotation.text = 'some elaborate comment'
+        assert str(annotation) == annotation.text
+
 
 class TestTag(TestCase):
 

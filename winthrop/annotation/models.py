@@ -75,6 +75,14 @@ class Annotation(BaseAnnotation, Notable):
                 pass
         super(Annotation, self).save()
 
+    def __str__(self):
+        # base annotation only returns text, but that could be empty; use
+        # tag as fallback
+        return self.text or \
+            '%s%sannotation' % (
+                ', '.join([tag.name for tag in self.tags.all()]),
+                ' ' if self.tags.count() else '')
+
     def handle_extra_data(self, data, request):
         '''Handle any "extra" data that is not part of the stock annotation
         data model.  Use this method to customize the logic for updating
