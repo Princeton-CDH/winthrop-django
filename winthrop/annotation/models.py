@@ -1,14 +1,14 @@
 from annotator_store.models import BaseAnnotation
-from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
-from django.http.request import HttpRequest
 from django.utils.safestring import mark_safe
 from django.urls import reverse
 from djiffy.models import Canvas
 
-from winthrop.common.models import Named, Notable
-from winthrop.people.models import Person
 from winthrop.books.models import Subject, Language
+from winthrop.common.models import Named, Notable
+from winthrop.footnotes.models import Footnote
+from winthrop.people.models import Person
 
 
 # FIXME: is this actually used/needed anywhere?
@@ -55,6 +55,8 @@ class Annotation(BaseAnnotation, Notable):
     # language and anchor text language
     languages = models.ManyToManyField(Language, blank=True)
     anchor_languages = models.ManyToManyField(Language, related_name='+', blank=True)
+
+    footnotes = GenericRelation(Footnote)
 
     def save(self, *args, **kwargs):
         # for image annotation, URI should be set to canvas URI; look up
