@@ -1,14 +1,13 @@
 import re
 
 from django.db import models
+from django.contrib.contenttypes.fields import GenericRelation
 
 from winthrop.common.models import Named, Notable, DateRange
-from winthrop.places.models import Place
-from .viaf import ViafAPI, ViafEntity
-
-# Generic footnote imports
-from django.contrib.contenttypes.fields import GenericRelation
 from winthrop.footnotes.models import Footnote
+from winthrop.places.models import Place
+from winthrop.people.viaf import ViafEntity
+
 
 class AliasIntegerField(models.IntegerField):
     '''Alias field adapted from https://djangosnippets.org/snippets/10440/
