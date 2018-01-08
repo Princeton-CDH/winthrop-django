@@ -52,7 +52,8 @@ class Footnote(Notable):
                       model__in=['subject', 'language', 'publisher',
                                  'owninginstitution', 'book', 'creatortype',
                                  'personbookrelationshiptype', 'personbook']))
-    object_id = models.PositiveIntegerField()
+    # using charfield to handle both integer ids AND UUID for Annotations
+    object_id = models.CharField(max_length=255)
     content_object = GenericForeignKey('content_type', 'object_id')
     is_agree = models.BooleanField(help_text='True if the evidence ' +
         'supports the information in the system, False if it contradicts.')
