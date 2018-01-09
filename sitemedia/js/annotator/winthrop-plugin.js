@@ -53,6 +53,15 @@ var winthrop = {
         annotationText.text('No annotation text');
       }
 
+      // add admin link to footer if not already present
+      if (annotation.admin_url) {
+        var footer = item.find('.annotation-footer');
+        if (! footer.find('.admin-link').length)  {
+          footer.append($('<a class="admin-link">Edit in Admin</a>')
+              .attr('href', annotation.admin_url));
+        }
+      }
+
       return item;
     }
   },
