@@ -151,6 +151,12 @@ class Annotation(BaseAnnotation, Notable):
             self.notes = data['notes']
             del data['notes']
 
+        # remove admin url if present so it is not saved in extra data
+        try:
+            del data['admin_url']
+        except KeyError:
+            pass
+
         return data
 
     def info(self):
@@ -165,7 +171,8 @@ class Annotation(BaseAnnotation, Notable):
             'tags': [tag.name for tag in self.tags.all()],
             'languages': [language.name for language in self.languages.all()],
             'anchor_languages': [language.name for language in self.anchor_languages.all()],
-            'subjects': [subject.name for subject in self.subjects.all()]
+            'subjects': [subject.name for subject in self.subjects.all()],
+            'admin_url': reverse('admin:annotation_annotation_change', args=[self.id]),
         })
         if self.text_translation:
             info['translation'] = self.text_translation
@@ -173,6 +180,7 @@ class Annotation(BaseAnnotation, Notable):
             info['anchor_translation'] = self.anchor_translation
         if self.notes:
             info['notes'] = self.notes
+
         return info
 
     img_info_to_iiif = {'w': 'width', 'h': 'height', 'x': 'x', 'y': 'y'}

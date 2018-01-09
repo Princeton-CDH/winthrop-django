@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 from django.contrib.auth import get_user_model
 from django.contrib.admin.sites import AdminSite
 from django.test import TestCase
-from django.urls import reverse
+from django.urls import reverse, resolve
 
 from djiffy.models import Manifest, Canvas
 
@@ -195,6 +195,10 @@ class TestAnnotation(TestCase):
                            annotation.subjects.all()]
         assert 'Chronology' not in assoc_subjects
 
+        # admin url ignored
+        data = annotation.handle_extra_data({'admin_url': 'example.com/edit_me'}, Mock())
+        assert 'admin_url' not in data
+
     def test_info(self):
         annotation = Annotation.objects.create()
         # tags should be an empty list when none are set
@@ -247,6 +251,12 @@ class TestAnnotation(TestCase):
         assert annotation.info()['anchor_translation'] == text_dict['anchor_translation']
         assert annotation.info()['notes'] == text_dict['notes']
 
+        # json data should includes admin edit url
+        assert 'admin_url' in annotation.info()
+        resolved_url = resolve(annotation.info()['admin_url'])
+        assert resolved_url.app_name == 'admin'
+        assert resolved_url.url_name == 'annotation_annotation_change'
+        assert resolved_url.args == (str(annotation.id), )
 
     def test_iiif_image_selection(self):
         annotation = Annotation()
