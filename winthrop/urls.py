@@ -7,12 +7,14 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.admin.views.decorators import staff_member_required
-from django.views.generic.base import RedirectView
+from django.views.generic.base import RedirectView, TemplateView
 from annotator_store import views as annotator_views
 from winthrop.annotation.views import TagAutocomplete
 
 
 urlpatterns = [
+    url(r'^robots\.txt$', TemplateView.as_view(template_name='robots.txt',
+        content_type='text/plain')),
     # for now, since there is not yet any public-facing site,
     # redirect base url to admin index page
     url(r'^$', RedirectView.as_view(pattern_name='admin:index'), name='site-index'),
