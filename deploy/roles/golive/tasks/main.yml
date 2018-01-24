@@ -30,7 +30,5 @@
     src: "{{ deploy }}"
     dest: "{{ install_root }}/current"
     state: link
-- name: Call restorecon just in case
-  command: 'restorecon -R {{ deploy }}'
 - name: Restart Apache (scl-httpd24-httpd)
   command: "sudo systemctl restart httpd24-httpd"
