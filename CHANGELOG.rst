@@ -3,11 +3,11 @@
 CHANGELOG
 =========
 
-0.7 Annotation Foonotes
------------------------
-As an annotation admin, I want an easy way to associate footnotes with annotations so that I can document known references and other details.
-As an annotation admin, I want a way to get from the annotation capture interface to the admin interface so that I can add structured footnotes to annotations.
-As an annotation editor, I want to take notes while I'm capturing and describing an annotation so I can document references or other information.
+0.7 Annotation interface improvements
+-------------------------------------
+* As an annotation admin, I want an easy way to associate footnotes with annotations so that I can document known references and other details.
+* As an annotation admin, I want a way to get from the annotation capture interface to the admin interface so that I can add structured footnotes to annotations.
+* As an annotation editor, I want to take notes while I'm capturing and describing an annotation so I can document references or other information.
 
 
 0.6.1 Annotation Hotfix
