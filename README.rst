@@ -4,7 +4,7 @@ winthrop-django
 .. sphinx-start-marker-do-not-remove
 
 Django web application for `The Winthrop Family on the
-Page <https://digitalhumanities.princeton.edu/projects/TheWinthropFamilyonthePage/>`__
+Page <https://cdh.princeton.edu/projects/the-winthrop-family-on-the-page/>`__
 project.
 
 Python 3.5 / Django 1.10
@@ -24,20 +24,6 @@ Python 3.5 / Django 1.10
 .. image:: https://landscape.io/github/Princeton-CDH/winthrop-django/master/landscape.svg?style=flat
     :target: https://requires.io/github/Princeton-CDH/winthrop-django/requirements/?branch=master
     :alt: Requirements Status
-
-
-Current development status
---------------------------
-
-.. image:: https://badge.waffle.io/Princeton-CDH/winthrop-django.svg?label=development+in+progress&title=In+Progress
-   :target: http://waffle.io/Princeton-CDH/winthrop-django
-   :alt: In Progress
-.. image:: https://badge.waffle.io/Princeton-CDH/winthrop-django.svg?label=development+complete&title=Development+Complete
-   :target: http://waffle.io/Princeton-CDH/winthrop-django
-   :alt: Development Complete
-.. image:: https://badge.waffle.io/Princeton-CDH/winthrop-django.svg?label=awaiting+testing&title=Awaiting+Testing
-   :target: http://waffle.io/Princeton-CDH/winthrop-django
-   :alt: Awaiting Testing
 
 
 Development instructions
@@ -78,10 +64,12 @@ To generate documentation them, first install development requirements::
 
     pip install -r dev-requirements.txt
 
-Then build documentation using the customized make file in the `docs`
+Then build documentation using the customized make file in the `sphinx-docs`
 directory::
 
-    cd docs
-    make html
+    cd sphinx-docs
+    make docs
+
+The documentation will be available in the directory `docs`.
 
 You can also view documentation for the current master branch `on GitHub Pages <https://princeton-cdh.github.io/winthrop-django/>`__

@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 from django.contrib.auth import get_user_model
 from django.contrib.admin.sites import AdminSite
 from django.test import TestCase
-from django.urls import reverse
+from django.urls import reverse, resolve
 
 from djiffy.models import Manifest, Canvas
 
@@ -46,7 +46,6 @@ class TestAnnotation(TestCase):
             note.save()
             assert not note.canvas
             mockcanvas.objects.get.assert_called_with(uri=note.uri)
-
 
     def test_handle_extra_data(self):
 
@@ -159,6 +158,7 @@ class TestAnnotation(TestCase):
         text_dict = {
             'translation': 'text of translation',
             'anchor_translation': 'text of anchor translation',
+            'notes': 'notes',
         }
         # make a copy because the expected behavior is to delete the dict
         copy = text_dict.copy()
@@ -166,6 +166,7 @@ class TestAnnotation(TestCase):
         # all of the object fields should equal their dict equivalent
         assert annotation.text_translation == text_dict['translation']
         assert annotation.anchor_translation == text_dict['anchor_translation']
+        assert annotation.notes == text_dict['notes']
         # if a field is deleted from the dict, it should be deleted from object
         # by hande_extra_data
         # remove translation
@@ -193,6 +194,10 @@ class TestAnnotation(TestCase):
         assoc_subjects = [subject.name for subject in
                            annotation.subjects.all()]
         assert 'Chronology' not in assoc_subjects
+
+        # admin url ignored
+        data = annotation.handle_extra_data({'admin_url': 'example.com/edit_me'}, Mock())
+        assert 'admin_url' not in data
 
     def test_info(self):
         annotation = Annotation.objects.create()
@@ -239,10 +244,19 @@ class TestAnnotation(TestCase):
         text_dict = {
             'text_translation': 'text of translation',
             'anchor_translation': 'text of anchor translation',
+            'notes': 'text of notes'
         }
         annotation = Annotation.objects.create(**text_dict)
         assert annotation.info()['translation'] == text_dict['text_translation']
         assert annotation.info()['anchor_translation'] == text_dict['anchor_translation']
+        assert annotation.info()['notes'] == text_dict['notes']
+
+        # json data should includes admin edit url
+        assert 'admin_url' in annotation.info()
+        resolved_url = resolve(annotation.info()['admin_url'])
+        assert resolved_url.app_name == 'admin'
+        assert resolved_url.url_name == 'annotation_annotation_change'
+        assert resolved_url.args == (str(annotation.id), )
 
     def test_iiif_image_selection(self):
         annotation = Annotation()
@@ -289,6 +303,24 @@ class TestAnnotation(TestCase):
         }
         assert annotation.admin_thumbnail() == \
             '<img src="%s" />' % annotation.iiif_image_selection().mini_thumbnail()
+
+    def test_str(self):
+        # no text or tags
+        annotation = Annotation.objects.create()
+        assert str(annotation) == 'annotation'
+
+        # tag but no text
+        tag = Tag.objects.create(name='squiggle')
+        annotation.tags.add(tag)
+        assert str(annotation) == 'squiggle annotation'
+
+        tag2, created = Tag.objects.get_or_create(name='dash')
+        annotation.tags.add(tag2)
+        assert str(annotation) == 'dash, squiggle annotation'
+
+        # use text if present
+        annotation.text = 'some elaborate comment'
+        assert str(annotation) == annotation.text
 
 
 class TestTag(TestCase):

@@ -14,6 +14,7 @@ Winthrop documentation
    architecture
    codedocs
    Change Log <changelog>
+   Deploy Notes <deploynotes>
 
 
 .. include:: ../README.rst

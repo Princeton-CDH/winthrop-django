@@ -62,12 +62,15 @@ class TestPerson(TestCase):
         test_rdf.parse(self.fixture_file)
 
         with patch('winthrop.people.viaf.rdflib.Graph') as mockgraph:
+            # patch parse to avoid trying to parse live uri
             mockgraph.return_value = test_rdf
-            pers.set_birth_death_years()
-            assert pers.birth == pers.viaf.birthyear
-            assert pers.birth == 69
-            assert pers.death == pers.viaf.deathyear
-            assert pers.death == 140
+
+            with patch.object(test_rdf, 'parse'):
+                pers.set_birth_death_years()
+                assert pers.birth == pers.viaf.birthyear
+                assert pers.birth == 69
+                assert pers.death == pers.viaf.deathyear
+                assert pers.death == 140
 
     def test_save(self):
         pers = Person()
@@ -313,17 +316,18 @@ class TestViafEntity(TestCase):
 
     def test_properties(self):
         # use viaf id matching fixture rdf file
-        ent = ViafEntity('89599270')
-
         test_rdf = rdflib.Graph()
         test_rdf.parse(self.rdf_fixture)
 
         with patch('winthrop.people.viaf.rdflib.Graph') as mockgraph:
             mockgraph.return_value = test_rdf
-            assert str(ent.birthdate) == '69'
-            assert str(ent.deathdate) == '140'
-            assert ent.birthyear == 69
-            assert ent.deathyear == 140
+            # patch parse to avoid trying to parse live uri
+            with patch.object(test_rdf, 'parse') as mockparse:
+                ent = ViafEntity('89599270')
+                assert ent.birthyear == 69
+                assert ent.deathyear == 140
+
+                mockparse.assert_called_once_with(ent.uri)
 
     def test_year_from_isodate(self):
         assert ViafEntity.year_from_isodate('2001') == 2001

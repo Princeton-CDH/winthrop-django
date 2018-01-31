@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Architecture &#8212; Winthrop 0.6.1 documentation</title>
+    <title>Architecture &#8212; Winthrop 0.7.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.6.1',
+        VERSION:     '0.7.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -25,21 +25,21 @@
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Code Documentation" href="codedocs.html" />
     <link rel="prev" title="Winthrop documentation" href="index.html" />
-   
+
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
-  
+
+
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
   <body>
-  
+
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body" role="main">
-            
+
   <div class="section" id="architecture">
 <h1>Architecture<a class="headerlink" href="#architecture" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
@@ -60,6 +60,15 @@
 <a class="reference external image-reference" href="_static/people-places-detail.png"><img alt="Detail view of people and places modules" src="_images/people-places-detail.png" /></a>
 <p>Detail view of the books module</p>
 <a class="reference external image-reference" href="_static/books-detail.png"><img alt="Detail view of people and places modules" src="_images/books-detail.png" /></a>
+<div class="section" id="database-revisions">
+<h4>0.7 Database Revisions<a class="headerlink" href="#database-revisions" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">notes</span></code> added to <code class="docutils literal"><span class="pre">annotation_annotation</span></code></li>
+<li><code class="docutils literal"><span class="pre">object_id</span></code> added to <code class="docutils literal"><span class="pre">footnotes_footnote</span></code></li>
+</ul>
+<p>Detail view of 0.7 schema modifications</p>
+<a class="reference external image-reference" href="_static/release-0.7-changes.png"><img alt="Detail view of table field changes in release 0.7" src="_images/release-0.7-changes.png" /></a>
+</div>
 </div>
 </div>
 </div>
@@ -88,7 +97,7 @@
 
 
 
-    
+
 
 <p>
 <a href="https://travis-ci.org/Princeton-CDH/winthrop-django">
@@ -102,7 +111,7 @@
 
 
 
-    
+
 
 <p>
 <a href="https://codecov.io/github/Princeton-CDH/winthrop-django">
@@ -118,6 +127,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="codedocs.html">Code Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deploynotes.html">Deploy Notes</a></li>
 </ul>
 
 
@@ -125,7 +135,10 @@
   <ul>
 <li><a class="reference internal" href="#">Architecture</a><ul>
 <li><a class="reference internal" href="#database">Database</a><ul>
-<li><a class="reference internal" href="#annotation-database-revisions">0.6 Annotation Database Revisions</a></li>
+<li><a class="reference internal" href="#annotation-database-revisions">0.6 Annotation Database Revisions</a><ul>
+<li><a class="reference internal" href="#database-revisions">0.7 Database Revisions</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -148,18 +161,18 @@
     </div>
     <div class="footer">
       &copy;2017, CDH @ Princeton & Trustees of Princeton University.
-      
+
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
-      
+
       |
       <a href="_sources/architecture.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
-    
 
-    
+
+
   </body>
 </html>

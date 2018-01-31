@@ -46,3 +46,15 @@ Detail view of the books module
 .. image:: _static/books-detail.png
     :target: _static/books-detail.png
     :alt: Detail view of people and places modules
+
+0.7 Database Revisions
+~~~~~~~~~~~~~~~~~~~~~~
+
+* ``notes`` added to ``annotation_annotation``
+* ``object_id`` added to ``footnotes_footnote``
+
+Detail view of 0.7 schema modifications
+
+.. image:: _static/release-0.7-changes.png
+    :target: _static/release-0.7-changes.png
+    :alt: Detail view of table field changes in release 0.7

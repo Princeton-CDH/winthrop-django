@@ -4,6 +4,7 @@ import pytest
 
 from .models import Named, Notable, DateRange
 
+
 class TestNamed(TestCase):
 
     def test_str(self):
@@ -22,6 +23,7 @@ class TestNotable(TestCase):
         assert False == noted.has_notes()
         noted.notes = None
         assert False == noted.has_notes()
+
 
 class TestDateRange(TestCase):
 
@@ -59,3 +61,21 @@ class TestDateRange(TestCase):
         # exclude set
         DateRange(start_year=1901, end_year=1900).clean_fields(exclude=['start_year'])
         DateRange(start_year=1901, end_year=1900).clean_fields(exclude=['end_year'])
+
+
+class TestRobotsTxt(TestCase):
+    '''Test for default robots.txt inclusion'''
+    def test_robots_txt(self):
+        res = self.client.get('/robots.txt')
+        # successfully gets robots.txt
+        assert res.status_code == 200
+        # is text/plain
+        assert res['Content-Type'] == 'text/plain'
+        # uses robots.txt template
+        assert 'robots.txt' in [template.name for template in res.templates]
+        with self.settings(DEBUG=False):
+            res = self.client.get('/robots.txt')
+            self.assertContains(res, 'Disallow: /admin')
+        with self.settings(DEBUG=True):
+            res = self.client.get('/robots.txt')
+            self.assertContains(res, 'Disallow: /')

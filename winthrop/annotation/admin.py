@@ -6,6 +6,7 @@ from djiffy.models import Canvas
 from annotator_store.admin import AnnotationAdmin
 
 from .models import Annotation, Tag
+from winthrop.footnotes.admin import FootnoteInline
 
 
 class CollapsibleTabularInline(admin.TabularInline):
@@ -62,7 +63,7 @@ class AnnotationAdminForm(forms.ModelForm):
         }
         fields = ('canvas', 'text', 'tags', 'text_translation', 'languages',
                   'subjects', 'author', 'quote', 'anchor_translation',
-                  'anchor_languages', 'user', 'extra_data', 'uri')
+                  'anchor_languages', 'notes', 'user', 'extra_data', 'uri')
 
 
 class WinthropAnnotationAdmin(AnnotationAdmin):
@@ -77,6 +78,7 @@ class WinthropAnnotationAdmin(AnnotationAdmin):
     list_display = ('admin_thumbnail', 'text_preview', 'annotator', 'canvas')
     # NOTE: 'quote' == anchor text, and should be editable
     readonly_fields = ('uri', 'extra_data')
+    inlines = (FootnoteInline, )
 
 
 admin.site.unregister(Annotation)

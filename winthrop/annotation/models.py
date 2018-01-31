@@ -1,14 +1,14 @@
 from annotator_store.models import BaseAnnotation
-from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
-from django.http.request import HttpRequest
 from django.utils.safestring import mark_safe
 from django.urls import reverse
 from djiffy.models import Canvas
 
-from winthrop.common.models import Named, Notable
-from winthrop.people.models import Person
 from winthrop.books.models import Subject, Language
+from winthrop.common.models import Named, Notable
+from winthrop.footnotes.models import Footnote
+from winthrop.people.models import Person
 
 
 # FIXME: is this actually used/needed anywhere?
@@ -37,7 +37,7 @@ class Tag(Named, Notable):
         verbose_name = 'Annotation Type'
 
 
-class Annotation(BaseAnnotation):
+class Annotation(BaseAnnotation, Notable):
     # NOTE: do we want to associate explicitly with canvas in the db?
     # could just use uri, but faster lookup if we associate...
     canvas = models.ForeignKey(Canvas, null=True, blank=True)
@@ -56,6 +56,8 @@ class Annotation(BaseAnnotation):
     languages = models.ManyToManyField(Language, blank=True)
     anchor_languages = models.ManyToManyField(Language, related_name='+', blank=True)
 
+    footnotes = GenericRelation(Footnote)
+
     def save(self, *args, **kwargs):
         # for image annotation, URI should be set to canvas URI; look up
         # canvas by URI and associate with the record
@@ -72,6 +74,14 @@ class Annotation(BaseAnnotation):
             except Canvas.DoesNotExist:
                 pass
         super(Annotation, self).save()
+
+    def __str__(self):
+        # base annotation only returns text, but that could be empty; use
+        # tag as fallback
+        return self.text or \
+            '%s%sannotation' % (
+                ', '.join([tag.name for tag in self.tags.all()]),
+                ' ' if self.tags.count() else '')
 
     def handle_extra_data(self, data, request):
         '''Handle any "extra" data that is not part of the stock annotation
@@ -137,6 +147,16 @@ class Annotation(BaseAnnotation):
         else:
             self.anchor_translation = ''
 
+        if 'notes' in data:
+            self.notes = data['notes']
+            del data['notes']
+
+        # remove admin url if present so it is not saved in extra data
+        try:
+            del data['admin_url']
+        except KeyError:
+            pass
+
         return data
 
     def info(self):
@@ -151,12 +171,16 @@ class Annotation(BaseAnnotation):
             'tags': [tag.name for tag in self.tags.all()],
             'languages': [language.name for language in self.languages.all()],
             'anchor_languages': [language.name for language in self.anchor_languages.all()],
-            'subjects': [subject.name for subject in self.subjects.all()]
+            'subjects': [subject.name for subject in self.subjects.all()],
+            'admin_url': reverse('admin:annotation_annotation_change', args=[self.id]),
         })
         if self.text_translation:
             info['translation'] = self.text_translation
         if self.anchor_translation:
             info['anchor_translation'] = self.anchor_translation
+        if self.notes:
+            info['notes'] = self.notes
+
         return info
 
     img_info_to_iiif = {'w': 'width', 'h': 'height', 'x': 'x', 'y': 'y'}
