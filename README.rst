@@ -7,7 +7,7 @@ Django web application for `The Winthrop Family on the
 Page <https://cdh.princeton.edu/projects/the-winthrop-family-on-the-page/>`__
 project.
 
-Python 3.5 / Django 1.10
+Python 3.5 / Django 1.11
 
 .. image:: https://travis-ci.org/Princeton-CDH/winthrop-django.svg?branch=master
     :target: https://travis-ci.org/Princeton-CDH/winthrop-django
