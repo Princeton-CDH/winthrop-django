@@ -70,6 +70,6 @@ directory::
     cd sphinx-docs
     make docs
 
-The documentation will be available in the directory 'docs'.    
+The documentation will be available in the directory `docs`.    
 
 You can also view documentation for the current master branch `on GitHub Pages <https://princeton-cdh.github.io/winthrop-django/>`__
