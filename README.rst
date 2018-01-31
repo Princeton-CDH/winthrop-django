@@ -64,10 +64,12 @@ To generate documentation them, first install development requirements::
 
     pip install -r dev-requirements.txt
 
-Then build documentation using the customized make file in the `docs`
+Then build documentation using the customized make file in the `sphinx-docs`
 directory::
 
-    cd docs
-    make html
+    cd sphinx-docs
+    make docs
+
+The documentation will be available in the directory 'docs'.    
 
 You can also view documentation for the current master branch `on GitHub Pages <https://princeton-cdh.github.io/winthrop-django/>`__
