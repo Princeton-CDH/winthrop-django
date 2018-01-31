@@ -4,7 +4,7 @@ winthrop-django
 .. sphinx-start-marker-do-not-remove
 
 Django web application for `The Winthrop Family on the
-Page <https://digitalhumanities.princeton.edu/projects/TheWinthropFamilyonthePage/>`__
+Page <https://cdh.princeton.edu/projects/the-winthrop-family-on-the-page/>`__
 project.
 
 Python 3.5 / Django 1.10
@@ -70,6 +70,6 @@ directory::
     cd sphinx-docs
     make docs
 
-The documentation will be available in the directory `docs`.    
+The documentation will be available in the directory `docs`.
 
 You can also view documentation for the current master branch `on GitHub Pages <https://princeton-cdh.github.io/winthrop-django/>`__
