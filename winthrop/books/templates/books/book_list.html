@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page-subtitle %}Books {% endblock %}
+
+{% block content %}
+<h1>Books</h1>
+<h1><img class="ui fluid image" src="{% static 'img/winthrop_banner-book.png' %}"
+    alt="Books"/></h1>
+<div class="ui text container">
+
+  <div class="ui grid">
+    {% for book in object_list %}
+      <div class="eight wide column">
+        <div class="ui segment">
+        <img class="ui small right floated image" src="{{ book.digital_edition.thumbnail.image.thumbnail }}"/>
+          <b>{{ book }}</b>
+
+         </div>
+      </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}

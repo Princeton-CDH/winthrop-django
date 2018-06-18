@@ -1,7 +1,12 @@
-from django.db.models import Q
 from dal import autocomplete
+from django.db.models import Q
+from django.views.generic import ListView, DetailView
 from djiffy.models import Canvas
-from .models import Publisher, Language, Subject
+
+from winthrop.books.models import Book, Publisher, Language, Subject
+
+class BookListView(ListView):
+    model = Book
 
 
 class PublisherAutocomplete(autocomplete.Select2QuerySetView):
