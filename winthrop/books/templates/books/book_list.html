@@ -7,7 +7,7 @@
 <h1>Books</h1>
 <h1><img class="ui fluid image" src="{% static 'img/winthrop_banner-book.png' %}"
     alt="Books"/></h1>
-<div class="ui text container">
+<div class="ui container">
 
   <div class="ui grid">
     {% for book in object_list %}
@@ -25,5 +25,8 @@
     {% endfor %}
   </div>
 
+    {% include 'snippets/pagination.html' %}
+
 </div>
+
 {% endblock %}
