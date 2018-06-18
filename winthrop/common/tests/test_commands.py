@@ -8,7 +8,7 @@ import pytest
 
 from winthrop.books.models import Book
 from winthrop.common.management.commands import index
-from winthrop.common.solr import get_solr_connection
+from winthrop.common.solr import get_solr_connection, Indexable
 
 
 class TestSolrSchemaCommand(TestCase):
@@ -81,7 +81,10 @@ class TestIndexCommand(TestCase):
         # index all books
         # (can't use assert_called_with because querysets doesn't evaluate equal)
         # mock_cmd_index_method.assert_called_with(books)
-        args = mock_cmd_index_method.call_args[0]
+
+        # get the arguments (not kwargs) for the first call
+        # (called twice because of SimpleIndexable test class)
+        args = mock_cmd_index_method.call_args_list[0][0]
         # first arg is queryset; compare them as lists
         assert list(books) == list(args[0])
 
@@ -89,5 +92,5 @@ class TestIndexCommand(TestCase):
         mockprogbar.ProgressBar.assert_not_called()
         # commit called after works are indexed
         mocksolr.commit.assert_called_with(test_coll)
-        # only called once (no pages)
-        assert mock_cmd_index_method.call_count == 1
+        # called once for each indexable subclass
+        assert mock_cmd_index_method.call_count == len(Indexable.__subclasses__())

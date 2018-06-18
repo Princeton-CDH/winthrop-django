@@ -84,6 +84,8 @@ class Command(BaseCommand):
 
         for model in Indexable.__subclasses__():
             # index in chunks and update progress bar
+            print("model %s" % model)
+            print("count %s" % model.objects.count())
             self.index(model.objects.all(), progbar=progbar)
 
         if progbar:
