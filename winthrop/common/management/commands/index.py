@@ -72,7 +72,8 @@ class Command(BaseCommand):
 
         total_to_index = 0
         for model in Indexable.__subclasses__():
-            # total works to be indexed
+            # total works to be indexed;
+            # currently assuming all indexables are django models
             total_to_index += model.objects.count()
 
         # initialize progressbar if requested and indexing more than 5 items

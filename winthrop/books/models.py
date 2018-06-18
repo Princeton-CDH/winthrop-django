@@ -136,6 +136,11 @@ class Book(Notable, Indexable):
         Creator.objects.create(person=person, creator_type=creator_type,
             book=self)
 
+    # TODO: index dependencies for author name
+    # index_depends_on = {
+        # 'creator_set':
+    # }
+
     def index_id(self):
         '''identifier within solr'''
         return 'book:{}'.format(self.pk)
@@ -143,7 +148,7 @@ class Book(Notable, Indexable):
     def index_data(self):
         '''data for indexing in Solr'''
         thumbnail_image = None
-        if self.digital_edition:
+        if self.digital_edition and self.odelsdigital_edition.thumbnail:
             thumbnail_image = self.digital_edition.thumbnail.iiif_image_id
 
         return {

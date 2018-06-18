@@ -14,8 +14,7 @@ install:
   - python -c "import uuid; print('SECRET_KEY = \'%s\'' % uuid.uuid4())" >> winthrop/local_settings.py
 
 script:
-  - py.test --cov=winthrop
-
+  - python -m pytest --cov=winthrop
 
 after_success:
 - codecov
