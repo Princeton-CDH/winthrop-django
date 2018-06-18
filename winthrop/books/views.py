@@ -1,12 +1,23 @@
 from dal import autocomplete
 from django.db.models import Q
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView
 from djiffy.models import Canvas
 
 from winthrop.books.models import Book, Publisher, Language, Subject
+from winthrop.common.solr import PagedSolrQuery
+
 
 class BookListView(ListView):
     model = Book
+    template_name = 'books/book_list.html'
+    paginate_by = 50
+
+    def get_queryset(self, **kwargs):
+        # return all books, filtering on content type
+        return PagedSolrQuery({
+            'q': '*:*',
+            'fq': 'content_type:(%s)' % str(Book._meta)
+        })
 
 
 class PublisherAutocomplete(autocomplete.Select2QuerySetView):

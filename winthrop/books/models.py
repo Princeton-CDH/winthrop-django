@@ -5,6 +5,7 @@ from django.utils.safestring import mark_safe
 from djiffy.models import Manifest
 
 from winthrop.common.models import Named, Notable, DateRange
+from winthrop.common.solr import Indexable
 from winthrop.places.models import Place
 from winthrop.people.models import Person
 from winthrop.footnotes.models import Footnote
@@ -53,7 +54,7 @@ class OwningInstitution(Named, Notable, BookCount):
         return self.short_name or self.name
 
 
-class Book(Notable):
+class Book(Notable, Indexable):
     '''An individual book or volume'''
     title = models.TextField()
     short_title = models.CharField(max_length=255)
@@ -134,6 +135,27 @@ class Book(Notable):
         creator_type = CreatorType.objects.get(name=creator_type)
         Creator.objects.create(person=person, creator_type=creator_type,
             book=self)
+
+    def index_id(self):
+        '''identifier within solr'''
+        return 'book:{}'.format(self.pk)
+
+    def index_data(self):
+        '''data for indexing in Solr'''
+        thumbnail_image = None
+        if self.digital_edition:
+            thumbnail_image = self.digital_edition.thumbnail.iiif_image_id
+
+        return {
+            # use content type in format of app.model_name for type
+            # (serializing model options as string returns this format)
+            'content_type': str(self._meta),
+            'id': self.index_id(),
+            'title': self.title,
+            'authors': [str(author.person) for author in self.authors()],
+            'pub_year': self.pub_year,
+            'thumbnail': thumbnail_image
+        }
 
 
 class Catalogue(Notable, DateRange):

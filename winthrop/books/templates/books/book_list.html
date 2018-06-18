@@ -13,8 +13,12 @@
     {% for book in object_list %}
       <div class="eight wide column">
         <div class="ui segment">
-        <img class="ui small right floated image" src="{{ book.digital_edition.thumbnail.image.thumbnail }}"/>
-          <b>{{ book }}</b>
+          <img class="ui small right floated image" src="{{ book.digital_edition.thumbnail.image.thumbnail }}"/>
+          <b>{{ book.title }}</b>
+          {% for author in book.authors %}
+              <p>{{ author }}</p>
+          {% endfor %}
+          <p>{{ book.pub_year }}</p>
 
          </div>
       </div>
