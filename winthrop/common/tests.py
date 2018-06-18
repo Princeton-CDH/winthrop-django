@@ -1,8 +1,13 @@
-from django.test import TestCase
+from unittest.mock import Mock
+
 from django.core.exceptions import ValidationError
+from django.http import QueryDict
+from django.test import TestCase
 import pytest
 
-from .models import Named, Notable, DateRange
+from winthrop.common.models import Named, Notable, DateRange
+from winthrop.common.templatetags.winthrop_tags import querystring_replace
+
 
 class TestNamed(TestCase):
 
@@ -59,3 +64,29 @@ class TestDateRange(TestCase):
         # exclude set
         DateRange(start_year=1901, end_year=1900).clean_fields(exclude=['start_year'])
         DateRange(start_year=1901, end_year=1900).clean_fields(exclude=['end_year'])
+
+
+def test_querystring_replace():
+    mockrequest = Mock()
+    mockrequest.GET = QueryDict('query=saussure')
+    context = {'request': mockrequest}
+    # replace when arg is not present
+    args = querystring_replace(context, page=1)
+    # preserves existing args
+    assert 'query=saussure' in args
+    # adds new arg
+    assert 'page=1' in args
+
+    mockrequest.GET = QueryDict('query=saussure&page=2')
+    args = querystring_replace(context, page=3)
+    assert 'query=saussure' in args
+    # replaces existing arg
+    assert 'page=3' in args
+    assert 'page=2' not in args
+
+    # handle repeating terms
+    mockrequest.GET = QueryDict('language=english&language=french')
+    args = querystring_replace(context, page=10)
+    assert 'language=english' in args
+    assert 'language=french' in args
+    assert 'page=10' in args
