@@ -4,7 +4,8 @@ import logging
 
 from cached_property import cached_property
 from django.conf import settings
-from django.db.models.fields.related_descriptors import ManyToManyDescriptor
+from django.db.models.fields.related_descriptors import ManyToManyDescriptor, \
+    ReverseManyToOneDescriptor
 from django.db.models.query import QuerySet
 import requests
 from SolrClient import SolrClient
@@ -33,6 +34,7 @@ class SolrSchema(object):
     #: solr schema field definitions
     fields = [
         {'name': 'title', 'type': 'text_en', 'required': False},
+        {'name': 'short_title', 'type': 'text_en', 'required': False},
         {'name': 'authors', 'type': 'text_en', 'required': False,
          'multiValued': True},
         {'name': 'pub_year', 'type': 'int', 'required': False},
@@ -41,6 +43,10 @@ class SolrSchema(object):
 
         {'name': 'text', 'type': 'text_en', 'required': False, 'stored': False,
          'multiValued': True},
+
+        # have solr automatically track last modification time for
+        # indexed content
+        {'name': 'last_modified', 'type': 'date', 'default': 'NOW'},
 
         # sort/facet copy fields
         # {'name': 'title_exact', 'type': 'string', 'required': False},
@@ -353,11 +359,17 @@ class Indexable(object):
                 # if a string, assume attribute of model
                 if isinstance(dep, str):
                     attr = getattr(model, dep)
+
+                    # many to many relationship
                     if isinstance(attr, ManyToManyDescriptor):
                         # store related model and options with signal handlers
                         related[attr.rel.model] = opts
                         # add through model to many to many list
                         m2m.append(attr.through)
+
+                    # reverse relationship of a many to many
+                    elif isinstance(attr, ReverseManyToOneDescriptor):
+                        related[attr.rel.related_model] = opts
 
         cls.related = related
         cls.m2m = m2m

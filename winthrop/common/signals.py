@@ -14,6 +14,8 @@ class IndexableSignalHandler:
 
     index_params = {'commitWithin': index_within * 1000}
 
+    connected = False
+
     def handle_save(sender, instance, **kwargs):
         if isinstance(instance, Indexable):
             logger.debug('Indexing %r', instance)
@@ -49,12 +51,12 @@ class IndexableSignalHandler:
                                                sender=m2m_rel)
 
         for model, options in Indexable.related.items():
-            if 'save' in options:
-                logger.debug('Registering save signal handler for %s', model)
-                models.signals.pre_save.connect(options['save'], sender=model)
-            if 'delete' in options:
-                logger.debug('Registering delete signal handler for %s', model)
-                models.signals.pre_delete.connect(options['delete'], sender=model)
+            for model_signal in ['pre_save', 'post_save', 'pre_delete', 'post_delete']:
+                if model_signal in options:
+                    signal = getattr(models.signals, model_signal)
+                    logger.debug('Registering %s signal handler for %s', model_signal, model)
+                    signal.connect(options[model_signal], sender=model)
+
 
     def disconnect():
         '''disconnect indexing signal handlers'''

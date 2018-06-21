@@ -1,3 +1,5 @@
+import logging
+
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
 from django.urls import reverse
@@ -9,6 +11,9 @@ from winthrop.common.solr import Indexable
 from winthrop.places.models import Place
 from winthrop.people.models import Person
 from winthrop.footnotes.models import Footnote
+
+
+logger = logging.getLogger(__name__)
 
 
 class BookCount(models.Model):
@@ -77,6 +82,7 @@ class Book(Notable, Indexable):
 
     subjects = models.ManyToManyField(Subject, through='BookSubject')
     languages = models.ManyToManyField(Language, through='BookLanguage')
+    contributors = models.ManyToManyField(Person, through='Creator')
 
     # books are connected to owning institutions via the Catalogue
     # model; mapping as a many-to-many with a through
@@ -134,12 +140,42 @@ class Book(Notable, Indexable):
         Will throw an exception if creator type is not valid.'''
         creator_type = CreatorType.objects.get(name=creator_type)
         Creator.objects.create(person=person, creator_type=creator_type,
-            book=self)
+                               book=self)
 
-    # TODO: index dependencies for author name
-    # index_depends_on = {
-        # 'creator_set':
-    # }
+    def handle_person_save(sender, instance, **kwargs):
+        '''signal handler for person save; reindex to get current author name'''
+        logger.debug('person save, reindexing %d book(s)', instance.book_set.count())
+        # NOTE: could refine to only reindex when person's name has changed
+        # (adapt logic from PPA)
+        Indexable.index_items(instance.book_set.all(), params={'commitWithin': 3000})
+
+    def handle_person_delete(sender, instance, **kwargs):
+        '''signal handler for person delete; reindex books'''
+
+        # get a list of ids for collected works before clearing them
+        book_ids = instance.book_set.values_list('id', flat=True)
+
+        logger.debug('peson delete, reindexing %d book(s)', len(book_ids))
+        # find the items based on the list of ids to reindex
+        books = Book.objects.filter(id__in=list(book_ids))
+
+        # NOTE: this sends pre/post clear signal, but it's not obvious
+        # how to take advantage of that
+        instance.book_set.clear()
+        Indexable.index_items(books, params={'commitWithin': 3000})
+
+    #: index dependencies, to update when changed
+    index_depends_on = {
+        # author name
+        # 'creator_set': {
+        #     'save': handle_creator_save,
+        #     'delete': handle_creator_delete,
+        # },
+        'contributors': {
+            'post_save': handle_person_save,
+            'pre_delete': handle_person_delete,
+        },
+    }
 
     def index_id(self):
         '''identifier within solr'''
@@ -148,7 +184,7 @@ class Book(Notable, Indexable):
     def index_data(self):
         '''data for indexing in Solr'''
         thumbnail_image = None
-        if self.digital_edition and self.odelsdigital_edition.thumbnail:
+        if self.digital_edition and self.digital_edition.thumbnail:
             thumbnail_image = self.digital_edition.thumbnail.iiif_image_id
 
         return {
@@ -157,6 +193,7 @@ class Book(Notable, Indexable):
             'content_type': str(self._meta),
             'id': self.index_id(),
             'title': self.title,
+            'short_title': self.short_title,
             'authors': [str(author.person) for author in self.authors()],
             'pub_year': self.pub_year,
             'thumbnail': thumbnail_image
