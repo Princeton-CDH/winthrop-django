@@ -16,6 +16,7 @@ class BookListView(ListView):
         # return all books, filtering on content type
         return PagedSolrQuery({
             'q': '*:*',
+            'sort': 'last_modified desc',
             'fq': 'content_type:(%s)' % str(Book._meta)
         })
 
