@@ -39,6 +39,7 @@ class SolrSchema(object):
          'multiValued': True},
         {'name': 'pub_year', 'type': 'int', 'required': False},
         {'name': 'thumbnail', 'type': 'string', 'required': False},
+        {'name': 'thumbnail_label', 'type': 'string', 'required': False},
         {'name': 'content_type', 'type': 'string', 'required': True},
 
         {'name': 'text', 'type': 'text_en', 'required': False, 'stored': False,

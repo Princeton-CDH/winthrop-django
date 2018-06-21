@@ -183,8 +183,9 @@ class Book(Notable, Indexable):
 
     def index_data(self):
         '''data for indexing in Solr'''
-        thumbnail_image = None
+        thumbnail_image = thumbnail_label = None
         if self.digital_edition and self.digital_edition.thumbnail:
+            thumbnail_label = self.digital_edition.thumbnail.label
             thumbnail_image = self.digital_edition.thumbnail.iiif_image_id
 
         return {
@@ -196,7 +197,8 @@ class Book(Notable, Indexable):
             'short_title': self.short_title,
             'authors': [str(author.person) for author in self.authors()],
             'pub_year': self.pub_year,
-            'thumbnail': thumbnail_image
+            'thumbnail': thumbnail_image,
+            'thumbnail_label': thumbnail_label
         }
 
 
