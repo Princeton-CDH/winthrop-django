@@ -43,5 +43,7 @@ def iiif_image(image_id, *args, **kwargs):
     # how much to generalize / what args to support here?
     if 'width' in kwargs:
         img = img.size(width=kwargs['width'])
+    if 'height' in kwargs:
+        img = img.size(height=kwargs['height'])
 
     return img
