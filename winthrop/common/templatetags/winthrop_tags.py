@@ -1,4 +1,6 @@
+from django import template
 from django.template.defaulttags import register
+from piffle.iiif import IIIFImageClient
 
 
 @register.simple_tag(takes_context=True)
@@ -21,3 +23,25 @@ def querystring_replace(context, **kwargs):
         querystring[key] = val
     # return urlencoded query string
     return querystring.urlencode()
+
+
+
+@register.simple_tag
+def iiif_image(image_id, *args, **kwargs):
+    '''Django template tag that provide IIIF image option logic via
+    piffle. Example use:
+
+        {% iiif_image my_image_uri width=200 %}
+
+    '''
+    if not image_id:
+        return
+
+    # piffle expects server and id separately; split them out
+    img = IIIFImageClient(*image_id.rsplit('/', 1))
+
+    # how much to generalize / what args to support here?
+    if 'width' in kwargs:
+        img = img.size(width=kwargs['width'])
+
+    return img
