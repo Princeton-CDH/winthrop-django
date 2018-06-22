@@ -44,4 +44,4 @@
     warn: False
     executable: /bin/bash
 - name: Restart Apache (scl-httpd24-httpd)
-command: "sudo systemctl restart httpd24-httpd"
+  command: "sudo systemctl restart httpd24-httpd"
