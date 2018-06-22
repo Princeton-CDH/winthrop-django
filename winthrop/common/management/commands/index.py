@@ -100,7 +100,8 @@ class Command(BaseCommand):
         # connections during handling of exceptions.
         try:
             # index in chunks and update progress bar if there is one
-            return Indexable.index_items(index_data, progbar=progbar)
+            return Indexable.index_items(index_data, params=self.solr_index_opts,
+                                         progbar=progbar)
         except Exception as err:
         # except (ConnectionError, RequestException) as err:
             # NOTE: this is fairly ugly, and catching the more specific errors

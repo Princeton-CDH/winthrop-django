@@ -58,7 +58,8 @@ class TestIndexCommand(TestCase):
 
         test_index_data = range(5)
         cmd.index(test_index_data)
-        mockindexable.index_items.assert_called_with(test_index_data, progbar=None)
+        mockindexable.index_items.assert_called_with(
+            test_index_data, params=cmd.solr_index_opts, progbar=None)
 
         # solr connection exception should raise a command error
         with pytest.raises(CommandError):
