@@ -2,17 +2,19 @@ from collections import defaultdict
 import csv
 from io import StringIO
 import json
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 import os
 
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
+from django.db.models.query import QuerySet
 from django.utils.safestring import mark_safe
 from django.test import TestCase
 from django.urls import reverse
 from djiffy.models import Manifest
 import pytest
 
+from winthrop.common.solr import Indexable
 from winthrop.places.models import Place
 from winthrop.people.models import Person
 from .models import OwningInstitution, Book, Publisher, Catalogue, \
@@ -154,6 +156,41 @@ class TestBook(TestCase):
         # add digital edition
         de_christelicke.digital_edition = Manifest.objects.first()
         assert de_christelicke.is_digitized()
+
+    @patch.object(Indexable, 'index_items')
+    def test_handle_person_save(self, mock_index_items):
+
+        author = Person.objects.all().first()
+        # Indexable.index_items(instance.book_set.all(), params={'commitWithin': 3000})
+
+        # TODO: only reindex on name change
+        # Book.handle_person_save(Mock(), author)
+        # index not called because collection name has not changed
+        # mock_index_items.assert_not_called()
+
+        # modify name to test indexing
+        # author.name = 'Another'
+        book = Book.objects.filter(contributors=author).first()
+        Book.handle_person_save(Mock(), author)
+        # call must be inspected piecemeal because queryset equals comparison fails
+        args, kwargs = mock_index_items.call_args
+        assert isinstance(args[0], QuerySet)
+        assert book in args[0]
+        assert kwargs['params'] == {'commitWithin': 3000}
+
+    @patch.object(Indexable, 'index_items')
+    def test_handle_person_delete(self, mock_index_items):
+        author = Person.objects.all().first()
+        book = Book.objects.filter(contributors=author).first()
+
+        Book.handle_person_delete(Mock(), author)
+
+        assert author.book_set.count() == 0
+        args, kwargs = mock_index_items.call_args
+        assert isinstance(args[0], QuerySet)
+        assert book in args[0]
+        assert kwargs['params'] == {'commitWithin': 3000}
+
 
 
 class TestCatalogue(TestCase):
