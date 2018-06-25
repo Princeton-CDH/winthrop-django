@@ -102,7 +102,15 @@ class TestPerson(TestCase):
             pers.save()
             mocksetyears.assert_called_with()
 
-
+    def test_authorized_name_changed(self):
+        person = Person(authorized_name='John Jacob Jingleheimer Smith')
+        assert not person.authorized_name_changed
+        # change the name
+        person.authorized_name = 'JJ Smith'
+        assert person.authorized_name_changed
+        # save changes; should no longer be marked as changed
+        person.save()
+        assert not person.authorized_name_changed
 
 
 class TestResidence(TestCase):
