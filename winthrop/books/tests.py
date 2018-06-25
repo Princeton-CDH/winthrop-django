@@ -161,15 +161,14 @@ class TestBook(TestCase):
     def test_handle_person_save(self, mock_index_items):
 
         author = Person.objects.all().first()
-        # Indexable.index_items(instance.book_set.all(), params={'commitWithin': 3000})
 
-        # TODO: only reindex on name change
-        # Book.handle_person_save(Mock(), author)
+        # only reindex on name change
+        Book.handle_person_save(Mock(), author)
         # index not called because collection name has not changed
-        # mock_index_items.assert_not_called()
+        mock_index_items.assert_not_called()
 
         # modify name to test indexing
-        # author.name = 'Another'
+        author.authorized_name = 'Another'
         book = Book.objects.filter(contributors=author).first()
         Book.handle_person_save(Mock(), author)
         # call must be inspected piecemeal because queryset equals comparison fails

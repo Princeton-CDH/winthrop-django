@@ -144,10 +144,10 @@ class Book(Notable, Indexable):
 
     def handle_person_save(sender, instance, **kwargs):
         '''signal handler for person save; reindex to get current author name'''
-        logger.debug('person save, reindexing %d book(s)', instance.book_set.count())
-        # NOTE: could refine to only reindex when person's name has changed
-        # (adapt logic from PPA)
-        Indexable.index_items(instance.book_set.all(), params={'commitWithin': 3000})
+        if instance.authorized_name_changed:
+            # only index if authorized name has changed
+            logger.debug('person save, reindexing %d book(s)', instance.book_set.count())
+            Indexable.index_items(instance.book_set.all(), params={'commitWithin': 3000})
 
     def handle_person_delete(sender, instance, **kwargs):
         '''signal handler for person delete; reindex books'''
