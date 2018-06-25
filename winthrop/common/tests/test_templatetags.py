@@ -1,8 +1,10 @@
 from unittest.mock import Mock
 
 from django.http import QueryDict
+from piffle.iiif import IIIFImageClient
 
-from winthrop.common.templatetags.winthrop_tags import querystring_replace
+from winthrop.common.templatetags.winthrop_tags import querystring_replace, \
+    iiif_image
 
 
 def test_querystring_replace():
@@ -29,3 +31,20 @@ def test_querystring_replace():
     assert 'language=english' in args
     assert 'language=french' in args
     assert 'page=10' in args
+
+
+def test_iiif_image():
+
+    test_img_server = 'http://example.com/imgserver'
+    test_img_id = 'foo-bar-baz.jp2'
+    test_img_uri = '/'.join([test_img_server, test_img_id])
+
+    iiif_img = IIIFImageClient(test_img_server, test_img_id)
+
+    assert str(iiif_image(test_img_uri)) == str(iiif_img)
+    assert str(iiif_image(test_img_uri, width=200)) == str(iiif_img.size(width=200))
+    assert str(iiif_image(test_img_uri, height=100)) == str(iiif_img.size(height=100))
+    assert str(iiif_image(test_img_uri, width=200, height=100)) == \
+        str(iiif_img.size(width=200, height=100))
+
+    assert iiif_image('') == None
