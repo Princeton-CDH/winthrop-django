@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from dal import autocomplete
 from django.db.models import Q
 from django.views.generic import ListView
@@ -5,20 +7,39 @@ from djiffy.models import Canvas
 
 from winthrop.books.models import Book, Publisher, Language, Subject
 from winthrop.common.solr import PagedSolrQuery
+from winthrop.common.views import LastModifiedListMixin
 
 
-class BookListView(ListView):
+class BookListView(ListView, LastModifiedListMixin):
     model = Book
     template_name = 'books/book_list.html'
     paginate_by = 50
 
-    def get_queryset(self, **kwargs):
-        # return all books, filtering on content type
-        return PagedSolrQuery({
+    def solr_query_opts(self):
+        return {
             'q': '*:*',
             'sort': 'last_modified desc',
             'fq': 'content_type:(%s)' % str(Book._meta)
+        }
+
+    def get_queryset(self, **kwargs):
+        # return all books, filtering on content type
+        return PagedSolrQuery(self.solr_query_opts())
+
+    def last_modified(self):
+        '''override last modified logic to work with Solr'''
+        query_opts = self.solr_query_opts()
+        # override sort to return most recent modification date,
+        # only return last modified value and nothing else
+        query_opts.update({
+            'sort': 'last_modified desc',
+            'fl': 'last_modified'
         })
+
+        psq = PagedSolrQuery(query_opts)
+        if psq.count():
+            # Solr stores date in isoformat; convert to datetime
+            return datetime.strptime(psq[0]['last_modified'], '%Y-%m-%dT%H:%M:%S.%fZ')
 
 
 class PublisherAutocomplete(autocomplete.Select2QuerySetView):

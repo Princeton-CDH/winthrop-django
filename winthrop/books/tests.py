@@ -1,5 +1,6 @@
 from collections import defaultdict
 import csv
+from datetime import datetime
 from io import StringIO
 import json
 from time import sleep
@@ -15,7 +16,7 @@ from django.urls import reverse
 from djiffy.models import Manifest
 import pytest
 
-from winthrop.common.solr import Indexable
+from winthrop.common.solr import Indexable, PagedSolrQuery
 from winthrop.places.models import Place
 from winthrop.people.models import Person
 from .models import OwningInstitution, Book, Publisher, Catalogue, \
@@ -520,6 +521,19 @@ class TestBookViews(TestCase):
          # no query or filters, should find all books
         response = self.client.get(url)
         assert response.status_code == 200
+        # last modified header should be set on response
+        assert response.has_header('last-modified')
+
+        # no easy way to get last modification time from Solr...
+        index_modified = PagedSolrQuery({
+            'q': '*:*',
+            'sort': 'last_modified desc',
+            'fq': 'content_type:(%s)' % str(Book._meta)
+            })[0]['last_modified']
+        index_modified_dt = datetime.strptime(index_modified, '%Y-%m-%dT%H:%M:%S.%fZ')
+
+        modified = index_modified_dt.strftime('%a, %d %b %Y %H:%M:%S GMT')
+        assert response['Last-Modified'] == modified
 
         # provisional text
         self.assertContains(response, 'Displaying %d books' % books.count())
