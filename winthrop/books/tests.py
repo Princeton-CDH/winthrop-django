@@ -190,6 +190,39 @@ class TestBook(TestCase):
         assert book in args[0]
         assert kwargs['params'] == {'commitWithin': 3000}
 
+    def test_index_id(self):
+        book = Book.objects.all().first()
+        assert book.index_id() == 'book:%d' % book.pk
+
+    def test_index_data(self):
+        book = Book.objects.filter(digital_edition__isnull=True).first()
+        # no digital edition associated
+        index_data = book.index_data()
+        assert index_data['content_type'] == 'books.book'
+        assert index_data['id'] == book.index_id()
+        assert index_data['title'] == book.title
+        assert index_data['short_title'] == book.short_title
+        for auth in book.authors():
+            assert auth.person.authorized_name in index_data['authors']
+        assert index_data['pub_year'] == book.pub_year
+        assert not index_data['thumbnail']
+        assert not index_data['thumbnail_label']
+
+        # associate digital edition from fixture (has no thumbnail)
+        book.digital_edition = Manifest.objects.first()
+        # has digital edition but no thumbnail
+        # book = Book.objects.filter(digital_edition__isnull=False).first()
+        index_data = book.index_data()
+        assert not index_data['thumbnail']
+        assert not index_data['thumbnail_label']
+
+        # mark canvas as thumbnail
+        canvas = book.digital_edition.canvases.first()
+        canvas.thumbnail = True
+        canvas.save()
+        index_data = book.index_data()
+        assert index_data['thumbnail'] == canvas.iiif_image_id
+        assert index_data['thumbnail_label'] == canvas.label
 
 
 class TestCatalogue(TestCase):
@@ -201,11 +234,11 @@ class TestCatalogue(TestCase):
         pub_place = Place(name='Printington', geonames_id=4567)
         inst = OwningInstitution(name='NYSL')
         bk = Book(title='Some rambling long old title',
-            short_title='Some rambling',
-            original_pub_info='foo',
-            publisher=pub,
-            pub_place=pub_place,
-            pub_year=1823)
+                  short_title='Some rambling',
+                  original_pub_info='foo',
+                  publisher=pub,
+                  pub_place=pub_place,
+                  pub_year=1823)
 
         cat = Catalogue(institution=inst, book=bk)
         assert '%s / %s' % (bk, inst) == str(cat)
