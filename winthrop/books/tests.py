@@ -545,6 +545,11 @@ class TestBookViews(TestCase):
             for creator in book.authors():
                 self.assertContains(response, creator.person.authorized_name)
 
+        # annotated badge should be displayed for books marked as annotated
+        annotated_count = books.filter(is_annotated=True).count()
+        self.assertContains(response, '<div class="ui label">annotated</div>',
+                            count=annotated_count)
+
         # associate digital edition & thumbnail from fixture
         book = books.first()
         book.digital_edition = Manifest.objects.first()

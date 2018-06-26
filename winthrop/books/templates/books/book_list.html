@@ -30,6 +30,9 @@
           {% endfor %}
           <p>{{ book.pub_year }}</p>
 
+          {% if book.is_annotated %}
+          <div class="ui label">annotated</div>
+          {% endif %}
          </div>
       </div>
     {% endfor %}

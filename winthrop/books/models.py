@@ -209,6 +209,9 @@ class Book(Notable, Indexable):
             'short_title': self.short_title,
             'authors': [str(author.person) for author in self.authors()],
             'pub_year': self.pub_year,
+            # NOTE: this indicates whether the book is annotated, does not
+            # necessarily mean there are annotations documented in our system
+            'is_annotated': self.is_annotated,
             'thumbnail': thumbnail_image,
             'thumbnail_label': thumbnail_label
         }
