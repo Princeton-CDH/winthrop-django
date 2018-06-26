@@ -1,9 +1,7 @@
 sudo: required
 language: python
-
 python:
-  - "3.5"
-
+- '3.5'
 env:
   global:
   - SOLR_VERSION=6.6.3
@@ -11,24 +9,22 @@ env:
 cache:
   directories:
   - downloads
-
 services:
-  - mysql
-
+- mysql
 install:
-  - pip install -r requirements.txt
-  - pip install -r dev-requirements.txt
-  - pip install codecov
-  - cp ci/testsettings.py winthrop/local_settings.py
-  - python -c "import uuid; print('SECRET_KEY = \'%s\'' % uuid.uuid4())" >> winthrop/local_settings.py
-
+- pip install -r requirements.txt
+- pip install -r dev-requirements.txt
+- pip install codecov
+- cp ci/testsettings.py winthrop/local_settings.py
+- python -c "import uuid; print('SECRET_KEY = \'%s\'' % uuid.uuid4())" >> winthrop/local_settings.py
 before_script:
 - SOLR_VERSION=$SOLR_VERSION SOLR_CORE=$SOLR_CORE bash ci/config_solr.sh
 before_cache:
 - rm -rf downloads/solr-${SOLR_VERSION}/
-
 script:
-  - python -m pytest --cov=winthrop
-
+- python -m pytest --cov=winthrop
 after_success:
 - codecov
+notifications:
+  slack:
+    secure: FDRmcPYLFysYNGADFv8fxihTC+BU8uXweN5THzTDE+OgbL4oxddtEBJy28UCr+yLmP9sccqoM89nY+q0/L3b6rR4wXCCCXfyBHkKYPupl1R51r4v+7Y9gKO5I7Sb3hcl60FoS5+TfdyLrOuWPqXfAw2hAh92g8dqFyxdWNeB06MjEuQ+SaoITgRX/K5AcEdXHI7rLlYzlFvew1QsKYKlTuCKg5TYqiPnfj4lQKW47dm7L2LbyDetn1WbBPsxNyegJY9TDZjYxFRtSWs7cn1C4KXW3qO76jR+faoJmnVBOT+mTaCoB8jdrtcFnLMxmq4HyXxEyIuhtHMPkLe2vDVsCYnyNGnmrn3QLRPp76lr7f6uplyfqufzZwLS5q3MNxehvP5x6PT2ODK8hOVfXJTFZYpKDcPVn7xCprBDcMCUjsR9gnhjxfgE5HNiqM7NDFzvMcocWvxp0XzBjsscRmHecFyj+QXT/RROx++Lmz3pKULXCxaEVkpP11cOuS3z4hTkUIdiVqOw152PfObdvVX9uuWyeGVSQZz2ZPxV61uGyNCTcUyETCuamoSH6fGe1yEPLSGaAgb0t0nonRt137ptfmM0xyhr2Cvb/SzaeWaIAeZXzaUyi91MVW8jbMRevZYXt1auvWBZ/DL180E4E/LExvGJJcPa3T/pJo/DLWffw0Y=
