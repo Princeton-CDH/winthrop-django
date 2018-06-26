@@ -1,9 +1,11 @@
 {% load winthrop_tags %}
 {% spaceless %}
 <div class="pagination ui stackable grid">
+    {% comment %}. suppress for now until we know what's needed
     <div class="items-per-page">
         Displaying {{ page_obj.paginator.per_page }} Results
     </div>
+    {% endcomment %}
     <div class="page-controls">
             {# previous link at first (disabled if no previous)  #}
             {% if page_obj.has_previous %}

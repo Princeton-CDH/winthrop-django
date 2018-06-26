@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static humanize %}
 
 {% block page-subtitle %}Books {% endblock %}
 
@@ -8,6 +8,12 @@
 <h1><img class="ui fluid image" src="{% static 'img/winthrop_banner-book.png' %}"
     alt="Books"/></h1>
 <div class="ui container">
+
+ {% if paginator.count %}
+  <p>Displaying {{ paginator.count|intcomma }} book{{ paginator.count|pluralize }}</p>
+ {% else %}
+  <p>No results found</p>
+ {% endif %}
 
   <div class="ui grid">
     {% for book in object_list %}

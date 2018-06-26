@@ -2,6 +2,7 @@ from collections import defaultdict
 import csv
 from io import StringIO
 import json
+from time import sleep
 from unittest.mock import patch, Mock
 import os
 
@@ -500,6 +501,52 @@ class TestBookViews(TestCase):
         result = self.client.get(canvas_autocomplete_url, {'q': 'pqn59s484h'})
         data = json.loads(result.content.decode('utf-8'))
         assert data['results'][0]['id'] == '10465'
+
+    @pytest.mark.usefixtures("solr")
+    def test_book_list(self):
+        url = reverse('books:list')
+
+         # nothing indexed - should find nothing
+        response = self.client.get(url)
+        assert response.status_code == 200
+        self.assertContains(response, 'No results')
+
+        books = Book.objects.all()
+
+        # index books for subsequent searches
+        Indexable.index_items(books, params={'commitWithin': 500})
+        sleep(2)
+
+         # no query or filters, should find all books
+        response = self.client.get(url)
+        assert response.status_code == 200
+
+        # provisional text
+        self.assertContains(response, 'Displaying %d books' % books.count())
+
+        # NOTE: total currently not displayed
+        for book in books:
+            self.assertContains(response, book.short_title)
+            self.assertContains(response, book.pub_year)
+            for creator in book.authors():
+                self.assertContains(response, creator.person.authorized_name)
+
+        # associate digital edition & thumbnail from fixture
+        book = books.first()
+        book.digital_edition = Manifest.objects.first()
+        canvas = book.digital_edition.canvases.first()
+        canvas.thumbnail = True
+        canvas.save()
+        # add to Solr index
+        book.index(params={'commitWithin': 500})
+        sleep(2)
+
+        response = self.client.get(url)
+        # should include image urls (1x/2x)
+        self.assertContains(response, str(canvas.image.size(height=218)))
+        self.assertContains(response, str(canvas.image.size(height=436)))
+        # should include image label
+        self.assertContains(response, canvas.label)
 
 
 class TestWinthropManifestImporter(TestCase):
