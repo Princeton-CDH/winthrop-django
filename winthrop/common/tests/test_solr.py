@@ -8,7 +8,8 @@ import pytest
 import requests
 from SolrClient import SolrClient
 
-from winthrop.books.models import Book
+from winthrop.books.models import Book, Creator
+from winthrop.people.models import Person
 from winthrop.common.solr import get_solr_connection, SolrSchema, CoreAdmin, \
     PagedSolrQuery, Indexable
 
@@ -373,17 +374,14 @@ class TestIndexable(TestCase):
         Indexable.index_items(mockqueryset)
         mockqueryset.iterator.assert_called_with()
 
-    @pytest.mark.skip
     def test_identify_index_dependencies(self, mock_get_solr_connection):
-        pass
-        # NOT YET IN USE here
 
-        # currently testing based on DigitizedWork configuration
-        # Indexable.identify_index_dependencies()
+        # currently testing based on Book configuration
+        Indexable.identify_index_dependencies()
 
-        # # collection model should be in related object config
-        # assert Collection in Indexable.related
-        # # save/delete handler config options saved
-        # assert Indexable.related[Collection] == DigitizedWork.index_depends_on['collections']
+        # personmodel should be in related object config
+        assert Person in Indexable.related
+        # save/delete handler config options saved
+        assert Indexable.related[Person] == Book.index_depends_on['contributors']
         # # through model added to m2m list
-        # assert DigitizedWork.collections.through in Indexable.m2m
+        assert Creator in Indexable.m2m

@@ -23,13 +23,15 @@ class BookCount(models.Model):
         abstract = True
 
     def book_count(self):
+        '''Generate a count of associated books with an admin link to
+        find those books on the change list'''
         base_url = reverse('admin:books_book_changelist')
         return mark_safe('<a href="%s?%ss__id__exact=%s">%s</a>' % (
-                            base_url,
-                            self.__class__.__name__.lower(),
-                            self.pk,
-                            self.book_set.count()
-                ))
+            base_url,
+            self.__class__.__name__.lower(),
+            self.pk,
+            self.book_set.count()
+        ))
     book_count.short_description = '# books'
 
 
@@ -50,7 +52,8 @@ class Publisher(Named, Notable, BookCount):
 
 class OwningInstitution(Named, Notable, BookCount):
     '''Institution that owns the extant copy of a book'''
-    short_name = models.CharField(max_length=255, blank=True,
+    short_name = models.CharField(
+        max_length=255, blank=True,
         help_text='Optional short name for admin display')
     contact_info = models.TextField()
     place = models.ForeignKey(Place)
@@ -68,9 +71,9 @@ class Book(Notable, Indexable):
         verbose_name='Original Publication Information')
     publisher = models.ForeignKey(Publisher, blank=True, null=True)
     pub_place = models.ForeignKey(Place, verbose_name='Place of Publication',
-        blank=True, null=True)
-    pub_year = models.PositiveIntegerField('Publication Year',
-        blank=True, null=True)
+                                  blank=True, null=True)
+    pub_year = models.PositiveIntegerField(
+        'Publication Year', blank=True, null=True)
     # is positive integer enough, or do we need more validation here?
     is_extant = models.BooleanField(default=False)
     is_annotated = models.BooleanField(default=False)
@@ -87,10 +90,11 @@ class Book(Notable, Indexable):
     # books are connected to owning institutions via the Catalogue
     # model; mapping as a many-to-many with a through
     # model in case we want to access owning instutions directly
-    owning_institutions = models.ManyToManyField(OwningInstitution,
-        through='Catalogue')
+    owning_institutions = models.ManyToManyField(
+        OwningInstitution, through='Catalogue')
 
-    digital_edition = models.ForeignKey(Manifest, blank=True, null=True,
+    digital_edition = models.ForeignKey(
+        Manifest, blank=True, null=True,
         help_text='Digitized edition of this book, if available')
 
     # proof-of-concept generic relation to footnotes
@@ -104,19 +108,21 @@ class Book(Notable, Indexable):
         return '%s (%s)' % (self.short_title, self.pub_year)
 
     def is_digitized(self):
+        '''is there an associated digital edition?'''
         return self.digital_edition != None
     is_digitized.boolean = True
 
     def catalogue_call_numbers(self):
-        'Convenience access to catalogue call numbers, for display in admin'
+        '''Convenience access to catalogue call numbers, for display in admin'''
         return ', '.join([c.call_number for c in self.catalogue_set.all()])
     catalogue_call_numbers.short_description = 'Call Numbers'
 
     def authors(self):
+        '''Creator queryset filtered by creator type Author'''
         return self.creator_set.filter(creator_type__name='Author')
 
     def author_names(self):
-        'Display author names; convenience access for display in admin'
+        '''Display author names; convenience access for display in admin'''
         # NOTE: possibly might want to use last names here
         return ', '.join(str(auth.person) for auth in self.authors())
     author_names.short_description = 'Authors'
@@ -164,17 +170,23 @@ class Book(Notable, Indexable):
         instance.book_set.clear()
         Indexable.index_items(books, params={'commitWithin': 3000})
 
-    #: index dependencies, to update when changed
+    def handle_creator_change(sender, instance, **kwargs):
+        '''signal handler for creator save or delete; reindex to get any creator changes'''
+        # same behavior for save or delete
+        logger.debug('creator change, reindexing %s', instance.book)
+        instance.book.index(params={'commitWithin': 3000})
+
+    #: index dependencies, to update when related items are changed
     index_depends_on = {
         # author name
-        # 'creator_set': {
-        #     'save': handle_creator_save,
-        #     'delete': handle_creator_delete,
-        # },
         'contributors': {
             'post_save': handle_person_save,
             'pre_delete': handle_person_delete,
         },
+        'creator_set': {
+            'post_save': handle_creator_change,
+            'post_delete': handle_creator_change,
+        }
     }
 
     def index_id(self):

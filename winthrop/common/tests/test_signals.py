@@ -6,7 +6,8 @@ from django.db import models
 from django.test import TestCase, override_settings
 import pytest
 
-from winthrop.books.models import Book
+from winthrop.books.models import Book, Creator, CreatorType
+from winthrop.people.models import Person
 from winthrop.common.signals import IndexableSignalHandler
 
 
@@ -65,39 +66,38 @@ class TestIndexableSignalHandler(TestCase):
         IndexableSignalHandler.handle_delete(Mock(), nonindexable)
         nonindexable.remove_from_index.assert_not_called()
 
-    @pytest.mark.skip
     @pytest.mark.django_db
     def test_handle_relation_change(self):
-        pass
-        # TODO: not yet handled; use Book and Creator
+        with patch.object(Book, 'index') as mockindex:
+            book = Book.objects.create(short_title='A long and arduous title', pub_year=1842)
+            author1 = Person.objects.create(authorized_name='Anne Onomous')
+            author = CreatorType.objects.get(name='Author')
 
-        # with patch.object(Book, 'index') as mockindex:
-        #     digwork = Book.objects.create(source_id='njp.32101013082597')
-        #     coll1 = Collection.objects.create(name='all the things')
-        #     coll2 = Collection.objects.create(name='some of the things')
+            # NOTE: explicit through model doesn't actually trigger
+            # m2m signals, so add/remove aren't actually testing the relation
+            # change signal handler here
 
-        #     # add to collection
-        #     mockindex.reset_mock()
-        #     digwork.collections.add(coll1)
-        #     digwork.collections.add(coll2)
-        #     mockindex.assert_called_with(params=IndexableSignalHandler.index_params)
+            # add author
+            mockindex.reset_mock()
+            Creator.objects.create(book=book, person=author1, creator_type=author)
+            mockindex.assert_called_with(params=IndexableSignalHandler.index_params)
 
-        #     # remove from collection
-        #     mockindex.reset_mock()
-        #     digwork.collections.remove(coll2)
-        #     mockindex.assert_called_with(params=IndexableSignalHandler.index_params)
+            # remove author
+            mockindex.reset_mock()
+            book.creator_set.filter(person=author1).delete()
+            mockindex.assert_called_with(params=IndexableSignalHandler.index_params)
 
-        #     # clear
-        #     mockindex.reset_mock()
-        #     digwork.collections.clear()
-        #     mockindex.assert_called_with(params=IndexableSignalHandler.index_params)
+            # clear
+            mockindex.reset_mock()
+            book.contributors.clear()
+            mockindex.assert_called_with(params=IndexableSignalHandler.index_params)
 
-        #     # if action is not one we care about, should be ignored
-        #     mockindex.reset_mock()
-        #     IndexableSignalHandler.handle_relation_change(Mock(), digwork, 'pre_remove')
-        #     mockindex.assert_not_called()
+            # if action is not one we care about, should be ignored
+            mockindex.reset_mock()
+            IndexableSignalHandler.handle_relation_change(Mock(), book, 'pre_remove')
+            mockindex.assert_not_called()
 
-        # # non-indexable object should be ignored
-        # nonindexable = Mock()
-        # IndexableSignalHandler.handle_relation_change(Mock(), nonindexable, 'post_add')
-        # nonindexable.index.assert_not_called()
+        # non-indexable object should be ignored
+        nonindexable = Mock()
+        IndexableSignalHandler.handle_relation_change(Mock(), nonindexable, 'post_add')
+        nonindexable.index.assert_not_called()

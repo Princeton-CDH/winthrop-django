@@ -51,15 +51,15 @@ class SolrSchema(object):
 
         # sort/facet copy fields
         # {'name': 'title_exact', 'type': 'string', 'required': False},
-        # {'name': 'author_exact', 'type': 'string', 'required': False,
-        #  'multiValued': True}
+        {'name': 'author_exact', 'type': 'string', 'required': False,
+         'multiValued': True}
     ]
     #: fields to be copied into general purpose text field for searching
-    text_fields = ['title', 'authors', 'pub_year']
+    text_fields = ['title', 'short_title', 'authors', 'pub_year']
     #: copy fields, e.g. for facets
     copy_fields = [
         # ('title', 'title_exact'),
-        # ('author', 'author_exact'),
+        ('authors', 'author_exact'),
     ]
 
     def __init__(self):
@@ -366,6 +366,10 @@ class Indexable(object):
                         # store related model and options with signal handlers
                         related[attr.rel.model] = opts
                         # add through model to many to many list
+                        # NOTE: add and remove m2m signals are only fired
+                        # on django auto-created through models, although
+                        # clear signals are sent. Can check auto-created
+                        # via attr.through._meta.auto_created
                         m2m.append(attr.through)
 
                     # reverse relationship of a many to many
