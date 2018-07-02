@@ -83,4 +83,3 @@ class SearchForm(forms.Form):
         '''
         # return solr field for requested sort option
         return self.solr_sort_fields[sort]
-

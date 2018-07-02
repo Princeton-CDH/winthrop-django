@@ -168,3 +168,16 @@ class TestBookViews(TestCase):
         # - bad search syntax
         response = self.client.get(url, {'query': '"astronomiae'})
         self.assertContains(response, 'Unable to parse search query')
+
+        ### sort
+        # bad sort option (relevance / no keyword) ignored
+        response = self.client.get(url, {'sort': 'relevance'})
+        # all books displayed
+        self.assertContains(response, 'Displaying %d books' % books.count())
+        # ordered by author by default
+        books = Book.objects.order_by('creator__person__authorized_name')
+        assert response.context['object_list'][0]['short_title'] == books.first().short_title
+
+        response = self.client.get(url, {'sort': 'pub_date_asc'})
+        books = Book.objects.order_by('pub_year')
+        assert response.context['object_list'][0]['pub_year'] == books.first().pub_year
