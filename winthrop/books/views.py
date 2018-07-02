@@ -112,10 +112,14 @@ class BookListView(ListView, LastModifiedListMixin):
             'fl': 'last_modified'
         })
 
-        psq = PagedSolrQuery(query_opts)
-        if psq.count():
-            # Solr stores date in isoformat; convert to datetime
-            return datetime.strptime(psq[0]['last_modified'], '%Y-%m-%dT%H:%M:%S.%fZ')
+        # if a syntax or other solr error happens, no date to return
+        try:
+            psq = PagedSolrQuery(query_opts)
+            if psq.count():
+                # Solr stores date in isoformat; convert to datetime
+                return datetime.strptime(psq[0]['last_modified'], '%Y-%m-%dT%H:%M:%S.%fZ')
+        except SolrError:
+            pass
 
 
 class PublisherAutocomplete(autocomplete.Select2QuerySetView):

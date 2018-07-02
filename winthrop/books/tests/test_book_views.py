@@ -153,3 +153,18 @@ class TestBookViews(TestCase):
         self.assertContains(response, str(canvas.image.size(height=436)))
         # should include image label
         self.assertContains(response, canvas.label)
+
+        ### keyword search
+        # - one match
+        response = self.client.get(url, {'query': 'mercurii'})
+        self.assertContains(response, 'Displaying 1 book')
+        mercurii_bk = Book.objects.get(title__contains='Mercurii')
+        self.assertContains(response, mercurii_bk.short_title)
+        self.assertContains(response, mercurii_bk.pub_year)
+
+        # - no match
+        response = self.client.get(url, {'query': 'astronomiae'})
+        self.assertContains(response, 'No results found')
+        # - bad search syntax
+        response = self.client.get(url, {'query': '"astronomiae'})
+        self.assertContains(response, 'Unable to parse search query')
