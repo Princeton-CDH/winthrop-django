@@ -95,6 +95,11 @@ class TestIndexCommand(TestCase):
         # called once for each indexable subclass
         assert mock_cmd_index_method.call_count == len(Indexable.__subclasses__())
 
+        # clear index
+        call_command('index', '--clear', stdout=stdout)
+        mocksolr.delete_doc_by_query.assert_called_with(
+            test_coll, '*:*', params={'commitWithin': 1000})
+
     def test_clear_index(self):
         cmd = index.Command()
         cmd.solr = Mock()
