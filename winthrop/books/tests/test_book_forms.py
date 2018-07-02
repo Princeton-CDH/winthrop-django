@@ -40,14 +40,14 @@ class TestSearchForm(TestCase):
         # no fields required
         assert searchform.is_valid()
         # relevance sort disabled
-        assert searchform.fields['sort'].widget.choices[3][1]['disabled']
+        assert searchform.fields['sort'].widget.choices[-1][1]['disabled']
 
         # relevance sort not disabled when keyword search is present
         searchform = SearchForm({'query': 'astronomiae'})
         # label only, no widget options to set as disabled
-        assert searchform.fields['sort'].widget.choices[3][1] == 'Relevance'
+        assert searchform.fields['sort'].widget.choices[-1][1] == 'Relevance'
 
     def test_get_solr_sort_field(self):
         assert SearchForm().get_solr_sort_field('relevance') == 'score desc'
-        assert SearchForm().get_solr_sort_field('author') == 'author_exact asc'
+        assert SearchForm().get_solr_sort_field('author_asc') == 'author_exact asc'
 

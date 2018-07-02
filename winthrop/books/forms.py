@@ -41,14 +41,15 @@ class SearchForm(forms.Form):
     '''Search form for searching across :class:`~winthrop.books.models.Books`.'''
 
     SORT_CHOICES = [
-        ('author', 'Author'),
-        ('pub_date_asc', 'Publication Date Oldest-Newest'),
-        ('pub_date_desc', 'Publication Date Newest-Oldest'),
+        ('author_asc', 'Author A-Z'),
+        ('author_desc', 'Author Z-A'),
+        ('pub_year_asc', 'Year Oldest-Newest'),
+        ('pub_year_desc', 'Year Newest-Oldest'),
         ('relevance', 'Relevance'),
     ]
 
     defaults = {
-        'sort': 'author',
+        'sort': 'author_asc',
     }
 
     query = forms.CharField(label='Keyword or Phrase', required=False)
@@ -64,15 +65,16 @@ class SearchForm(forms.Form):
 
         # relevance is disabled unless we have a keyword query present
         if not data or not data.get('query', None):
-            self.fields['sort'].widget.choices[3] = \
+            self.fields['sort'].widget.choices[-1] = \
                 ('relevance', {'label': 'Relevance', 'disabled': True})
 
     # map form sort options to solr sort field
     solr_sort_fields = {
         'relevance': 'score desc',
-        'pub_date_asc': 'pub_year asc',
-        'pub_date_desc': 'pub_year desc',
-        'author': 'author_exact asc',
+        'pub_year_asc': 'pub_year asc',
+        'pub_year_desc': 'pub_year desc',
+        'author_asc': 'author_exact asc',
+        'author_desc': 'author_exact desc',
     }
 
     def get_solr_sort_field(self, sort):

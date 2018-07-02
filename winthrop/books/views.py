@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from dal import autocomplete
+from django.core.validators import ValidationError
 from django.db.models import Q
 from django.views.generic import ListView
 from djiffy.models import Canvas
@@ -20,36 +21,12 @@ class BookListView(ListView, LastModifiedListMixin):
     form = None
 
     def solr_query_opts(self):
-        query = self.search_opts.get("query", None)
-
-        solr_q = '*:*'
-        # fields = '*'
-        if query:
-            solr_q = 'text:(%s)' % query
-            # NOTE: score is needed in field list if we want to
-            # display it for debugging solr indexing
-            # fields = '*,score'
-
-        solr_sort = 'last_modified desc'
-        sort = self.search_opts.get("sort", None)
-
-        if sort:
-            solr_sort = self.form.get_solr_sort_field(sort)
-
-        return {
-            'q': solr_q,
-            'sort': solr_sort,
-            # 'fl': fields,
-            'fq': 'content_type:(%s)' % Book.content_type()
-        }
-
-    def get_queryset(self, **kwargs):
-        # return all books, filtering on content type
-
-        # default sort logic borrowed from PPA
+        # NOTE: solr query logic used by both the view and to generate
+        # last-modified value for header/conditional display
 
         form_opts = self.request.GET.copy()
 
+        # NOTE: default sort logic borrowed from PPA
         # if relevance sort is requested but there is no keyword search
         # term present, clear it out and fallback to default sort
         if not 'query' in form_opts and 'sort' in form_opts and \
@@ -65,24 +42,47 @@ class BookListView(ListView, LastModifiedListMixin):
                 form_opts.setdefault(key, val)
 
         self.form = self.form_class(form_opts)
-
-        # if the form is not valid, return an empty queryset and bail out
-        # (queryset needed for django paginator)
-        if not self.form.is_valid():
-            return Book.objects.none()
-
-        if self.form.is_valid():
-            self.search_opts = self.form.cleaned_data
-
-        return PagedSolrQuery(self.solr_query_opts())
-
-    def get_context_data(self, **kwargs):
         # if the form is not valid, bail out
         if not self.form.is_valid():
-            context = super().get_context_data(**kwargs)
-            context['search_form'] = self.form
-            return context
+            raise ValidationError('Search form is not valid')
 
+        search_opts = {}
+        if self.form.is_valid():
+            search_opts = self.form.cleaned_data
+
+        query = search_opts.get("query", None)
+
+        solr_q = '*:*'
+        # fields = '*'
+        if query:
+            solr_q = 'text:(%s)' % query
+            # NOTE: score is needed in field list if we want to
+            # display it for debugging solr indexing
+            # fields = '*,score'
+
+        solr_sort = 'last_modified desc'
+        sort = search_opts.get("sort", None)
+
+        if sort:
+            solr_sort = self.form.get_solr_sort_field(sort)
+
+        return {
+            'q': solr_q,
+            'sort': solr_sort,
+            # 'fl': fields,
+            'fq': 'content_type:(%s)' % Book.content_type()
+        }
+
+    def get_queryset(self, **kwargs):
+        # return all books, filtering on content type
+        try:
+            return PagedSolrQuery(self.solr_query_opts())
+        except ValidationError:
+            # if the form is not valid, return an empty queryset and bail out
+            # (queryset needed for django paginator)
+            return Book.objects.none()
+
+    def get_context_data(self, **kwargs):
         try:
             # catch an error querying solr when the search terms cannot be parsed
             # (e.g., incomplete exact phrase)
@@ -104,7 +104,11 @@ class BookListView(ListView, LastModifiedListMixin):
 
     def last_modified(self):
         '''override last modified logic to work with Solr'''
-        query_opts = self.solr_query_opts()
+        try:
+            query_opts = self.solr_query_opts()
+        except ValidationError:
+            return
+
         # override sort to return most recent modification date,
         # only return last modified value and nothing else
         query_opts.update({

@@ -168,6 +168,8 @@ class TestBookViews(TestCase):
         # - bad search syntax
         response = self.client.get(url, {'query': '"astronomiae'})
         self.assertContains(response, 'Unable to parse search query')
+        # last modified header should NOT be set on response
+        assert not response.has_header('last-modified')
 
         ### sort
         # bad sort option (relevance / no keyword) ignored
@@ -178,6 +180,6 @@ class TestBookViews(TestCase):
         books = Book.objects.order_by('creator__person__authorized_name')
         assert response.context['object_list'][0]['short_title'] == books.first().short_title
 
-        response = self.client.get(url, {'sort': 'pub_date_asc'})
+        response = self.client.get(url, {'sort': 'pub_year_asc'})
         books = Book.objects.order_by('pub_year')
         assert response.context['object_list'][0]['pub_year'] == books.first().pub_year
