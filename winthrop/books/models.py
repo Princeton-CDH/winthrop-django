@@ -4,7 +4,9 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.utils.text import slugify
 from djiffy.models import Manifest
+from unidecode import unidecode
 
 from winthrop.common.models import Named, Notable, DateRange
 from winthrop.common.solr import Indexable
@@ -74,6 +76,14 @@ class Book(Notable, Indexable):
                                   blank=True, null=True)
     pub_year = models.PositiveIntegerField(
         'Publication Year', blank=True, null=True)
+    #: identifying slug for use in URLs
+    slug = models.SlugField(
+        max_length=255, unique=True, blank=True,
+        help_text=('Readable ID for use in URLs. Automatically generated from '
+                   'author, title, and year on save. Edit with *caution* '
+                   'because this will break permanent links.')
+    )
+
     # is positive integer enough, or do we need more validation here?
     is_extant = models.BooleanField(default=False)
     is_annotated = models.BooleanField(default=False)
@@ -103,6 +113,11 @@ class Book(Notable, Indexable):
 
     class Meta:
         ordering = ['title']
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = self.generate_slug()
+        super(Book, self).save(*args, **kwargs)
 
     def __str__(self):
         return '%s (%s)' % (self.short_title, self.pub_year)
@@ -147,6 +162,26 @@ class Book(Notable, Indexable):
         creator_type = CreatorType.objects.get(name=creator_type)
         Creator.objects.create(person=person, creator_type=creator_type,
                                book=self)
+
+    def generate_slug(self):
+        '''Generate a slug based on first author, title, and year.
+
+        :rtype str: String in the format ``lastname-title-of-work-year``
+        '''
+        # get the first author, if there is one
+        author = self.authors().first()
+        if author:
+            # use the last name of the first author
+            author = author.person.authorized_name.split(',')[0]
+        else:
+            # otherwise, set it to an empty string
+            author = ''
+        # truncate the title to first several words of the title
+        title = ' '.join(self.short_title.split()[:9])
+        # use copyright year if available, with fallback to work year if
+        year = self.pub_year or ''
+        # # return a slug
+        return slugify(' '.join([unidecode(author), unidecode(title), str(year)]))
 
     def handle_person_save(sender, instance, **kwargs):
         '''signal handler for person save; reindex to get current author name'''

@@ -180,7 +180,7 @@ class Command(BaseCommand):
         #   but model stores it as an integer
         stripped_spaces_only = data[self.fields['pub_year']].strip()
         pub_year = data[self.fields['pub_year']].strip('[]?.nd ')
-        if re.search('-|i\.e\.', pub_year):
+        if re.search(r'-|i\.e\.', pub_year):
             if newbook.notes:
                 newbook.notes += '\n\nAdditional Publication Year Info: %s' %\
                     stripped_spaces_only

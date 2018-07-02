@@ -11,10 +11,12 @@ from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.db.models.query import QuerySet
 from django.utils.safestring import mark_safe
+from django.utils.text import slugify
 from django.test import TestCase
 from django.urls import reverse
 from djiffy.models import Manifest
 import pytest
+from unidecode import unidecode
 
 from winthrop.common.solr import Indexable, PagedSolrQuery
 from winthrop.places.models import Place
@@ -226,6 +228,43 @@ class TestBook(TestCase):
         assert index_data['thumbnail'] == canvas.iiif_image_id
         assert index_data['thumbnail_label'] == canvas.label
 
+    def test_generate_slug(self):
+        # model method
+        book = Book.objects.all().first()
+        slug = book.generate_slug()
+        book_author_lastname = book.authors().first().person\
+                .authorized_name.split(',')[0]
+        book_author_lastname = unidecode(book_author_lastname).strip().lower()
+        assert slug.startswith(book_author_lastname)
+        assert slug.endswith('-%s' % book.pub_year)
+        assert slugify(book.short_title) in slug
+
+        # no pub year, no problem
+        book.pub_year = None
+        author_title_slug = slugify('%s %s' % (book_author_lastname, book.short_title))
+        assert book.generate_slug() == author_title_slug
+
+        # no author, no problem
+        book.creator_set.all().delete()
+        assert book.generate_slug() == slugify(book.short_title)
+
+        # long title is shortened
+        book.short_title = book.title
+        assert book.generate_slug() == slugify(' '.join(book.short_title.split()[:9]))
+
+    def test_save(self):
+        # save should generate slug if not set
+        book = Book.objects.all().first()
+        book.slug = None
+        book.save()
+        assert book.slug == book.generate_slug()
+
+        # not regenerated on save if already set
+        test_slug = 'my-bogus-slug'
+        book.slug = test_slug
+        book.save()
+        assert book.slug == test_slug
+
 
 class TestCatalogue(TestCase):
 
@@ -330,6 +369,10 @@ class TestImportNysl(TestCase):
         self.cmd.viaf_lookup = dummy_viaf
         self.cmd.geonames_lookup = dummy_geonames
 
+    def tearDown(self):
+        # remove all books after each test to avoid non-unique slugs
+        Book.objects.all().delete()
+
     def test_run(self, mocksetbirthdeath):
             out = StringIO()
             # pass the modified self.cmd object
@@ -419,7 +462,11 @@ class TestImportNysl(TestCase):
         # Test that the reproduction notes were pulled as expected
         assert book.notes == data['Notes'] + \
             '\n\nReproduction Recommendation: Front flyleaf recto, TP'
+
+        # reimport the same volume to test sammelband logic
+        # modify title so slug will be unique
         # Check that is_sammelband was set on a 'bound' volume
+        data['Title'] = "OS"
         self.cmd.create_book(data)
         self.cmd.build_sammelband()
         assert book.catalogue_set.first().is_sammelband == True
