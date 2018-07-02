@@ -4,8 +4,10 @@ from dal import autocomplete
 from django.db.models import Q
 from django.views.generic import ListView
 from djiffy.models import Canvas
+from SolrClient.exceptions import SolrError
 
 from winthrop.books.models import Book, Publisher, Language, Subject
+from winthrop.books.forms import SearchForm
 from winthrop.common.solr import PagedSolrQuery
 from winthrop.common.views import LastModifiedListMixin
 
@@ -14,17 +16,91 @@ class BookListView(ListView, LastModifiedListMixin):
     model = Book
     template_name = 'books/book_list.html'
     paginate_by = 50
+    form_class = SearchForm
+    form = None
 
     def solr_query_opts(self):
+        query = self.search_opts.get("query", None)
+
+        solr_q = '*:*'
+        # fields = '*'
+        if query:
+            solr_q = 'text:(%s)' % query
+            # NOTE: score is needed in field list if we want to
+            # display it for debugging solr indexing
+            # fields = '*,score'
+
+        solr_sort = 'last_modified desc'
+        sort = self.search_opts.get("sort", None)
+
+        if sort:
+            solr_sort = self.form.get_solr_sort_field(sort)
+
         return {
-            'q': '*:*',
-            'sort': 'last_modified desc',
+            'q': solr_q,
+            'sort': solr_sort,
+            # 'fl': fields,
             'fq': 'content_type:(%s)' % str(Book._meta)
         }
 
     def get_queryset(self, **kwargs):
         # return all books, filtering on content type
+
+        # default sort logic borrowed from PPA
+
+        form_opts = self.request.GET.copy()
+
+        # if relevance sort is requested but there is no keyword search
+        # term present, clear it out and fallback to default sort
+        if not 'query' in form_opts and 'sort' in form_opts and \
+          form_opts['sort'] == 'relevance':
+            del form_opts['sort']
+
+        for key, val in self.form_class.defaults.items():
+            # set as list to avoid nested lists
+            # follows solution using in derrida-django for InstanceListView
+            if isinstance(val, list):
+                form_opts.setlistdefault(key, val)
+            else:
+                form_opts.setdefault(key, val)
+
+        self.form = self.form_class(form_opts)
+
+        # if the form is not valid, return an empty queryset and bail out
+        # (queryset needed for django paginator)
+        if not self.form.is_valid():
+            return Book.objects.none()
+
+        if self.form.is_valid():
+            self.search_opts = self.form.cleaned_data
+
         return PagedSolrQuery(self.solr_query_opts())
+
+    def get_context_data(self, **kwargs):
+        # if the form is not valid, bail out
+        if not self.form.is_valid():
+            context = super().get_context_data(**kwargs)
+            context['search_form'] = self.form
+            return context
+
+        try:
+            # catch an error querying solr when the search terms cannot be parsed
+            # (e.g., incomplete exact phrase)
+            context = super().get_context_data(**kwargs)
+
+        except SolrError as solr_err:
+            context = {'object_list': []}
+            if 'Cannot parse' in str(solr_err):
+                error_msg = 'Unable to parse search query; please revise and try again.'
+            else:
+                # NOTE: this error should possibly be raised; 500 error?
+                error_msg = 'Something went wrong.'
+            context['error'] = error_msg
+
+        context.update({
+            'search_form': self.form,
+        })
+        return context
 
     def last_modified(self):
         '''override last modified logic to work with Solr'''
