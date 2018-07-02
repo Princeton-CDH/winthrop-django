@@ -100,13 +100,23 @@
             </tr>
             {% endif %}
 
-
             {% if book.catalogue_set.exists %}
             <tr>
                 <th>Owning Institution</th>
                 <td>{% for catalogue in book.catalogue_set.all %}
                     <p>{{ catalogue.institution }} {{ catalogue.call_number }}</p>
                 {% endfor %}</td>
+            </tr>
+            {% endif %}
+
+            {% if book.personbook_set.exists %}
+            <tr>
+                <th>Person/Book interactions</th>
+                <td>
+                    {% for personbook_rel in book.personbook_set.all %}
+                    <p>{{ personbook_rel.person }}, {{ personbook_rel.relationship_type}}</p>
+                    {% endfor %}
+                </td>
             </tr>
             {% endif %}
 
