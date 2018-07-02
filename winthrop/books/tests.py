@@ -209,6 +209,7 @@ class TestBook(TestCase):
         assert index_data['pub_year'] == book.pub_year
         assert not index_data['thumbnail']
         assert not index_data['thumbnail_label']
+        assert index_data['author_exact'] == book.authors()[0].person.authorized_name
 
         # associate digital edition from fixture (has no thumbnail)
         book.digital_edition = Manifest.objects.first()
@@ -225,6 +226,12 @@ class TestBook(TestCase):
         index_data = book.index_data()
         assert index_data['thumbnail'] == canvas.iiif_image_id
         assert index_data['thumbnail_label'] == canvas.label
+
+        # no authors
+        book.creator_set.all().delete()
+        index_data = book.index_data()
+        assert index_data['authors'] == []
+        assert index_data['author_exact'] is None
 
 
 class TestCatalogue(TestCase):
