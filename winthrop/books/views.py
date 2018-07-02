@@ -40,7 +40,7 @@ class BookListView(ListView, LastModifiedListMixin):
             'q': solr_q,
             'sort': solr_sort,
             # 'fl': fields,
-            'fq': 'content_type:(%s)' % str(Book._meta)
+            'fq': 'content_type:(%s)' % Book.content_type()
         }
 
     def get_queryset(self, **kwargs):
