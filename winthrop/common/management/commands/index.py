@@ -64,7 +64,7 @@ class Command(BaseCommand):
             '--no-progress', action='store_true',
             help='Do not display progress bar to track the status of the reindex.')
         parser.add_argument(
-            '--clear', action='store_true',
+            '-c', '--clear', action='store_true',
             help='Remove items from Solr before indexing.')
 
     def handle(self, *args, **kwargs):

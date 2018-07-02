@@ -77,7 +77,6 @@ class TestIndexCommand(TestCase):
 
         stdout = StringIO()
         call_command('index', stdout=stdout)
-        print(stdout.getvalue())
 
         # index all books
         # (can't use assert_called_with because querysets doesn't evaluate equal)
@@ -95,3 +94,12 @@ class TestIndexCommand(TestCase):
         mocksolr.commit.assert_called_with(test_coll)
         # called once for each indexable subclass
         assert mock_cmd_index_method.call_count == len(Indexable.__subclasses__())
+
+    def test_clear_index(self):
+        cmd = index.Command()
+        cmd.solr = Mock()
+        cmd.solr_collection = 'test_coll'
+
+        cmd.clear_index()
+        cmd.solr.delete_doc_by_query.assert_called_with(
+            cmd.solr_collection, '*:*', params={'commitWithin': 1000})
