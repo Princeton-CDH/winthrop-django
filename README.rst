@@ -42,15 +42,31 @@ Initial setup and installation:
 -  copy sample local settings and configure for your environment::
    cp winthrop/local_settings.py.sample winthrop/local_settings.py
 
+- Create a new Solr cores with a basic configuration and managed schema,
+  using the core/collection names that youconfigured in local settings::
+
+    solr create -c winthrop -n basic_configs
+
+- Run the manage command to configure the schema::
+
+    python manage.py solr_schema
+
+  The manage command will automatically reload the core to ensure schema
+  changes take effect.
 
 Unit Tests
 ~~~~~~~~~~
 
 Unit tests are written with `py.test <http://doc.pytest.org/>`__ but use
 Django fixture loading and convenience testing methods when that makes
-things easier. To run them, first install development requirements::
+things easier. To run them, you must install development requirements::
 
     pip install -r dev-requirements.txt
+
+Create a test Solr core the same way you created the main one, using the
+core/collectio name configured in local settings::
+
+    solr create -c winthrop-test -n basic_configs
 
 Run tests using py.test::
 

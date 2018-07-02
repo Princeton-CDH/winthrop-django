@@ -1,3 +1,5 @@
+import logging
+
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
 from django.urls import reverse
@@ -5,9 +7,13 @@ from django.utils.safestring import mark_safe
 from djiffy.models import Manifest
 
 from winthrop.common.models import Named, Notable, DateRange
+from winthrop.common.solr import Indexable
 from winthrop.places.models import Place
 from winthrop.people.models import Person
 from winthrop.footnotes.models import Footnote
+
+
+logger = logging.getLogger(__name__)
 
 
 class BookCount(models.Model):
@@ -17,13 +23,15 @@ class BookCount(models.Model):
         abstract = True
 
     def book_count(self):
+        '''Generate a count of associated books with an admin link to
+        find those books on the change list'''
         base_url = reverse('admin:books_book_changelist')
         return mark_safe('<a href="%s?%ss__id__exact=%s">%s</a>' % (
-                            base_url,
-                            self.__class__.__name__.lower(),
-                            self.pk,
-                            self.book_set.count()
-                ))
+            base_url,
+            self.__class__.__name__.lower(),
+            self.pk,
+            self.book_set.count()
+        ))
     book_count.short_description = '# books'
 
 
@@ -44,7 +52,8 @@ class Publisher(Named, Notable, BookCount):
 
 class OwningInstitution(Named, Notable, BookCount):
     '''Institution that owns the extant copy of a book'''
-    short_name = models.CharField(max_length=255, blank=True,
+    short_name = models.CharField(
+        max_length=255, blank=True,
         help_text='Optional short name for admin display')
     contact_info = models.TextField()
     place = models.ForeignKey(Place)
@@ -53,7 +62,7 @@ class OwningInstitution(Named, Notable, BookCount):
         return self.short_name or self.name
 
 
-class Book(Notable):
+class Book(Notable, Indexable):
     '''An individual book or volume'''
     title = models.TextField()
     short_title = models.CharField(max_length=255)
@@ -62,9 +71,9 @@ class Book(Notable):
         verbose_name='Original Publication Information')
     publisher = models.ForeignKey(Publisher, blank=True, null=True)
     pub_place = models.ForeignKey(Place, verbose_name='Place of Publication',
-        blank=True, null=True)
-    pub_year = models.PositiveIntegerField('Publication Year',
-        blank=True, null=True)
+                                  blank=True, null=True)
+    pub_year = models.PositiveIntegerField(
+        'Publication Year', blank=True, null=True)
     # is positive integer enough, or do we need more validation here?
     is_extant = models.BooleanField(default=False)
     is_annotated = models.BooleanField(default=False)
@@ -76,14 +85,16 @@ class Book(Notable):
 
     subjects = models.ManyToManyField(Subject, through='BookSubject')
     languages = models.ManyToManyField(Language, through='BookLanguage')
+    contributors = models.ManyToManyField(Person, through='Creator')
 
     # books are connected to owning institutions via the Catalogue
     # model; mapping as a many-to-many with a through
     # model in case we want to access owning instutions directly
-    owning_institutions = models.ManyToManyField(OwningInstitution,
-        through='Catalogue')
+    owning_institutions = models.ManyToManyField(
+        OwningInstitution, through='Catalogue')
 
-    digital_edition = models.ForeignKey(Manifest, blank=True, null=True,
+    digital_edition = models.ForeignKey(
+        Manifest, blank=True, null=True,
         help_text='Digitized edition of this book, if available')
 
     # proof-of-concept generic relation to footnotes
@@ -97,19 +108,21 @@ class Book(Notable):
         return '%s (%s)' % (self.short_title, self.pub_year)
 
     def is_digitized(self):
+        '''is there an associated digital edition?'''
         return self.digital_edition != None
     is_digitized.boolean = True
 
     def catalogue_call_numbers(self):
-        'Convenience access to catalogue call numbers, for display in admin'
+        '''Convenience access to catalogue call numbers, for display in admin'''
         return ', '.join([c.call_number for c in self.catalogue_set.all()])
     catalogue_call_numbers.short_description = 'Call Numbers'
 
     def authors(self):
+        '''Creator queryset filtered by creator type Author'''
         return self.creator_set.filter(creator_type__name='Author')
 
     def author_names(self):
-        'Display author names; convenience access for display in admin'
+        '''Display author names; convenience access for display in admin'''
         # NOTE: possibly might want to use last names here
         return ', '.join(str(auth.person) for auth in self.authors())
     author_names.short_description = 'Authors'
@@ -133,7 +146,75 @@ class Book(Notable):
         Will throw an exception if creator type is not valid.'''
         creator_type = CreatorType.objects.get(name=creator_type)
         Creator.objects.create(person=person, creator_type=creator_type,
-            book=self)
+                               book=self)
+
+    def handle_person_save(sender, instance, **kwargs):
+        '''signal handler for person save; reindex to get current author name'''
+        if instance.authorized_name_changed:
+            # only index if authorized name has changed
+            logger.debug('person save, reindexing %d book(s)', instance.book_set.count())
+            Indexable.index_items(instance.book_set.all(), params={'commitWithin': 3000})
+
+    def handle_person_delete(sender, instance, **kwargs):
+        '''signal handler for person delete; reindex books'''
+
+        # get a list of ids for collected works before clearing them
+        book_ids = instance.book_set.values_list('id', flat=True)
+
+        logger.debug('peson delete, reindexing %d book(s)', len(book_ids))
+        # find the items based on the list of ids to reindex
+        books = Book.objects.filter(id__in=list(book_ids))
+
+        # NOTE: this sends pre/post clear signal, but it's not obvious
+        # how to take advantage of that
+        instance.book_set.clear()
+        Indexable.index_items(books, params={'commitWithin': 3000})
+
+    def handle_creator_change(sender, instance, **kwargs):
+        '''signal handler for creator save or delete; reindex to get any creator changes'''
+        # same behavior for save or delete
+        logger.debug('creator change, reindexing %s', instance.book)
+        instance.book.index(params={'commitWithin': 3000})
+
+    #: index dependencies, to update when related items are changed
+    index_depends_on = {
+        # author name
+        'contributors': {
+            'post_save': handle_person_save,
+            'pre_delete': handle_person_delete,
+        },
+        'creator_set': {
+            'post_save': handle_creator_change,
+            'post_delete': handle_creator_change,
+        }
+    }
+
+    def index_id(self):
+        '''identifier within solr'''
+        return 'book:{}'.format(self.pk)
+
+    def index_data(self):
+        '''data for indexing in Solr'''
+        thumbnail_image = thumbnail_label = None
+        if self.digital_edition and self.digital_edition.thumbnail:
+            thumbnail_label = self.digital_edition.thumbnail.label
+            thumbnail_image = self.digital_edition.thumbnail.iiif_image_id
+
+        return {
+            # use content type in format of app.model_name for type
+            # (serializing model options as string returns this format)
+            'content_type': str(self._meta),
+            'id': self.index_id(),
+            'title': self.title,
+            'short_title': self.short_title,
+            'authors': [str(author.person) for author in self.authors()],
+            'pub_year': self.pub_year,
+            # NOTE: this indicates whether the book is annotated, does not
+            # necessarily mean there are annotations documented in our system
+            'is_annotated': self.is_annotated,
+            'thumbnail': thumbnail_image,
+            'thumbnail_label': thumbnail_label
+        }
 
 
 class Catalogue(Notable, DateRange):

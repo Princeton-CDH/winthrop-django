@@ -17,6 +17,15 @@ DATABASES = {
     },
 }
 
+# required for integration tests that query Solr
+SOLR_CONNECTIONS = {
+  'test': {
+        'COLLECTION': 'test-winthrop',
+        'URL': 'http://localhost:8983/solr/',
+        'ADMIN_URL': 'http://localhost:8983/solr/admin/cores'
+    },
+}
+
 
 # secret key added as a travis build step
 

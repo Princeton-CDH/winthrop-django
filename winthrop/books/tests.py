@@ -1,18 +1,22 @@
 from collections import defaultdict
 import csv
+from datetime import datetime
 from io import StringIO
 import json
-from unittest.mock import patch
+from time import sleep
+from unittest.mock import patch, Mock
 import os
 
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
+from django.db.models.query import QuerySet
 from django.utils.safestring import mark_safe
 from django.test import TestCase
 from django.urls import reverse
 from djiffy.models import Manifest
 import pytest
 
+from winthrop.common.solr import Indexable, PagedSolrQuery
 from winthrop.places.models import Place
 from winthrop.people.models import Person
 from .models import OwningInstitution, Book, Publisher, Catalogue, \
@@ -155,6 +159,73 @@ class TestBook(TestCase):
         de_christelicke.digital_edition = Manifest.objects.first()
         assert de_christelicke.is_digitized()
 
+    @patch.object(Indexable, 'index_items')
+    def test_handle_person_save(self, mock_index_items):
+
+        author = Person.objects.all().first()
+
+        # only reindex on name change
+        Book.handle_person_save(Mock(), author)
+        # index not called because collection name has not changed
+        mock_index_items.assert_not_called()
+
+        # modify name to test indexing
+        author.authorized_name = 'Another'
+        book = Book.objects.filter(contributors=author).first()
+        Book.handle_person_save(Mock(), author)
+        # call must be inspected piecemeal because queryset equals comparison fails
+        args, kwargs = mock_index_items.call_args
+        assert isinstance(args[0], QuerySet)
+        assert book in args[0]
+        assert kwargs['params'] == {'commitWithin': 3000}
+
+    @patch.object(Indexable, 'index_items')
+    def test_handle_person_delete(self, mock_index_items):
+        author = Person.objects.all().first()
+        book = Book.objects.filter(contributors=author).first()
+
+        Book.handle_person_delete(Mock(), author)
+
+        assert author.book_set.count() == 0
+        args, kwargs = mock_index_items.call_args
+        assert isinstance(args[0], QuerySet)
+        assert book in args[0]
+        assert kwargs['params'] == {'commitWithin': 3000}
+
+    def test_index_id(self):
+        book = Book.objects.all().first()
+        assert book.index_id() == 'book:%d' % book.pk
+
+    def test_index_data(self):
+        book = Book.objects.filter(digital_edition__isnull=True).first()
+        # no digital edition associated
+        index_data = book.index_data()
+        assert index_data['content_type'] == 'books.book'
+        assert index_data['id'] == book.index_id()
+        assert index_data['title'] == book.title
+        assert index_data['short_title'] == book.short_title
+        for auth in book.authors():
+            assert auth.person.authorized_name in index_data['authors']
+        assert index_data['pub_year'] == book.pub_year
+        assert not index_data['thumbnail']
+        assert not index_data['thumbnail_label']
+
+        # associate digital edition from fixture (has no thumbnail)
+        book.digital_edition = Manifest.objects.first()
+        # has digital edition but no thumbnail
+        # book = Book.objects.filter(digital_edition__isnull=False).first()
+        index_data = book.index_data()
+        assert not index_data['thumbnail']
+        assert not index_data['thumbnail_label']
+
+        # mark canvas as thumbnail
+        canvas = book.digital_edition.canvases.first()
+        canvas.thumbnail = True
+        canvas.save()
+        index_data = book.index_data()
+        assert index_data['thumbnail'] == canvas.iiif_image_id
+        assert index_data['thumbnail_label'] == canvas.label
+
 
 class TestCatalogue(TestCase):
 
@@ -165,11 +236,11 @@ class TestCatalogue(TestCase):
         pub_place = Place(name='Printington', geonames_id=4567)
         inst = OwningInstitution(name='NYSL')
         bk = Book(title='Some rambling long old title',
-            short_title='Some rambling',
-            original_pub_info='foo',
-            publisher=pub,
-            pub_place=pub_place,
-            pub_year=1823)
+                  short_title='Some rambling',
+                  original_pub_info='foo',
+                  publisher=pub,
+                  pub_place=pub_place,
+                  pub_year=1823)
 
         cat = Catalogue(institution=inst, book=bk)
         assert '%s / %s' % (bk, inst) == str(cat)
@@ -431,6 +502,70 @@ class TestBookViews(TestCase):
         result = self.client.get(canvas_autocomplete_url, {'q': 'pqn59s484h'})
         data = json.loads(result.content.decode('utf-8'))
         assert data['results'][0]['id'] == '10465'
+
+    @pytest.mark.usefixtures("solr")
+    def test_book_list(self):
+        url = reverse('books:list')
+
+         # nothing indexed - should find nothing
+        response = self.client.get(url)
+        assert response.status_code == 200
+        self.assertContains(response, 'No results')
+
+        books = Book.objects.all()
+
+        # index books for subsequent searches
+        Indexable.index_items(books, params={'commitWithin': 500})
+        sleep(2)
+
+         # no query or filters, should find all books
+        response = self.client.get(url)
+        assert response.status_code == 200
+        # last modified header should be set on response
+        assert response.has_header('last-modified')
+
+        # no easy way to get last modification time from Solr...
+        index_modified = PagedSolrQuery({
+            'q': '*:*',
+            'sort': 'last_modified desc',
+            'fq': 'content_type:(%s)' % str(Book._meta)
+            })[0]['last_modified']
+        index_modified_dt = datetime.strptime(index_modified, '%Y-%m-%dT%H:%M:%S.%fZ')
+
+        modified = index_modified_dt.strftime('%a, %d %b %Y %H:%M:%S GMT')
+        assert response['Last-Modified'] == modified
+
+        # provisional text
+        self.assertContains(response, 'Displaying %d books' % books.count())
+
+        # NOTE: total currently not displayed
+        for book in books:
+            self.assertContains(response, book.short_title)
+            self.assertContains(response, book.pub_year)
+            for creator in book.authors():
+                self.assertContains(response, creator.person.authorized_name)
+
+        # annotated badge should be displayed for books marked as annotated
+        annotated_count = books.filter(is_annotated=True).count()
+        self.assertContains(response, '<div class="ui label">annotated</div>',
+                            count=annotated_count)
+
+        # associate digital edition & thumbnail from fixture
+        book = books.first()
+        book.digital_edition = Manifest.objects.first()
+        canvas = book.digital_edition.canvases.first()
+        canvas.thumbnail = True
+        canvas.save()
+        # add to Solr index
+        book.index(params={'commitWithin': 500})
+        sleep(2)
+
+        response = self.client.get(url)
+        # should include image urls (1x/2x)
+        self.assertContains(response, str(canvas.image.size(height=218)))
+        self.assertContains(response, str(canvas.image.size(height=436)))
+        # should include image label
+        self.assertContains(response, canvas.label)
 
 
 class TestWinthropManifestImporter(TestCase):

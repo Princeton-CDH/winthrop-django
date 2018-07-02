@@ -45,6 +45,11 @@ class Person(Notable, DateRange):
         verbose_name_plural = 'People'
         ordering = ['authorized_name']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # store a copy of model data to allow checking for changes
+        self.__initial = self.__dict__.copy()
+
     def save(self, *args, **kwargs):
         '''Adds birth and death dates if they aren't already set
         and there's a viaf id for the record'''
@@ -53,6 +58,9 @@ class Person(Notable, DateRange):
             self.set_birth_death_years()
 
         super(Person, self).save(*args, **kwargs)
+
+        # update copy of initial data to reflect saved state
+        self.__initial = self.__dict__.copy()
 
     def __str__(self):
         return self.authorized_name
@@ -67,6 +75,11 @@ class Person(Notable, DateRange):
         if self.viaf_id:
             self.birth = self.viaf.birthyear
             self.death = self.viaf.deathyear
+
+    @property
+    def authorized_name_changed(self):
+        '''check if authorized name has been changed (only works on current instance)'''
+        return self.authorized_name != self.__initial['authorized_name']
 
 
 class Residence(Notable, DateRange):

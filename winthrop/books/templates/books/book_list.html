@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static humanize %}
+
+{% block page-subtitle %}Books {% endblock %}
+
+{% block content %}
+<h1>Books</h1>
+<h1><img class="ui fluid image" src="{% static 'img/winthrop_banner-book.png' %}"
+    alt="Books"/></h1>
+<div class="ui container">
+
+ {% if paginator.count %}
+  <p>Displaying {{ paginator.count|intcomma }} book{{ paginator.count|pluralize }}</p>
+ {% else %}
+  <p>No results found</p>
+ {% endif %}
+
+  <div class="ui grid">
+    {% for book in object_list %}
+      <div class="eight wide column">
+        <div class="ui segment">
+          {% if book.thumbnail %}
+          <img class="ui right floated image" src="{% iiif_image book.thumbnail height=218 %}"
+              srcset="{% iiif_image book.thumbnail height=436 %} 2x"
+              alt="{{ book.thumbnail_label }}" title="{{ book.thumbnail_label }}"/>
+          {% endif %}
+          <b>{{ book.short_title }}</b>
+          {% for author in book.authors %}
+              <p>{{ author }}</p>
+          {% endfor %}
+          <p>{{ book.pub_year }}</p>
+
+          {% if book.is_annotated %}
+          <div class="ui label">annotated</div>
+          {% endif %}
+         </div>
+      </div>
+    {% endfor %}
+  </div>
+
+    {% include 'snippets/pagination.html' %}
+
+</div>
+
+{% endblock %}

@@ -1,8 +1,8 @@
-from django.test import TestCase
 from django.core.exceptions import ValidationError
+from django.test import TestCase
 import pytest
 
-from .models import Named, Notable, DateRange
+from winthrop.common.models import Named, Notable, DateRange
 
 
 class TestNamed(TestCase):
