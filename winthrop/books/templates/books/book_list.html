@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static humanize %}
 
-{% block page-subtitle %}Books {% endblock %}
+{% block page-subtitle %}Books | {% endblock %}
 
 {% block content %}
 <h1>Books</h1>
@@ -19,6 +19,7 @@
     {% for book in object_list %}
       <div class="eight wide column">
         <div class="ui segment">
+          <a href="{% url 'books:detail' book.slug %}">
           {% if book.thumbnail %}
           <img class="ui right floated image" src="{% iiif_image book.thumbnail height=218 %}"
               srcset="{% iiif_image book.thumbnail height=436 %} 2x"
@@ -34,6 +35,7 @@
           <div class="ui label">annotated</div>
           {% endif %}
          </div>
+       </a>
       </div>
     {% endfor %}
   </div>

@@ -133,13 +133,16 @@ class Book(Notable, Indexable):
     catalogue_call_numbers.short_description = 'Call Numbers'
 
     def authors(self):
-        '''Creator queryset filtered by creator type Author'''
-        return self.creator_set.filter(creator_type__name='Author')
+        '''Contributor queryset filtered by creator type Author'''
+        if self.pk:
+            return self.contributors.filter(creator__creator_type__name='Author') \
+                .order_by('creator__id')
+        return Person.objects.none()
 
     def author_names(self):
         '''Display author names; convenience access for display in admin'''
         # NOTE: possibly might want to use last names here
-        return ', '.join(str(auth.person) for auth in self.authors())
+        return ', '.join(str(auth) for auth in self.authors())
     author_names.short_description = 'Authors'
     author_names.admin_order_field = 'creator__person__authorized_name'
 
@@ -163,6 +166,14 @@ class Book(Notable, Indexable):
         Creator.objects.create(person=person, creator_type=creator_type,
                                book=self)
 
+    def translators(self):
+        '''Contributor queryset filtered by creator type Translator'''
+        return self.contributors.filter(creator__creator_type__name='Translator')
+
+    def editors(self):
+        '''Contributor queryset filtered by creator type Editor'''
+        return self.contributors.filter(creator__creator_type__name='Editor')
+
     def generate_slug(self):
         '''Generate a slug based on first author, title, and year.
 
@@ -172,7 +183,7 @@ class Book(Notable, Indexable):
         author = self.authors().first()
         if author:
             # use the last name of the first author
-            author = author.person.authorized_name.split(',')[0]
+            author = author.authorized_name.split(',')[0]
         else:
             # otherwise, set it to an empty string
             author = ''
@@ -228,27 +239,38 @@ class Book(Notable, Indexable):
         '''identifier within solr'''
         return 'book:{}'.format(self.pk)
 
+    @property
+    def thumbnail(self):
+        '''IIIF image id for associated digital edition thumbnail,
+        if there is one'''
+        if self.digital_edition and self.digital_edition.thumbnail:
+            return self.digital_edition.thumbnail.iiif_image_id
+
+    @property
+    def thumbnail_label(self):
+        '''Label for the thumbnail of the associated digital edition,
+        if there is one'''
+        if self.digital_edition and self.digital_edition.thumbnail:
+            return self.digital_edition.thumbnail.label
+
     def index_data(self):
         '''data for indexing in Solr'''
-        thumbnail_image = thumbnail_label = None
-        if self.digital_edition and self.digital_edition.thumbnail:
-            thumbnail_label = self.digital_edition.thumbnail.label
-            thumbnail_image = self.digital_edition.thumbnail.iiif_image_id
 
         return {
             # use content type in format of app.model_name for type
             # (serializing model options as string returns this format)
             'content_type': str(self._meta),
             'id': self.index_id(),
+            'slug': self.slug,
             'title': self.title,
             'short_title': self.short_title,
-            'authors': [str(author.person) for author in self.authors()],
+            'authors': [str(author) for author in self.authors()],
             'pub_year': self.pub_year,
             # NOTE: this indicates whether the book is annotated, does not
             # necessarily mean there are annotations documented in our system
             'is_annotated': self.is_annotated,
-            'thumbnail': thumbnail_image,
-            'thumbnail_label': thumbnail_label
+            'thumbnail': self.thumbnail,
+            'thumbnail_label': self.thumbnail_label
         }
 
 

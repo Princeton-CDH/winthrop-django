@@ -2,7 +2,7 @@ from datetime import datetime
 
 from dal import autocomplete
 from django.db.models import Q
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from djiffy.models import Canvas
 
 from winthrop.books.models import Book, Publisher, Language, Subject
@@ -40,6 +40,11 @@ class BookListView(ListView, LastModifiedListMixin):
         if psq.count():
             # Solr stores date in isoformat; convert to datetime
             return datetime.strptime(psq[0]['last_modified'], '%Y-%m-%dT%H:%M:%S.%fZ')
+
+
+class BookDetailView(DetailView):
+    model = Book
+
 
 
 class PublisherAutocomplete(autocomplete.Select2QuerySetView):

@@ -108,7 +108,7 @@ class TestBook(TestCase):
 
         laski = 'Łaski, Jan'
         assert de_christelicke.authors().count() == 1
-        assert de_christelicke.authors().first().person.authorized_name == \
+        assert de_christelicke.authors().first().authorized_name == \
             laski
         assert de_christelicke.author_names() == laski
 
@@ -207,7 +207,7 @@ class TestBook(TestCase):
         assert index_data['title'] == book.title
         assert index_data['short_title'] == book.short_title
         for auth in book.authors():
-            assert auth.person.authorized_name in index_data['authors']
+            assert auth.authorized_name in index_data['authors']
         assert index_data['pub_year'] == book.pub_year
         assert not index_data['thumbnail']
         assert not index_data['thumbnail_label']
@@ -232,8 +232,7 @@ class TestBook(TestCase):
         # model method
         book = Book.objects.all().first()
         slug = book.generate_slug()
-        book_author_lastname = book.authors().first().person\
-                .authorized_name.split(',')[0]
+        book_author_lastname = book.authors().first().authorized_name.split(',')[0]
         book_author_lastname = unidecode(book_author_lastname).strip().lower()
         assert slug.startswith(book_author_lastname)
         assert slug.endswith('-%s' % book.pub_year)
@@ -416,10 +415,10 @@ class TestImportNysl(TestCase):
         assert book.pub_place.geonames_id == 'http://notgeonames/0001/'
         assert book.publisher.name == data['Standardized Name of Publisher']
         # - first row has author, no editor or translator
-        assert book.authors().first().person.authorized_name == \
+        assert book.authors().first().authorized_name == \
             data['AUTHOR, Standarized']
         # Is viaf_id getting set and passed from call?
-        assert book.authors().first().person.viaf_id == \
+        assert book.authors().first().viaf_id == \
             'http://totallyviaf.org/viaf/00001/'
         book_creators = book.creator_set.all()
         assert book_creators.filter(creator_type__name='Editor').count() == 0
@@ -590,7 +589,7 @@ class TestBookViews(TestCase):
             self.assertContains(response, book.short_title)
             self.assertContains(response, book.pub_year)
             for creator in book.authors():
-                self.assertContains(response, creator.person.authorized_name)
+                self.assertContains(response, creator.authorized_name)
 
         # annotated badge should be displayed for books marked as annotated
         annotated_count = books.filter(is_annotated=True).count()

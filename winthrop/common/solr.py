@@ -42,6 +42,7 @@ class SolrSchema(object):
         {'name': 'thumbnail_label', 'type': 'string', 'required': False},
         {'name': 'content_type', 'type': 'string', 'required': True},
         {'name': 'is_annotated', 'type': 'boolean', 'required': False},
+        {'name': 'slug', 'type': 'string', 'required': False},
 
         {'name': 'text', 'type': 'text_en', 'required': False, 'stored': False,
          'multiValued': True},
