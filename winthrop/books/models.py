@@ -208,6 +208,9 @@ class Book(Notable, Indexable):
             'title': self.title,
             'short_title': self.short_title,
             'authors': [str(author.person) for author in self.authors()],
+            # first author only, for sorting
+            # FIXME: sort on last name first? not an ordered relationship currently
+            'author_exact': str(self.authors().first().person) if self.authors().exists() else None,
             'pub_year': self.pub_year,
             # NOTE: this indicates whether the book is annotated, does not
             # necessarily mean there are annotations documented in our system
