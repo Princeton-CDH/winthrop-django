@@ -253,18 +253,26 @@ class Book(Notable, Indexable):
         if self.digital_edition and self.digital_edition.thumbnail:
             return self.digital_edition.thumbnail.label
 
+    @classmethod
+    def content_type(cls):
+        # content type as a string, for use in solr indexing
+        return str(cls._meta)
+
     def index_data(self):
         '''data for indexing in Solr'''
 
         return {
             # use content type in format of app.model_name for type
             # (serializing model options as string returns this format)
-            'content_type': str(self._meta),
+            'content_type': Book.content_type(),
             'id': self.index_id(),
             'slug': self.slug,
             'title': self.title,
             'short_title': self.short_title,
             'authors': [str(author) for author in self.authors()],
+            # first author only, for sorting
+            # FIXME: sort on last name first? not an ordered relationship currently
+            'author_exact': str(self.authors().first()) if self.authors().exists() else None,
             'pub_year': self.pub_year,
             # NOTE: this indicates whether the book is annotated, does not
             # necessarily mean there are annotations documented in our system

@@ -9,10 +9,20 @@
     alt="Books"/></h1>
 <div class="ui container">
 
+{# provisional search form display #}
+<form>
+{{ search_form.as_p }}
+<input type="submit"/>
+</form>
+
+
+
  {% if paginator.count %}
   <p>Displaying {{ paginator.count|intcomma }} book{{ paginator.count|pluralize }}</p>
  {% else %}
-  <p>No results found</p>
+   <div class="ui error message container">
+      <p>{% firstof error "No results found" %}</p>
+  </div>
  {% endif %}
 
   <div class="ui grid">

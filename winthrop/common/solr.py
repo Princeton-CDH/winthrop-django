@@ -53,15 +53,14 @@ class SolrSchema(object):
 
         # sort/facet copy fields
         # {'name': 'title_exact', 'type': 'string', 'required': False},
-        {'name': 'author_exact', 'type': 'string', 'required': False,
-         'multiValued': True}
+        {'name': 'author_exact', 'type': 'string', 'required': False},
     ]
     #: fields to be copied into general purpose text field for searching
     text_fields = ['title', 'short_title', 'authors', 'pub_year']
     #: copy fields, e.g. for facets
     copy_fields = [
         # ('title', 'title_exact'),
-        ('authors', 'author_exact'),
+        # ('authors', 'author_exact'),
     ]
 
     def __init__(self):
