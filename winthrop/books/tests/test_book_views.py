@@ -2,8 +2,9 @@ from datetime import datetime
 import json
 from time import sleep
 
-from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.template.defaultfilters import escape
+from django.test import TestCase
 from django.urls import reverse
 from djiffy.models import Manifest
 import pytest
@@ -183,3 +184,47 @@ class TestBookViews(TestCase):
         response = self.client.get(url, {'sort': 'pub_year_asc'})
         books = Book.objects.order_by('pub_year')
         assert response.context['object_list'][0]['pub_year'] == books.first().pub_year
+
+    def test_book_detail(self):
+        book = Book.objects.filter(is_annotated=True).first()
+        # associate digital edition & thumbnail from fixture
+        book.digital_edition = Manifest.objects.first()
+        canvas = book.digital_edition.canvases.first()
+        canvas.thumbnail = True
+        canvas.save()
+        book.save()
+
+        response = self.client.get(book.get_absolute_url())
+        assert response.status_code == 200
+        # details that are expected to display
+        self.assertContains(response, book.title)
+        self.assertContains(response, book.short_title)
+        self.assertContains(response, book.pub_year)
+        self.assertContains(response, "annotated")
+        self.assertContains(response, escape(book.original_pub_info))
+        self.assertContains(response, book.publisher.name)
+        self.assertContains(response, book.pub_place.name)
+        self.assertContains(response, book.authors().first().authorized_name)
+        catalogue = book.catalogue_set.first()
+        self.assertContains(response, '%s %s' % (catalogue.institution, catalogue.call_number))
+        # headings that should not display because there is no data
+        self.assertNotContains(response, 'Translator')
+        self.assertNotContains(response, 'Editor')
+        self.assertNotContains(response, 'Book Language')
+        self.assertNotContains(response, 'Book Subject')
+        self.assertNotContains(response, 'Person/Book interactions')
+        # none should not be displayed for any missing/empty fields
+        self.assertNotContains(response, "None")
+
+        # should include image urls (1x/2x)
+        self.assertContains(response, str(canvas.image.size(height=218)))
+        self.assertContains(response, str(canvas.image.size(height=436)))
+        # should include image label
+        self.assertContains(response, canvas.label)
+
+        # TODO: populate and test that additioal fields are displayed
+        # as expected
+
+        # bogus id should 404
+        response = self.client.get(reverse('books:detail', args=['foo']))
+        assert response.status_code == 404

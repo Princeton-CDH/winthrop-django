@@ -205,6 +205,10 @@ class Book(Notable, Indexable):
         # # return a slug
         return slugify(' '.join([unidecode(author), unidecode(title), str(year)]))
 
+    def get_absolute_url(self):
+        '''URL so view this object on the public website'''
+        return reverse('books:detail', kwargs={'slug': self.slug})
+
     def handle_person_save(sender, instance, **kwargs):
         '''signal handler for person save; reindex to get current author name'''
         if instance.authorized_name_changed:
