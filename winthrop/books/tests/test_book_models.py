@@ -4,10 +4,12 @@ import os
 
 from django.db.models.query import QuerySet
 from django.utils.safestring import mark_safe
+from django.utils.text import slugify
 from django.test import TestCase
 from django.urls import reverse
 from djiffy.models import Manifest
 import pytest
+from unidecode import unidecode
 
 from winthrop.books.models import OwningInstitution, Book, Publisher, Catalogue, \
     Creator, CreatorType, Subject, BookSubject, Language, BookLanguage, \
@@ -98,7 +100,7 @@ class TestBook(TestCase):
 
         laski = 'Łaski, Jan'
         assert de_christelicke.authors().count() == 1
-        assert de_christelicke.authors().first().person.authorized_name == \
+        assert de_christelicke.authors().first().authorized_name == \
             laski
         assert de_christelicke.author_names() == laski
 
@@ -197,11 +199,11 @@ class TestBook(TestCase):
         assert index_data['title'] == book.title
         assert index_data['short_title'] == book.short_title
         for auth in book.authors():
-            assert auth.person.authorized_name in index_data['authors']
+            assert auth.authorized_name in index_data['authors']
         assert index_data['pub_year'] == book.pub_year
         assert not index_data['thumbnail']
         assert not index_data['thumbnail_label']
-        assert index_data['author_exact'] == book.authors()[0].person.authorized_name
+        assert index_data['author_exact'] == book.authors()[0].authorized_name
 
         # associate digital edition from fixture (has no thumbnail)
         book.digital_edition = Manifest.objects.first()
@@ -210,6 +212,7 @@ class TestBook(TestCase):
         index_data = book.index_data()
         assert not index_data['thumbnail']
         assert not index_data['thumbnail_label']
+        assert index_data['author_exact'] == book.authors()[0].authorized_name
 
         # mark canvas as thumbnail
         canvas = book.digital_edition.canvases.first()

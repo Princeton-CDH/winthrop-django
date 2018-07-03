@@ -130,7 +130,7 @@ class TestBookViews(TestCase):
             self.assertContains(response, book.short_title)
             self.assertContains(response, book.pub_year)
             for creator in book.authors():
-                self.assertContains(response, creator.person.authorized_name)
+                self.assertContains(response, creator.authorized_name)
 
         # annotated badge should be displayed for books marked as annotated
         annotated_count = books.filter(is_annotated=True).count()

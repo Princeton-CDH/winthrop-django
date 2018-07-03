@@ -86,10 +86,10 @@ class TestImportNysl(TestCase):
         assert book.pub_place.geonames_id == 'http://notgeonames/0001/'
         assert book.publisher.name == data['Standardized Name of Publisher']
         # - first row has author, no editor or translator
-        assert book.authors().first().person.authorized_name == \
+        assert book.authors().first().authorized_name == \
             data['AUTHOR, Standarized']
         # Is viaf_id getting set and passed from call?
-        assert book.authors().first().person.viaf_id == \
+        assert book.authors().first().viaf_id == \
             'http://totallyviaf.org/viaf/00001/'
         book_creators = book.creator_set.all()
         assert book_creators.filter(creator_type__name='Editor').count() == 0
@@ -133,6 +133,8 @@ class TestImportNysl(TestCase):
         assert book.notes == data['Notes'] + \
             '\n\nReproduction Recommendation: Front flyleaf recto, TP'
         # Check that is_sammelband was set on a 'bound' volume
+        # - change title to ensure we get a unique slug
+        data['Title'] = 'OS'
         self.cmd.create_book(data)
         self.cmd.build_sammelband()
         assert book.catalogue_set.first().is_sammelband == True
