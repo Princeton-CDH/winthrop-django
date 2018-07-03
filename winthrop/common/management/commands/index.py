@@ -26,7 +26,6 @@ Example usage::
 
 
 from django.core.management.base import BaseCommand, CommandError
-from django.db.models import Sum
 import progressbar
 # from urllib3.exceptions import HTTPError
 #from SolrClient.exceptions import ConnectionError
@@ -64,11 +63,17 @@ class Command(BaseCommand):
         parser.add_argument(
             '--no-progress', action='store_true',
             help='Do not display progress bar to track the status of the reindex.')
+        parser.add_argument(
+            '-c', '--clear', action='store_true',
+            help='Remove items from Solr before indexing.')
 
     def handle(self, *args, **kwargs):
         self.solr, self.solr_collection = get_solr_connection()
         self.verbosity = kwargs.get('verbosity', self.v_normal)
         self.options = kwargs
+
+        if self.options.get('clear', False):
+            self.clear_index()
 
         total_to_index = 0
         for model in Indexable.__subclasses__():
@@ -110,3 +115,9 @@ class Command(BaseCommand):
             # at least stop the script instead of repeatedly throwing
             # connection errors
             raise CommandError(err)
+
+    def clear_index(self):
+        # NOTE might be nice to report how many items were deleted,
+        # but would require before/after queries
+        self.solr.delete_doc_by_query(self.solr_collection, '*:*',
+                                      params={'commitWithin': 1000})
