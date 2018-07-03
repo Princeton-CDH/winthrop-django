@@ -134,10 +134,7 @@ class Book(Notable, Indexable):
 
     def authors(self):
         '''Contributor queryset filtered by creator type Author'''
-        if self.pk:
-            return self.contributors.filter(creator__creator_type__name='Author') \
-                .order_by('creator__id')
-        return Person.objects.none()
+        return self.contributor_by_type('Author')
 
     def author_names(self):
         '''Display author names; convenience access for display in admin'''
@@ -166,13 +163,27 @@ class Book(Notable, Indexable):
         Creator.objects.create(person=person, creator_type=creator_type,
                                book=self)
 
+    def contributor_by_type(self, creator_type):
+        '''Contributors by type, e.g. author or editor. Returns an empty
+        :class:`~winthrop.people.models.Person` queryset if the object is not
+        yet saved.'''
+
+        # object must be saved in order to query related items
+        if self.pk:
+            # order by when the creator record pk (i.e. creation order);
+            # (otherwise defaults to alpha by authorized name)
+            return self.contributors.filter(creator__creator_type__name=creator_type) \
+                       .order_by('creator__pk')
+        # return empty queryset if unsaved
+        return Person.objects.none()
+
     def translators(self):
         '''Contributor queryset filtered by creator type Translator'''
-        return self.contributors.filter(creator__creator_type__name='Translator')
+        return self.contributor_by_type('Translator')
 
     def editors(self):
         '''Contributor queryset filtered by creator type Editor'''
-        return self.contributors.filter(creator__creator_type__name='Editor')
+        return self.contributor_by_type('Editor')
 
     def generate_slug(self):
         '''Generate a slug based on first author, title, and year.

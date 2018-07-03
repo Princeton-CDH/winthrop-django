@@ -118,6 +118,47 @@ class TestBook(TestCase):
         de_christelicke.creator_set.all().delete()
         assert de_christelicke.authors().count() == 0
 
+        # unsaved object - no error, empty result
+        book = Book()
+        assert not book.authors()
+
+    def test_editors(self):
+        de_christelicke = Book.objects.get(short_title__contains="De Christelicke")
+
+        # no editors
+        assert de_christelicke.editors().count() == 0
+
+        # convert author to editor
+        laski = 'Łaski, Jan'
+        ed_type = CreatorType.objects.get(name='Editor')
+        de_christelicke.creator_set.update(creator_type=ed_type)
+        assert de_christelicke.editors().count() == 1
+        assert de_christelicke.editors().first().authorized_name == \
+            laski
+
+        # unsaved object - no error, empty result
+        book = Book()
+        assert not book.editors()
+
+    def test_translators(self):
+        de_christelicke = Book.objects.get(short_title__contains="De Christelicke")
+
+        # no translators
+        assert de_christelicke.translators().count() == 0
+
+        # convert author to translator
+        laski = 'Łaski, Jan'
+        translator = CreatorType.objects.get(name='Translator')
+        de_christelicke.creator_set.update(creator_type=translator)
+        assert de_christelicke.translators().count() == 1
+        assert de_christelicke.translators().first().authorized_name == \
+            laski
+
+        # unsaved object - no error, empty result
+        book = Book()
+        assert not book.translators()
+
+
     def test_add_author(self):
         de_christelicke = Book.objects.get(short_title__contains="De Christelicke")
         abelin = Person.objects.get(authorized_name="Abelin, Johann Philipp")
@@ -227,6 +268,42 @@ class TestBook(TestCase):
         index_data = book.index_data()
         assert index_data['authors'] == []
         assert index_data['author_exact'] is None
+
+    def test_generate_slug(self):
+        # model method
+        book = Book.objects.all().first()
+        slug = book.generate_slug()
+        book_author_lastname = book.authors().first().authorized_name.split(',')[0]
+        book_author_lastname = unidecode(book_author_lastname).strip().lower()
+        assert slug.startswith(book_author_lastname)
+        assert slug.endswith('-%s' % book.pub_year)
+        assert slugify(book.short_title) in slug
+
+        # no pub year, no problem
+        book.pub_year = None
+        author_title_slug = slugify('%s %s' % (book_author_lastname, book.short_title))
+        assert book.generate_slug() == author_title_slug
+
+        # no author, no problem
+        book.creator_set.all().delete()
+        assert book.generate_slug() == slugify(book.short_title)
+
+        # long title is shortened
+        book.short_title = book.title
+        assert book.generate_slug() == slugify(' '.join(book.short_title.split()[:9]))
+
+    def test_save(self):
+        # save should generate slug if not set
+        book = Book.objects.all().first()
+        book.slug = None
+        book.save()
+        assert book.slug == book.generate_slug()
+
+        # not regenerated on save if already set
+        test_slug = 'my-bogus-slug'
+        book.slug = test_slug
+        book.save()
+        assert book.slug == test_slug
 
 
 class TestCatalogue(TestCase):
