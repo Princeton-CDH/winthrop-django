@@ -185,6 +185,7 @@ class TestBookViews(TestCase):
         books = Book.objects.order_by('pub_year')
         assert response.context['object_list'][0]['pub_year'] == books.first().pub_year
 
+    @pytest.mark.usefixtures("solr")
     def test_book_detail(self):
         book = Book.objects.filter(is_annotated=True).first()
         # associate digital edition & thumbnail from fixture
@@ -222,7 +223,33 @@ class TestBookViews(TestCase):
         # should include image label
         self.assertContains(response, canvas.label)
 
-        # TODO: populate and test that additioal fields are displayed
+        # book without annotations
+        book = Book.objects.filter(is_annotated=False).first()
+        response = self.client.get(book.get_absolute_url())
+        self.assertNotContains(response, "annotated")
+
+        # last modified header not set because not available from Solr
+        assert not response.has_header('last-modified')
+
+        # index to test last-modified logic
+        book.index(params={'commitWithin': 500})
+        sleep(2)
+
+         # no query or filters, should find all books
+        response = self.client.get(book.get_absolute_url())
+        assert response.status_code == 200
+        # last modified header should be set on response
+        assert response.has_header('last-modified')
+
+        # no easy way to get last modification time from Solr...
+        index_modified = PagedSolrQuery({
+            'q': 'id:"%s"' % book.index_id(),
+            })[0]['last_modified']
+        index_modified_dt = datetime.strptime(index_modified, '%Y-%m-%dT%H:%M:%S.%fZ')
+        modified = index_modified_dt.strftime('%a, %d %b %Y %H:%M:%S GMT')
+        assert response['Last-Modified'] == modified
+
+        # TODO: populate and test that additional fields are displayed
         # as expected
 
         # bogus id should 404

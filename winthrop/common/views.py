@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.utils.cache import get_conditional_response
 from django.views.generic.base import View
 
@@ -23,6 +25,15 @@ class LastModifiedMixin(View):
 
         return get_conditional_response(
             request, last_modified=last_modified, response=response)
+
+    @staticmethod
+    def solr_timestamp_to_datetime(solr_time):
+        # Solr stores date in isoformat; convert to datetime object
+        # - microseconds only included when second is not exact; strip out if
+        #    they are present
+        if '.' in solr_time:
+            solr_time = '%sZ' % solr_time.split('.')[0]
+        return datetime.strptime(solr_time, '%Y-%m-%dT%H:%M:%SZ')
 
 
 class LastModifiedListMixin(LastModifiedMixin):

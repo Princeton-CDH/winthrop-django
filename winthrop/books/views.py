@@ -10,7 +10,7 @@ from SolrClient.exceptions import SolrError
 from winthrop.books.models import Book, Publisher, Language, Subject
 from winthrop.books.forms import SearchForm
 from winthrop.common.solr import PagedSolrQuery
-from winthrop.common.views import LastModifiedListMixin
+from winthrop.common.views import LastModifiedListMixin, LastModifiedMixin
 
 
 class BookListView(ListView, LastModifiedListMixin):
@@ -121,13 +121,28 @@ class BookListView(ListView, LastModifiedListMixin):
             psq = PagedSolrQuery(query_opts)
             if psq.count():
                 # Solr stores date in isoformat; convert to datetime
-                return datetime.strptime(psq[0]['last_modified'], '%Y-%m-%dT%H:%M:%S.%fZ')
+                return self.solr_timestamp_to_datetime(psq[0]['last_modified'])
         except SolrError:
             pass
 
 
-class BookDetailView(DetailView):
+class BookDetailView(DetailView, LastModifiedMixin):
     model = Book
+
+    def last_modified(self):
+        '''book model doesn't track update; get last index modification from Solr instead'''
+
+        # if there is a solr error, skip last-modified behavior and display page
+        try:
+            psq = PagedSolrQuery({
+                'q': 'id:"%s"' % self.object.index_id(),
+                'fl': 'last_modified'
+            })
+            if psq.count():
+                # Solr stores date in isoformat; convert to datetime
+                return self.solr_timestamp_to_datetime(psq[0]['last_modified'])
+        except SolrError:
+            pass
 
 
 
