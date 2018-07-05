@@ -11,6 +11,8 @@ cache:
   - downloads
 services:
 - mysql
+before_install:
+- npm install
 install:
 - pip install -r requirements.txt
 - pip install -r dev-requirements.txt
@@ -23,6 +25,7 @@ before_cache:
 - rm -rf downloads/solr-${SOLR_VERSION}/
 script:
 - python -m pytest --cov=winthrop
+- python manage.py compress -f -v0
 after_success:
 - codecov
 notifications:

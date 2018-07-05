@@ -71,6 +71,22 @@ Initial setup and installation:
     python manage.py index
 
 
+Frontend development setup:
+
+- django-compressor dependencies: you need `Node.js <https://nodejs.org/en/>`_
+  and a js package manager (`npm` or `yarn`). Install dependencies with the
+  relevant install command for your package manager - for `npm`::
+
+    npm install
+
+  for `yarn`::
+
+    yarn
+
+  if you wish to install dependencies globally, take a look at the optional
+  settings for `django-compressor-toolkit <https://github.com/kottenator/django-compressor-toolkit>`_.
+
+
 Tests
 ~~~~~~~~~~
 

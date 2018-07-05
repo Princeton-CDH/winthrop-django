@@ -2,6 +2,8 @@ django<2
 mysqlclient
 django-grappelli
 django-autocomplete-light
+django-compressor
+django-compressor-toolkit
 requests
 rdflib
 pucas
