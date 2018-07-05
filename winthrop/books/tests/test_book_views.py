@@ -141,20 +141,6 @@ class TestBookViews(TestCase):
 
         # check a book with a digital edition
         book = books.filter(digital_edition__isnull=False).first()
-        print('digital edition')
-        print(book.digital_edition)
-        print('thumbnail')
-        print(book.digital_edition.thumbnail)
-
-        # associate digital edition & thumbnail from fixture
-        # book = books.first()
-        # book.digital_edition = Manifest.objects.first()
-        # canvas = book.digital_edition.canvases.first()
-        # canvas.thumbnail = True
-        # canvas.save()
-        # # add to Solr index
-        # book.index(params={'commitWithin': 500})
-        # sleep(2)
         canvas = book.digital_edition.thumbnail
         response = self.client.get(url)
         # should include image urls (1x/2x)
