@@ -3,6 +3,7 @@ from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
 from django.test import TransactionTestCase
 from django.utils.text import slugify
+import pytest
 
 
 
@@ -17,6 +18,8 @@ class TestMigrations(TransactionTestCase):
     app = None
     migrate_from = None
     migrate_to = None
+
+
 
     def setUp(self):
         assert self.migrate_from and self.migrate_to, \
@@ -41,11 +44,21 @@ class TestMigrations(TransactionTestCase):
         pass
 
 
+# NOTE: TransactionTestCase must be run after all other test cases,
+# because it truncates the database, removing fixture objects expected
+# to be present by other tests.
+# Django test runner runs transaction test cases after simple test cases,
+# but pytest / pytest-django do not.
+
+
+@pytest.mark.last
 class TestBookAddSlugs(TestMigrations):
+
 
     app = 'books'
     migrate_from = '0011_add_book_digital_edition_remove_is_digitized'
     migrate_to = '0014_make_book_slugs_unique'
+    serialized_rollback = True
 
     def setUpBeforeMigration(self, apps):
         # create variant books to test
