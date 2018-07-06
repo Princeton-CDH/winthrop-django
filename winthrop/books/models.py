@@ -199,7 +199,7 @@ class Book(Notable, Indexable):
             # otherwise, set it to an empty string
             author = ''
         # truncate the title to first several words of the title
-        title = ' '.join(self.short_title.split()[:9])
+        title = ' '.join(self.short_title.split()[:5])
         # use copyright year if available, with fallback to work year if
         year = self.pub_year or ''
         # # return a slug

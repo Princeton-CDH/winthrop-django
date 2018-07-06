@@ -277,20 +277,22 @@ class TestBook(TestCase):
         book_author_lastname = unidecode(book_author_lastname).strip().lower()
         assert slug.startswith(book_author_lastname)
         assert slug.endswith('-%s' % book.pub_year)
-        assert slugify(book.short_title) in slug
+        # title shortened to first 5 words
+        shorter_title = ' '.join(book.short_title.split()[:5])
+        assert slugify(shorter_title) in slug
 
         # no pub year, no problem
         book.pub_year = None
-        author_title_slug = slugify('%s %s' % (book_author_lastname, book.short_title))
+        author_title_slug = slugify('%s %s' % (book_author_lastname, shorter_title))
         assert book.generate_slug() == author_title_slug
 
         # no author, no problem
         book.creator_set.all().delete()
-        assert book.generate_slug() == slugify(book.short_title)
+        assert book.generate_slug() == slugify(shorter_title)
 
         # long title is shortened
         book.short_title = book.title
-        assert book.generate_slug() == slugify(' '.join(book.short_title.split()[:9]))
+        assert book.generate_slug() == slugify(' '.join(book.short_title.split()[:5]))
 
     def test_save(self):
         # save should generate slug if not set
