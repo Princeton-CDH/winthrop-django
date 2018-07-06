@@ -15,3 +15,4 @@ cached_property
 git+https://github.com/moonlitesolutions/SolrClient.git@19c5280c9f8e97#egg=SolrClient
 #solrclient
 progressbar2
+unidecode

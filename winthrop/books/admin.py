@@ -99,19 +99,19 @@ class BookAdmin(admin.ModelAdmin):
     form = BookAdminForm
 
     list_display = ('short_title', 'author_names', 'pub_year',
-        'catalogue_call_numbers', 'is_extant', 'is_annotated',
-        'is_digitized', 'has_notes')
+                    'catalogue_call_numbers', 'is_extant', 'is_annotated',
+                    'is_digitized', 'has_notes')
     # NOTE: fields are specified here so that notes input will be displayed last
-    fields = ('title', 'short_title', 'original_pub_info', 'publisher',
-        'pub_place', 'pub_year', 'is_extant', 'is_annotated',
-        'red_catalog_number', 'ink_catalog_number', 'pencil_catalog_number',
-        'dimensions', 'digital_edition', 'notes')
+    fields = ('title', 'short_title', 'original_pub_info', 'slug', 'publisher',
+              'pub_place', 'pub_year', 'is_extant', 'is_annotated',
+              'red_catalog_number', 'ink_catalog_number', 'pencil_catalog_number',
+              'dimensions', 'digital_edition', 'notes')
     search_fields = ('title', 'creator__person__authorized_name',
-        'catalogue__call_number', 'notes', 'publisher__name')
+                     'catalogue__call_number', 'notes', 'publisher__name')
     inlines = [CreatorInline, LanguageInline, SubjectInline, CatalogueInline,
-        PersonBookInline, FootnoteInline]
+               PersonBookInline, FootnoteInline]
     list_filter = ('subjects', 'languages', 'is_extant',
-        'is_annotated')
+                   'is_annotated')
 
 
 class PersonBookAdmin(admin.ModelAdmin):

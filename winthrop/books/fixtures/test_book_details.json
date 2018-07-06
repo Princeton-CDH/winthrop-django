@@ -1,0 +1,400 @@
+[
+{
+    "model": "places.place",
+    "pk": 2,
+    "fields": {
+        "name": "Frankfurt",
+        "notes": "",
+        "geonames_id": "http://sws.geonames.org/2925533/",
+        "latitude": 50.11552,
+        "longitude": 8.68417
+    }
+},
+{
+    "model": "books.publisher",
+    "pk": 156,
+    "fields": {
+        "name": "Heirs of Lazarus Zetzner",
+        "notes": ""
+    }
+},
+{
+    "model": "books.book",
+    "pk": 196,
+    "fields": {
+        "notes": "Reproduction Recommendation: everything through page 77, and see \"Vindiciae\" for reproductions from second part of the book",
+        "title": "[...] Princeps [...] Adiecta sunt eiusdem argumenti aliorum quorumdam contra Machiavellum scripta, de potestate [et] officio Principum contra Tyrannos. Quibus denuo accessit Antonii Possevini Iudicium de Nicolai Machiavelli [et] Ioannis Bodini scriptis",
+        "short_title": "Princeps",
+        "original_pub_info": "Francofurti. Sumptibus Haeredum Lazari Zetzneri, M. DC. XXII.",
+        "publisher": 156,
+        "pub_place": 2,
+        "pub_year": 1622,
+        "slug": "machiavelli-princeps-1622",
+        "is_extant": true,
+        "is_annotated": true,
+        "red_catalog_number": "252",
+        "ink_catalog_number": "301",
+        "pencil_catalog_number": "131",
+        "dimensions": "",
+        "digital_edition": null
+    }
+},
+{
+    "model": "people.person",
+    "pk": 157,
+    "fields": {
+        "notes": "",
+        "start_year": null,
+        "end_year": null,
+        "authorized_name": "Tellus, Sylvester",
+        "viaf_id": null,
+        "sort_name": "",
+        "family_group": ""
+    }
+},
+{
+    "model": "books.creatortype",
+    "pk": 4,
+    "fields": {
+        "name": "Translator",
+        "notes": ""
+    }
+},
+{
+    "model": "books.book",
+    "pk": 196,
+    "fields": {
+        "notes": "Reproduction Recommendation: everything through page 77, and see \"Vindiciae\" for reproductions from second part of the book",
+        "title": "[...] Princeps [...] Adiecta sunt eiusdem argumenti aliorum quorumdam contra Machiavellum scripta, de potestate [et] officio Principum contra Tyrannos. Quibus denuo accessit Antonii Possevini Iudicium de Nicolai Machiavelli [et] Ioannis Bodini scriptis",
+        "short_title": "Princeps",
+        "original_pub_info": "Francofurti. Sumptibus Haeredum Lazari Zetzneri, M. DC. XXII.",
+        "publisher": 156,
+        "pub_place": 2,
+        "pub_year": 1622,
+        "slug": "machiavelli-princeps-1622",
+        "is_extant": true,
+        "is_annotated": true,
+        "red_catalog_number": "252",
+        "ink_catalog_number": "301",
+        "pencil_catalog_number": "131",
+        "dimensions": "",
+        "digital_edition": null
+    }
+},
+{
+    "model": "people.person",
+    "pk": 156,
+    "fields": {
+        "notes": "",
+        "start_year": 1469,
+        "end_year": 1527,
+        "authorized_name": "Machiavelli, Niccol\u00f2, 1469-1527",
+        "viaf_id": "https://viaf.org/viaf/95151646/",
+        "sort_name": "",
+        "family_group": ""
+    }
+},
+{
+    "model": "books.creatortype",
+    "pk": 1,
+    "fields": {
+        "name": "Author",
+        "notes": ""
+    }
+},
+{
+    "model": "books.creator",
+    "pk": 203,
+    "fields": {
+        "notes": "",
+        "creator_type": 4,
+        "person": 157,
+        "book": 196
+    }
+},
+{
+    "model": "books.creator",
+    "pk": 202,
+    "fields": {
+        "notes": "",
+        "creator_type": 1,
+        "person": 156,
+        "book": 196
+    }
+},
+{
+    "model": "places.place",
+    "pk": 15,
+    "fields": {
+        "name": "Leiden",
+        "notes": "",
+        "geonames_id": "http://sws.geonames.org/2751773/",
+        "latitude": 52.15833,
+        "longitude": 4.49306
+    }
+},
+{
+    "model": "books.publisher",
+    "pk": 140,
+    "fields": {
+        "name": "Officina Plantiniana Raphelengii",
+        "notes": ""
+    }
+},
+{
+    "model": "books.book",
+    "pk": 170,
+    "fields": {
+        "notes": "Reproduction Recommendation: TP, 213, 217, 219, 251, 253, 254, 258, 264, 282-87, 292-3, 294, 297-301, 304, 306-8,",
+        "title": "\u0397\u0396\u0399\u039f\u0394\u039f\u03a5 \u0391\u03a3\u039a\u03a1\u0391\u0399\u039f\u03a5 \u03c4\u1f70 \u03b5\u1f51\u03c1\u03b9\u03c3\u03ba\u03cc\u03bc\u03b5\u03bd\u03b1. Hesiodi Ascraei quae extant, Cum Graecis Scholiis, Procli, Moschopuli, Tzetzae, in \u1f1c\u03c1\u03b3\u03b1 \u03ba\u03b1\u1f76 \u1f29\u03bc\u03ad\u03c1\u03b1\u03c2: Io. Diaconi [et] incerti in reliqua. Accessit liber singularis, in quo doctrina \u1f1c\u03c1\u03b3\u03c9\u03bd \u03ba\u03b1\u1f76 \u1f29\u03bc\u03b5\u03c1\u1ff6\u03bd, eiusque institutum, contra opinionem, quae obinuit, ostenditur; Item Notae, emendationes, observationes, [et] Index copiosissimus in Hesiodum eiusque Interpretes",
+        "short_title": "Ta heuriskomena",
+        "original_pub_info": "[Lugduni Batavorum]: Ex officina Plantiniana Raphelengij. M. D. CIII. 1603.",
+        "publisher": 140,
+        "pub_place": 15,
+        "pub_year": 1603,
+        "slug": "hesiod-ta-heuriskomena-1603",
+        "is_extant": true,
+        "is_annotated": true,
+        "red_catalog_number": "",
+        "ink_catalog_number": "",
+        "pencil_catalog_number": "105",
+        "dimensions": "",
+        "digital_edition": null
+    }
+},
+{
+    "model": "djiffy.manifest",
+    "pk": 13,
+    "fields": {
+        "label": "Flores (selections)",
+        "short_id": "pn009zf50v",
+        "uri": "https://plum.princeton.edu/concern/scanned_resources/pn009zf50v/manifest",
+        "metadata": "{\"Local identifier\":[\"Win 229\"],\"Collection\":[\"Winthrop\"]}",
+        "created": "2017-06-22",
+        "last_modified": "2017-06-22",
+        "extra_data": "{\"memberOf\":[{\"@id\":\"https://plum.princeton.edu/collections/p4j03fz143\",\"title\":\"Winthrop\"}],\"title\":\"Flores (selections)\",\"edm_rights\":[\"http://rightsstatements.org/vocab/NKC/1.0/\"],\"@id\":\"https://plum.princeton.edu/concern/scanned_resources/pn009zf50v\",\"@context\":\"https://bibdata.princeton.edu/context.json\",\"identifier\":[\"ark:/88435/j38609840\"]}"
+    }
+},
+{
+    "model": "places.place",
+    "pk": 18,
+    "fields": {
+        "name": "Geneva",
+        "notes": "",
+        "geonames_id": "http://sws.geonames.org/2660646/",
+        "latitude": 46.20222,
+        "longitude": 6.14569
+    }
+},
+{
+    "model": "books.publisher",
+    "pk": 29,
+    "fields": {
+        "name": "Pierre de la Rovi\u00e8re",
+        "notes": ""
+    }
+},
+{
+    "model": "books.book",
+    "pk": 286,
+    "fields": {
+        "notes": "Forth Winthrop is all over the front and rear flyleaves\r\n\r\nReproduction Recommendation: front fly-leaf and TP, 32 (?), rear fly-leaves",
+        "title": "[...] Flores: ex operibus [...] singulari iudicio selecti",
+        "short_title": "Flores",
+        "original_pub_info": "Coloniae Allobrogrum: Excudebat Petrus de la Rouiere, MDCXIII",
+        "publisher": 29,
+        "pub_place": 18,
+        "pub_year": 1613,
+        "slug": "seneca-flores-1613",
+        "is_extant": true,
+        "is_annotated": true,
+        "red_catalog_number": "",
+        "ink_catalog_number": "188",
+        "pencil_catalog_number": "229",
+        "dimensions": "",
+        "digital_edition": 13
+    }
+},
+{
+    "model": "djiffy.manifest",
+    "pk": 35,
+    "fields": {
+        "label": "Apocalypsis Iesu Christi (selections)",
+        "short_id": "pft84c435g",
+        "uri": "https://plum.princeton.edu/concern/scanned_resources/pft84c435g/manifest",
+        "metadata": "{\"Local identifier\":[\"Win 104\"],\"Collection\":[\"Winthrop\"]}",
+        "created": "2017-06-22",
+        "last_modified": "2017-06-22",
+        "extra_data": "{\"memberOf\":[{\"@id\":\"https://plum.princeton.edu/collections/p4j03fz143\",\"title\":\"Winthrop\"}],\"title\":\"Apocalypsis Iesu Christi (selections)\",\"edm_rights\":[\"http://rightsstatements.org/vocab/NKC/1.0/\"],\"@id\":\"https://plum.princeton.edu/concern/scanned_resources/pft84c435g\",\"@context\":\"https://bibdata.princeton.edu/context.json\",\"identifier\":[\"ark:/88435/8k71nk998\"]}"
+    }
+},
+{
+    "model": "djiffy.canvas",
+    "pk": 3674,
+    "fields": {
+        "label": "00000001.tif",
+        "short_id": "pt722kp23h",
+        "uri": "https://plum.princeton.edu/concern/scanned_resources/pft84c435g/manifest/canvas/pt722kp23h",
+        "iiif_image_id": "https://libimages1.princeton.edu/loris/plum_prod/pt%2F72%2F2k%2Fp2%2F3h-intermediate_file.jp2",
+        "manifest": 35,
+        "thumbnail": true,
+        "order": 0,
+        "extra_data": "{}"
+    }
+},
+{
+    "model": "places.place",
+    "pk": 7,
+    "fields": {
+        "name": "London",
+        "notes": "",
+        "geonames_id": "http://sws.geonames.org/2643743/",
+        "latitude": 51.50853,
+        "longitude": -0.12574
+    }
+},
+{
+    "model": "books.publisher",
+    "pk": 110,
+    "fields": {
+        "name": "Thomas Orwin for Rodulph Jackson and Robert Dexter",
+        "notes": ""
+    }
+},
+{
+    "model": "books.personbookrelationshiptype",
+    "pk": 1,
+    "fields": {
+        "name": "One-Time Owner",
+        "notes": ""
+    }
+},
+{
+    "model": "books.book",
+    "pk": 127,
+    "fields": {
+        "notes": "OK to Digitize. 9/28/16\r\n\r\nReproduction Recommendation: spine and inside front cover, TP",
+        "title": "Apocalypsis Iesu Christi, Revelata per angelum Domini, excepta atque conscripta a Ioanne Apostolo & Euangeliographo;  Brevi, perspicua, & methodica temporum & personarum designatione, exposita per Ioannem Foorthe",
+        "short_title": "Apocalypsis Iesu Christi",
+        "original_pub_info": "Londini: Excudebat vidua Thomae Orwini impensis Rodulphi Iacksoni & Roberti Dexter, 1597.",
+        "publisher": 110,
+        "pub_place": 7,
+        "pub_year": 1597,
+        "slug": "foord-apocalypsis-iesu-christi-1597",
+        "is_extant": true,
+        "is_annotated": true,
+        "red_catalog_number": "",
+        "ink_catalog_number": "",
+        "pencil_catalog_number": "",
+        "dimensions": "",
+        "digital_edition": 35
+    }
+},
+{
+    "model": "people.person",
+    "pk": 281,
+    "fields": {
+        "notes": "",
+        "start_year": 1548,
+        "end_year": 1623,
+        "authorized_name": "Adam Winthrop",
+        "viaf_id": null,
+        "sort_name": "",
+        "family_group": ""
+    }
+},
+{
+    "model": "books.personbook",
+    "pk": 3,
+    "fields": {
+        "notes": "",
+        "start_year": null,
+        "end_year": null,
+        "person": 281,
+        "book": 127,
+        "relationship_type": 1
+    }
+},
+{
+    "model": "people.person",
+    "pk": 138,
+    "fields": {
+        "notes": "",
+        "start_year": 750,
+        "end_year": 650,
+        "authorized_name": "Hesiod",
+        "viaf_id": "https://viaf.org/viaf/122220717/",
+        "sort_name": "",
+        "family_group": ""
+    }
+},
+{
+    "model": "people.person",
+    "pk": 139,
+    "fields": {
+        "notes": "",
+        "start_year": 1580,
+        "end_year": 1655,
+        "authorized_name": "Heinsius, Daniel",
+        "viaf_id": "https://viaf.org/viaf/56635500/",
+        "sort_name": "",
+        "family_group": ""
+    }
+},
+{
+    "model": "books.creator",
+    "pk": 176,
+    "fields": {
+        "notes": "",
+        "creator_type": 3,
+        "person": 139,
+        "book": 170
+    }
+},
+{
+    "model": "books.creator",
+    "pk": 175,
+    "fields": {
+        "notes": "",
+        "creator_type": 1,
+        "person": 138,
+        "book": 170
+    }
+},
+{
+    "model": "books.language",
+    "pk": 6,
+    "fields": {
+        "name": "Ancient Greek",
+        "notes": ""
+    }
+},
+{
+    "model": "books.booklanguage",
+    "pk": 1,
+    "fields": {
+        "notes": "",
+        "language": 6,
+        "book": 170,
+        "is_primary": false
+    }
+},
+{
+    "model": "books.subject",
+    "pk": 9,
+    "fields": {
+        "name": "Literature (Classical)",
+        "notes": ""
+    }
+},
+{
+    "model": "books.booksubject",
+    "pk": 1,
+    "fields": {
+        "notes": "",
+        "subject": 9,
+        "book": 170,
+        "is_primary": false
+    }
+}
+]

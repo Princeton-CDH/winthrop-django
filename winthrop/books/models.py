@@ -4,7 +4,9 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.utils.text import slugify
 from djiffy.models import Manifest
+from unidecode import unidecode
 
 from winthrop.common.models import Named, Notable, DateRange
 from winthrop.common.solr import Indexable
@@ -74,6 +76,14 @@ class Book(Notable, Indexable):
                                   blank=True, null=True)
     pub_year = models.PositiveIntegerField(
         'Publication Year', blank=True, null=True)
+    #: identifying slug for use in URLs
+    slug = models.SlugField(
+        max_length=255, unique=True, blank=True,
+        help_text=('Readable ID for use in URLs. Automatically generated from '
+                   'author, title, and year on save. Edit with *caution* '
+                   'because this will break permanent links.')
+    )
+
     # is positive integer enough, or do we need more validation here?
     is_extant = models.BooleanField(default=False)
     is_annotated = models.BooleanField(default=False)
@@ -104,6 +114,11 @@ class Book(Notable, Indexable):
     class Meta:
         ordering = ['title']
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = self.generate_slug()
+        super(Book, self).save(*args, **kwargs)
+
     def __str__(self):
         return '%s (%s)' % (self.short_title, self.pub_year)
 
@@ -118,13 +133,13 @@ class Book(Notable, Indexable):
     catalogue_call_numbers.short_description = 'Call Numbers'
 
     def authors(self):
-        '''Creator queryset filtered by creator type Author'''
-        return self.creator_set.filter(creator_type__name='Author')
+        '''Contributor queryset filtered by creator type Author'''
+        return self.contributor_by_type('Author')
 
     def author_names(self):
         '''Display author names; convenience access for display in admin'''
         # NOTE: possibly might want to use last names here
-        return ', '.join(str(auth.person) for auth in self.authors())
+        return ', '.join(str(auth) for auth in self.authors())
     author_names.short_description = 'Authors'
     author_names.admin_order_field = 'creator__person__authorized_name'
 
@@ -147,6 +162,52 @@ class Book(Notable, Indexable):
         creator_type = CreatorType.objects.get(name=creator_type)
         Creator.objects.create(person=person, creator_type=creator_type,
                                book=self)
+
+    def contributor_by_type(self, creator_type):
+        '''Contributors by type, e.g. author or editor. Returns an empty
+        :class:`~winthrop.people.models.Person` queryset if the object is not
+        yet saved.'''
+
+        # object must be saved in order to query related items
+        if self.pk:
+            # order by when the creator record pk (i.e. creation order);
+            # (otherwise defaults to alpha by authorized name)
+            return self.contributors.filter(creator__creator_type__name=creator_type) \
+                       .order_by('creator__pk')
+        # return empty queryset if unsaved
+        return Person.objects.none()
+
+    def translators(self):
+        '''Contributor queryset filtered by creator type Translator'''
+        return self.contributor_by_type('Translator')
+
+    def editors(self):
+        '''Contributor queryset filtered by creator type Editor'''
+        return self.contributor_by_type('Editor')
+
+    def generate_slug(self):
+        '''Generate a slug based on first author, title, and year.
+
+        :rtype str: String in the format ``lastname-title-of-work-year``
+        '''
+        # get the first author, if there is one
+        author = self.authors().first()
+        if author:
+            # use the last name of the first author
+            author = author.authorized_name.split(',')[0]
+        else:
+            # otherwise, set it to an empty string
+            author = ''
+        # truncate the title to first several words of the title
+        title = ' '.join(self.short_title.split()[:5])
+        # use copyright year if available, with fallback to work year if
+        year = self.pub_year or ''
+        # # return a slug
+        return slugify(' '.join([unidecode(author), unidecode(title), str(year)]))
+
+    def get_absolute_url(self):
+        '''URL so view this object on the public website'''
+        return reverse('books:detail', kwargs={'slug': self.slug})
 
     def handle_person_save(sender, instance, **kwargs):
         '''signal handler for person save; reindex to get current author name'''
@@ -193,6 +254,20 @@ class Book(Notable, Indexable):
         '''identifier within solr'''
         return 'book:{}'.format(self.pk)
 
+    @property
+    def thumbnail(self):
+        '''IIIF image id for associated digital edition thumbnail,
+        if there is one'''
+        if self.digital_edition and self.digital_edition.thumbnail:
+            return self.digital_edition.thumbnail.iiif_image_id
+
+    @property
+    def thumbnail_label(self):
+        '''Label for the thumbnail of the associated digital edition,
+        if there is one'''
+        if self.digital_edition and self.digital_edition.thumbnail:
+            return self.digital_edition.thumbnail.label
+
     @classmethod
     def content_type(cls):
         # content type as a string, for use in solr indexing
@@ -200,28 +275,25 @@ class Book(Notable, Indexable):
 
     def index_data(self):
         '''data for indexing in Solr'''
-        thumbnail_image = thumbnail_label = None
-        if self.digital_edition and self.digital_edition.thumbnail:
-            thumbnail_label = self.digital_edition.thumbnail.label
-            thumbnail_image = self.digital_edition.thumbnail.iiif_image_id
 
         return {
             # use content type in format of app.model_name for type
             # (serializing model options as string returns this format)
             'content_type': Book.content_type(),
             'id': self.index_id(),
+            'slug': self.slug,
             'title': self.title,
             'short_title': self.short_title,
-            'authors': [str(author.person) for author in self.authors()],
+            'authors': [str(author) for author in self.authors()],
             # first author only, for sorting
             # FIXME: sort on last name first? not an ordered relationship currently
-            'author_exact': str(self.authors().first().person) if self.authors().exists() else None,
+            'author_exact': str(self.authors().first()) if self.authors().exists() else None,
             'pub_year': self.pub_year,
             # NOTE: this indicates whether the book is annotated, does not
             # necessarily mean there are annotations documented in our system
             'is_annotated': self.is_annotated,
-            'thumbnail': thumbnail_image,
-            'thumbnail_label': thumbnail_label
+            'thumbnail': self.thumbnail,
+            'thumbnail_label': self.thumbnail_label
         }
 
 
