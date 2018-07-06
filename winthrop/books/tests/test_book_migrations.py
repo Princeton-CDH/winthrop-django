@@ -13,11 +13,8 @@ class TestMigrations(TransactionTestCase):
 
     # @property
     # def app(self):
-    #     print(type(self))
-    #     print(type(self).__module__)
     #     return apps.get_containing_app_config(type(self).__module__).name
-    #     return apps.get_containing_app_config(type(self).__module__).name
-
+    app = None
     migrate_from = None
     migrate_to = None
 
@@ -35,11 +32,14 @@ class TestMigrations(TransactionTestCase):
         self.setUpBeforeMigration(old_apps)
 
         # Run the migration to test
-        executor = MigrationExecutor(connection)
         executor.loader.build_graph()  # reload.
         executor.migrate(self.migrate_to)
 
         self.apps = executor.loader.project_state(self.migrate_to).apps
+
+    def tearDown(self):
+        executor = MigrationExecutor(connection)
+        executor.migrate()
 
     def setUpBeforeMigration(self, apps):
         pass
@@ -49,7 +49,7 @@ class TestBookAddSlugs(TestMigrations):
 
     app = 'books'
     migrate_from = '0011_add_book_digital_edition_remove_is_digitized'
-    migrate_to = '0012_add_book_slug'
+    migrate_to = '0014_make_book_slugs_unique'
 
     def setUpBeforeMigration(self, apps):
         # create variant books to test
@@ -67,7 +67,6 @@ class TestBookAddSlugs(TestMigrations):
         author = CreatorType.objects.get(name='Author')
         Creator.objects.create(person=machiavelli, book=princeps, creator_type=author)
         self.princeps_id = princeps.id
-
 
     def test_slugs_generated(self):
         Book = self.apps.get_model('books', 'Book')

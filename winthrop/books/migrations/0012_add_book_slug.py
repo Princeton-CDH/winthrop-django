@@ -4,39 +4,6 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.db.models.deletion
-from django.utils.text import slugify
-from unidecode import unidecode
-
-
-def generate_book_slug(book):
-    '''Generate a slug based on first author, title, and year.
-
-    :rtype str: String in the format ``lastname-title-of-work-year``
-    '''
-    # get the first author, if there is one
-    author = book.creator_set.filter(creator_type__name='Author').first()
-    if author:
-        # use the last name of the first author
-        author = author.person.authorized_name.split(',')[0]
-    else:
-        # otherwise, set it to an empty string
-        author = ''
-    # truncate the title to first several words of the title
-    title = ' '.join(book.short_title.split()[:9])
-    # use copyright year if available, with fallback to work year if
-    year = book.pub_year or ''
-    # # return a slug (not unique for multiple copies of same instance)
-    return slugify(' '.join([unidecode(author), unidecode(title), str(year)]))
-
-
-def generate_slugs(apps, schema_editor):
-    '''Generate slugs for books'''
-    Book = apps.get_model('books', 'Book')
-
-    # generate and save
-    for book in Book.objects.all():
-        book.slug = generate_book_slug(book)
-        book.save()
 
 
 class Migration(migrations.Migration):
@@ -62,17 +29,5 @@ class Migration(migrations.Migration):
             model_name='book',
             name='slug',
             field=models.SlugField(blank=True, max_length=255),
-        ),
-        # Generate unique slugs
-        migrations.RunPython(
-            code=generate_slugs,
-            reverse_code=migrations.RunPython.noop,
-        ),
-        # alter the field toenforce uniqueness
-        migrations.AlterField(
-            model_name='book',
-            name='slug',
-            field=models.SlugField(blank=True, max_length=255, unique=True,
-                                   help_text='Readable ID for use in URLs. Automatically generated from author, title, and year on save. Edit with *caution* because this will break permanent links.'),
         ),
     ]
