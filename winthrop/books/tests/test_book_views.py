@@ -250,7 +250,7 @@ class TestBookViews(TestCase):
         # solr error on getting last modified shouldn't break the page
         with patch('winthrop.books.views.PagedSolrQuery') as mockpagedsolrq:
             mockpagedsolrq.side_effect = SolrError
-            response = self.client.get(url)
+            response = self.client.get(book.get_absolute_url())
             # should return ok but with no last modified header
             assert response.status_code == 200
             assert not response.has_header('last-modified')
