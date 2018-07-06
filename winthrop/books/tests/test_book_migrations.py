@@ -1,0 +1,84 @@
+from django.apps import apps
+from django.db import connection
+from django.db.migrations.executor import MigrationExecutor
+from django.test import TransactionTestCase
+from django.utils.text import slugify
+
+
+
+## migration test case adapted from
+# https://www.caktusgroup.com/blog/2016/02/02/writing-unit-tests-django-migrations/
+
+class TestMigrations(TransactionTestCase):
+
+    # @property
+    # def app(self):
+    #     print(type(self))
+    #     print(type(self).__module__)
+    #     return apps.get_containing_app_config(type(self).__module__).name
+    #     return apps.get_containing_app_config(type(self).__module__).name
+
+    migrate_from = None
+    migrate_to = None
+
+    def setUp(self):
+        assert self.migrate_from and self.migrate_to, \
+            "TestCase '{}' must define migrate_from and migrate_to properties".format(type(self).__name__)
+        self.migrate_from = [(self.app, self.migrate_from)]
+        self.migrate_to = [(self.app, self.migrate_to)]
+        executor = MigrationExecutor(connection)
+        old_apps = executor.loader.project_state(self.migrate_from).apps
+
+        # Reverse to the original migration
+        executor.migrate(self.migrate_from)
+
+        self.setUpBeforeMigration(old_apps)
+
+        # Run the migration to test
+        executor = MigrationExecutor(connection)
+        executor.loader.build_graph()  # reload.
+        executor.migrate(self.migrate_to)
+
+        self.apps = executor.loader.project_state(self.migrate_to).apps
+
+    def setUpBeforeMigration(self, apps):
+        pass
+
+
+class TestBookAddSlugs(TestMigrations):
+
+    app = 'books'
+    migrate_from = '0011_add_book_digital_edition_remove_is_digitized'
+    migrate_to = '0012_add_book_slug'
+
+    def setUpBeforeMigration(self, apps):
+        # create variant books to test
+        Book = apps.get_model('books', 'Book')
+        self.noauthor_noyear_id = Book.objects.create(short_title='Authorless').id
+        self.noauthor_year_id = Book.objects.create(short_title='Authorless',
+                                                    pub_year=1701).id
+
+        Person = apps.get_model('people', 'Person')
+        Creator = apps.get_model('books', 'Creator')
+        CreatorType = apps.get_model('books', 'CreatorType')
+
+        princeps = Book.objects.create(short_title='Princeps', pub_year=1622)
+        machiavelli = Person.objects.create(authorized_name='Machiavelli, Niccolo')
+        author = CreatorType.objects.get(name='Author')
+        Creator.objects.create(person=machiavelli, book=princeps, creator_type=author)
+        self.princeps_id = princeps.id
+
+
+    def test_slugs_generated(self):
+        Book = self.apps.get_model('books', 'Book')
+        authorless_book = Book.objects.get(id=self.noauthor_noyear_id)
+        assert authorless_book.slug == slugify(authorless_book.short_title)
+
+        authorless_book = Book.objects.get(id=self.noauthor_year_id)
+        assert authorless_book.slug == \
+            slugify('%s %s' % (authorless_book.short_title, authorless_book.pub_year))
+
+        princeps = Book.objects.get(id=self.princeps_id)
+        assert princeps.slug == \
+            slugify('Machiavelli %s %s' % (princeps.short_title, princeps.pub_year))
+
