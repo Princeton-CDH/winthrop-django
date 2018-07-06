@@ -37,10 +37,6 @@ class TestMigrations(TransactionTestCase):
 
         self.apps = executor.loader.project_state(self.migrate_to).apps
 
-    def tearDown(self):
-        executor = MigrationExecutor(connection)
-        executor.migrate()
-
     def setUpBeforeMigration(self, apps):
         pass
 
