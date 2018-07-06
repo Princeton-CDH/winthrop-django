@@ -27,7 +27,7 @@
   copy:
     src: "{{ lookup('env', 'HOME') }}/.deploy/{{ local_settings_path }}"
     dest: "{{ deploy }}/{{ djangoapp }}/local_settings.py"
--- name: Configure log file
+- name: Configure log file
   file:
     path: '{{ install_root }}/winthrop.log'
     state: touch
