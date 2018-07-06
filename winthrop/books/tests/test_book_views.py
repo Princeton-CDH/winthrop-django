@@ -1,13 +1,14 @@
 from datetime import datetime
 import json
 from time import sleep
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.template.defaultfilters import escape
 from django.test import TestCase
 from django.urls import reverse
-from djiffy.models import Manifest
 import pytest
+from SolrClient.exceptions import SolrError
 
 from winthrop.books.models import Book
 from winthrop.common.solr import Indexable, PagedSolrQuery
@@ -123,6 +124,7 @@ class TestBookViews(TestCase):
 
         modified = index_modified_dt.strftime('%a, %d %b %Y %H:%M:%S GMT')
         assert response['Last-Modified'] == modified
+
 
         # provisional text
         self.assertContains(response, 'Displaying %d books' % books.count())
@@ -244,6 +246,14 @@ class TestBookViews(TestCase):
         index_modified_dt = LastModifiedMixin.solr_timestamp_to_datetime(index_modified)
         modified = index_modified_dt.strftime('%a, %d %b %Y %H:%M:%S GMT')
         assert response['Last-Modified'] == modified
+
+        # solr error on getting last modified shouldn't break the page
+        with patch('winthrop.books.views.PagedSolrQuery') as mockpagedsolrq:
+            mockpagedsolrq.side_effect = SolrError
+            response = self.client.get(url)
+            # should return ok but with no last modified header
+            assert response.status_code == 200
+            assert not response.has_header('last-modified')
 
         # test book with translator
         book = Book.objects.filter(creator__creator_type__name='Translator').first()
