@@ -67,21 +67,21 @@ by default; use page_rdf_type to override with a webpage subclass.
     {% block head_extras %}{% endblock %}
   </head>
   <body>
-		{% include 'snippets/test_banner.html' %}
+    {% include 'snippets/test_banner.html' %}
     {% comment %}
 		{% block page_nav %}
-				{% page_menu 'snippets/nav.html' %}
+				{% include 'snippets/nav.html' %}
     {% endblock %}
     {% endcomment %}
     <div class="pusher"> {# moves page content when mobile menu is clicked #}
       {% block page_header %}
-          {# {% page_menu 'snippets/header.html' %} #}
+          {% include 'snippets/header.html' %}
       {% endblock %}
       <main id="{% block page-context-id %}{% endblock %}" class="ui inverted segment">
         {% block content %}{% endblock %}
       </main>
       {% block page_footer %}
-          {# {% page_menu 'snippets/footer.html' %} #}
+          {% include 'snippets/footer.html' %}
       {% endblock %}
     </div>
     {% block page-js %}{% endblock %}

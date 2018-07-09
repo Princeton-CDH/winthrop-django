@@ -1,0 +1,37 @@
+{% load static %}
+<!-- footer -->
+<footer class="ui basic inverted segment" id="footer">
+    <div class="ui stackable centered grid container">
+        <nav class="ui inverted stackable borderless menu">
+            <a class="item" href="{% url 'books:list' %}">Books</a>
+            <a class="item">People</a>
+            <a class="item">Annotations</a>
+            <a class="item">Stories</a>
+            <a class="item">Bibliography</a>
+            <a class="item">Download Data</a>
+        </nav>
+        <div class="ui inverted horizontal link list row">
+            <a class="item">Contact</a>
+            <a class="item">Home</a>
+            <a class="item">How to Cite</a>
+            <a class="item">Credits</a>
+            <a class="item">Technical</a>
+        </div>
+        <div class="logos ui inverted horizontal list row">
+            <a class="item ui tiny image" href="https://cdh.princeton.edu/">
+                <img src="{% static 'img/CDH_logo_W.svg' %}" alt="The Center for Digital Humanities at Princeton" />
+            </a>
+            <a class="item ui small image" href="https://www.princeton.edu/">
+                <img src="{% static 'img/PUsig2-ww-ws.svg' %}" alt="Princeton University" />
+            </a>
+        </div>
+    </div>
+    <div class="ui container">
+        <div class="contact ui inverted horizontal link list">
+            <span class="item">©{% now 'Y' %} Trustees of Princeton University</span>
+            <a class="item" href="https://accessibility.princeton.edu/">Accessibility</a>
+            <a class="item" href="https://accessibility.princeton.edu/accessibility-assistance">Accessibility Assistance</a>
+            <span class="item" id="sw_version">{{ SW_VERSION }}</span>
+        </div>
+    </div>
+</footer>
