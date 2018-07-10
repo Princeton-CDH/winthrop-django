@@ -1,0 +1,44 @@
+<!-- site search -->
+<div class="ui top sidebar inverted vertical borderless menu" id="site-search">
+    <div class="ui category search item">
+        <div class="ui transparent icon input">
+            <input class="prompt" placeholder="Search..." type="text">
+            <i class="search link icon"></i>
+        </div>
+    </div>
+</div>
+<!-- mobile navigation -->
+<nav class="ui top sidebar inverted vertical borderless menu" id="mobile-nav">
+    <a class="item" href="{% url 'books:list' %}">Books</a>
+    <a class="item">People</a>
+    <a class="item">Annotations</a>
+    <a class="item">Stories</a>
+    <a class="item">Bibliography</a>
+    <a class="item">Download Data</a>
+</nav>
+<!-- main navigation -->
+<nav class="ui top fixed inverted borderless menu" id="main-nav">
+    <div class="brand">
+        <a class="item" href="/" alt="home">
+            W
+        </a>
+    </div>
+    <a class="toc item">
+        <i class="sidebar icon"></i>
+        <i class="times icon" style="display:none;"></i>
+    </a>
+    <div class="center menu">
+        <a class="item" href="{% url 'books:list' %}">Books</a>
+        <a class="item">People</a>
+        <a class="item">Annotations</a>
+        <a class="item">Stories</a>
+        <a class="item">Bibliography</a>
+        <a class="item">Download Data</a>
+    </div>
+    <div class="right menu">
+        <a class="search item">
+            <i class="search icon"></i>
+        </a>
+    </div>
+</nav>
+    
