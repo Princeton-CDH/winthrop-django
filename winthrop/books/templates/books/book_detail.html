@@ -2,135 +2,141 @@
 
 {% block page-subtitle %}{{ book.short_title }} | Books | {% endblock %}
 
+{% block page-context-id %}book-detail{% endblock %}
+
 {% block content %}
 <div class="ui container">
-
-    <div class="ui segment">
-        <h1>{{ book.short_title }}</h1>
-
-        {% if book.thumbnail %} {# copied from list view; same size? #}
-            <img class="ui right floated image" src="{% iiif_image book.thumbnail height=218 %}"
-                srcset="{% iiif_image book.thumbnail height=436 %} 2x"
-                alt="{{ book.thumbnail_label }}" title="{{ book.thumbnail_label }}"/>
-        {% endif %}
-
-        <div>Title: {{ book.title }}</div>
-
-        {% if book.is_annotated %}
-            <div class="ui label">annotated</div>
-        {% endif %}
-
-        <table class="ui table">
-            {% if book.authors %}
-            <tr>
-                <th>Author</th>
-                <td>
-                    {% for author in book.authors %}
-                    <p>{{ author }}</p>
-                    {% endfor %}
-                </td>
-            </tr>
+    <div class="ui inverted text menu">
+        <a class="back-button item" href="javascript:history.back()" title="back to Books">
+            <i class="ui chevron left icon"></i>
+            Books
+        </a>
+    </div>
+    <div class="ui very padded stackable grid segment">
+        <div class="metadata ui nine wide column">
+            <h1 class="ui header">{{ book.short_title }}</h1>
+            <p>Title: {{ book.title }}</p>
+            {% if book.is_annotated %}
+                <div class="ui basic circular label">annotated</div>
             {% endif %}
-
-            {% if book.translators %}
-            <tr>
-                <th>Translator</th>
-                <td>
-                    {% for translator in book.translators %}
-                    <p>{{ translator }}</p>
-                    {% endfor %}
-                </td>
-            </tr>
+            <table class="ui very basic table">
+                {% if book.authors %}
+                <tr>
+                    <th>Author</th>
+                    <td>
+                        {% for author in book.authors %}
+                        <p>{{ author }}</p>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endif %}
+    
+                {% if book.translators %}
+                <tr>
+                    <th>Translator</th>
+                    <td>
+                        {% for translator in book.translators %}
+                        <p>{{ translator }}</p>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endif %}
+    
+                {% if book.editors %}
+                <tr>
+                    <th>Editor</th>
+                    <td>
+                        {% for editor in book.editors %}
+                        <p>{{ editor }}</p>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endif %}
+    
+                {% if book.original_pub_info %}
+                <tr>
+                    <th>Original Publication Information</th>
+                    <td>{{ book.original_pub_info }}</td>
+                    </td>
+                </tr>
+                {% endif %}
+    
+                {% if book.publisher %}
+                <tr>
+                    <th>Publisher</th>
+                    <td>{{ book.publisher }}</td>
+                    </td>
+                </tr>
+                {% endif %}
+    
+                {% if book.pub_place %}
+                <tr>
+                    <th>Place of Publication</th>
+                    <td>{{ book.pub_place }}</td>
+                    </td>
+                </tr>
+                {% endif %}
+    
+                {% if book.pub_year %}
+                <tr>
+                    <th>Year of Publication</th>
+                    <td>{{ book.pub_year }}</td>
+                    </td>
+                </tr>
+                {% endif %}
+    
+                {% if book.languages.exists %}
+                <tr>
+                    <th>Book Language</th>
+                    <td>{% for language in book.languages.all %}<p>{{ language }}</p>{% endfor %}</td>
+                </tr>
+                {% endif %}
+    
+                {% if book.subjects.exists %}
+                <tr>
+                    <th>Book Subject</th>
+                    <td>{% for subject in book.subjects.all %}<p>{{ subject }}</p>{% endfor %}</td>
+                </tr>
+                {% endif %}
+    
+                {% if book.catalogue_set.exists %}
+                <tr>
+                    <th>Owning Institution and Call Number</th>
+                    <td>{% for catalogue in book.catalogue_set.all %}
+                        <p>{{ catalogue.institution }} {{ catalogue.call_number }}</p>
+                    {% endfor %}</td>
+                </tr>
+                {% endif %}
+    
+                {% if book.personbook_set.exists %}
+                <tr>
+                    <th>Person/Book interactions</th>
+                    <td>
+                        {% for personbook_rel in book.personbook_set.all %}
+                        <p>{{ personbook_rel.person }}, {{ personbook_rel.relationship_type}}</p>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endif %}
+    
+                {% if book.notes %}
+                <tr>
+                    <th>Notes</th>
+                    <td>{{ book.notes }}</td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+        <div class="preview ui three wide column">
+            {% if book.thumbnail %} {# copied from list view; same size? #}
+                <img class="ui image" src="{% iiif_image book.thumbnail height=218 %}"
+                    srcset="{% iiif_image book.thumbnail height=436 %} 2x"
+                    alt="{{ book.thumbnail_label }}" title="{{ book.thumbnail_label }}"/>
+                <button class="ui large basic button">
+                    View Book
+                </button>
             {% endif %}
-
-            {% if book.editors %}
-            <tr>
-                <th>Editor</th>
-                <td>
-                    {% for editor in book.editors %}
-                    <p>{{ editor }}</p>
-                    {% endfor %}
-                </td>
-            </tr>
-            {% endif %}
-
-            {% if book.original_pub_info %}
-            <tr>
-                <th>Original Publication Information</th>
-                <td>{{ book.original_pub_info }}</td>
-                </td>
-            </tr>
-            {% endif %}
-
-            {% if book.publisher %}
-            <tr>
-                <th>Publisher</th>
-                <td>{{ book.publisher }}</td>
-                </td>
-            </tr>
-            {% endif %}
-
-            {% if book.pub_place %}
-            <tr>
-                <th>Place of Publication</th>
-                <td>{{ book.pub_place }}</td>
-                </td>
-            </tr>
-            {% endif %}
-
-            {% if book.pub_year %}
-            <tr>
-                <th>Year of Publication</th>
-                <td>{{ book.pub_year }}</td>
-                </td>
-            </tr>
-            {% endif %}
-
-            {% if book.languages.exists %}
-            <tr>
-                <th>Book Language</th>
-                <td>{% for language in book.languages.all %}<p>{{ language }}</p>{% endfor %}</td>
-            </tr>
-            {% endif %}
-
-            {% if book.subjects.exists %}
-            <tr>
-                <th>Book Subject</th>
-                <td>{% for subject in book.subjects.all %}<p>{{ subject }}</p>{% endfor %}</td>
-            </tr>
-            {% endif %}
-
-            {% if book.catalogue_set.exists %}
-            <tr>
-                <th>Owning Institution</th>
-                <td>{% for catalogue in book.catalogue_set.all %}
-                    <p>{{ catalogue.institution }} {{ catalogue.call_number }}</p>
-                {% endfor %}</td>
-            </tr>
-            {% endif %}
-
-            {% if book.personbook_set.exists %}
-            <tr>
-                <th>Person/Book interactions</th>
-                <td>
-                    {% for personbook_rel in book.personbook_set.all %}
-                    <p>{{ personbook_rel.person }}, {{ personbook_rel.relationship_type}}</p>
-                    {% endfor %}
-                </td>
-            </tr>
-            {% endif %}
-
-            {% if book.notes %}
-            <tr>
-                <th>Notes</th>
-                <td>{{ book.notes }}</td>
-            </tr>
-            {% endif %}
-
-
-        </table>
-
-
+        </div>
     </div>
 </div>
 {% endblock %}
