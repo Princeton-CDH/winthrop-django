@@ -1,0 +1,65 @@
+/* navigation */
+
+#main-nav {
+    min-height: $nav-height;
+    z-index: 103; // above mobile nav
+    transition: all 0.25s;
+
+    &.hidden {
+        margin-top: -$nav-height;
+    }
+
+    .center.menu {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        margin-left: 4rem;
+    }
+
+    .brand {
+        width: 100%;
+        height: $nav-height;
+        display: flex;
+        position: absolute;
+        justify-content: center;
+        margin: 0;
+
+        @media (min-width: $computer) {
+            justify-content: start;
+        }
+
+        .item {
+            display: flex;
+        }
+    }
+
+    .item {
+        z-index: 1;
+        display: none;
+
+        @media (min-width: $computer) {
+            display: flex;
+        }
+
+        &.search {
+            display: flex;
+        }
+
+        &.toc {
+            display: flex;
+
+            @media (min-width: $computer) {
+                display: none;
+            }
+        }
+    }
+}
+
+#mobile-nav {
+    top: $nav-height !important; // have to override sui's important
+}
+
+#site-search {
+    min-height: $nav-height;
+    top: $nav-height !important; // have to override sui's important
+}
