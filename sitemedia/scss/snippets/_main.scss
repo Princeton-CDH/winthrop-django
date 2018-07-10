@@ -1,0 +1,18 @@
+/* main content */
+
+.pushable > .pusher {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+}
+
+main.ui.segment {
+    flex: 1 0 auto;
+    margin: 0;
+    padding-bottom: 50px;
+
+    @media (min-width: $mobile) {
+        padding-bottom: 100px;
+    }
+}

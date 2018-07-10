@@ -1,8 +1,11 @@
 /* variables */
 
+// positioning
+$nav-height: 64px;
+
 // breakpoints
-$mobileBreakpoint: 320px;
-$tabletBreakpoint: 735px;
-$computerBreakpoint: 1068px;
-$largeMonitorBreakpoint: 1440px;
-$widescreenMonitorBreakpoint: 1920px;
+$mobile: 320px;
+$tablet: 735px;
+$computer: 1068px;
+$largeMonitor: 1440px;
+$widescreenMonitor: 1920px;
