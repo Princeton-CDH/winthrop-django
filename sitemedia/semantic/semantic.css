@@ -5211,21 +5211,21 @@ body .ui.inverted::-webkit-scrollbar-thumb:hover {
 
 @media only screen and (min-width: 1440px) {
   .ui.container {
-    width: 1367px;
+    width: 1009px;
     margin-left: auto !important;
     margin-right: auto !important;
   }
 
   .ui.grid.container {
-    width: calc( 1367px  +  2rem ) !important;
+    width: calc( 1009px  +  2rem ) !important;
   }
 
   .ui.relaxed.grid.container {
-    width: calc( 1367px  +  3rem ) !important;
+    width: calc( 1009px  +  3rem ) !important;
   }
 
   .ui.very.relaxed.grid.container {
-    width: calc( 1367px  +  5rem ) !important;
+    width: calc( 1009px  +  5rem ) !important;
   }
 }
 
