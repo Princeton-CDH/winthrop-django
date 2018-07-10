@@ -2,29 +2,30 @@
 
 #footer {
     padding: 1rem 0;
-    margin-bottom: 0;
+    margin: 0 auto;
+    width: 100%;
 
     nav.menu {
         justify-content: center;
         flex-wrap: wrap;
 
-        @media (min-width: $computerBreakpoint) {
+        @media (min-width: $computer) {
             margin: 1em 0;
         }
     }
 
     .menu .item {
-        @media (max-width: $tabletBreakpoint) {
+        @media (max-width: $tablet) {
             justify-content: center;
         }
     }
 
     .link.list {
-        @media (max-width: $mobileBreakpoint) {
+        @media (max-width: $mobile) {
             flex-direction: column;
         }
 
-        @media (min-width: $computerBreakpoint) {
+        @media (min-width: $computer) {
             padding: 2rem 0;
         }
     }
@@ -32,11 +33,11 @@
     .logos {
         margin: 2rem;
 
-        @media (min-width: $tabletBreakpoint) {
+        @media (min-width: $tablet) {
             margin-top: 0;
         }
 
-        @media (min-width: $computerBreakpoint) {
+        @media (min-width: $computer) {
             margin: 0;
         }
     }
@@ -46,14 +47,14 @@
         align-items: center;
         flex-direction: column;
 
-        @media (min-width: $tabletBreakpoint) {
+        @media (min-width: $tablet) {
             flex-direction: row;
             justify-content: flex-start;
         }
     }
 
     #sw_version {
-        @media (min-width: $tabletBreakpoint) {
+        @media (min-width: $tablet) {
             margin-left: auto;
         }
     }
