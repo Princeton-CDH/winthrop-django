@@ -2,5 +2,9 @@
 
 #header {
     margin-bottom: 0;
-    margin-top: $nav-height;
+    padding: 0;
+    
+    .ui.header {
+        padding-top: $nav-height;
+    }
 }
