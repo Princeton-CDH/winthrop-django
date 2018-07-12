@@ -27,25 +27,9 @@
 	{% if paginator.count %}
 	<div class="ui two column stackable grid">
 		{% for book in object_list %}
-			<div class="six wide column">
-				<div class="ui segment">
-					<a href="{% url 'books:detail' book.slug %}">
-					{% if book.thumbnail %}
-					<img class="ui right floated image" src="{% iiif_image book.thumbnail height=218 %}"
-							srcset="{% iiif_image book.thumbnail height=436 %} 2x"
-							alt="{{ book.thumbnail_label }}" title="{{ book.thumbnail_label }}"/>
-					{% endif %}
-					<b>{{ book.short_title }}</b>
-					{% for author in book.authors %}
-							<p>{{ author }}</p>
-					{% endfor %}
-					<p>{{ book.pub_year }}</p>
-					{% if book.is_annotated %}
-						<div class="ui label">annotated</div>
-					{% endif %}
-				 </div>
-			 </a>
-			</div>
+		<div class="six wide column">
+			{% include 'books/snippets/book_result.html' %}
+		</div>
 		{% endfor %}
 	</div>
 	{% else %}

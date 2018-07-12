@@ -1,0 +1,21 @@
+<div class="result">
+    <div class="ui segment">
+        <a href="{% url 'books:detail' book.slug %}">
+            <span class="title">{{ book.short_title }}</span><br>
+        </a>
+        {% for author in book.authors %}
+            <span class="author">{{ author }}</span><br>
+        {% endfor %}
+        <span>{{ book.pub_year }}</span>
+        {% if book.is_annotated %}
+            <div class="ui basic circular label">annotated</div>
+        {% endif %}
+    </div>
+    {% if book.thumbnail %}
+    <img class="ui image" src="{% iiif_image book.thumbnail height=218 %}"
+            srcset="{% iiif_image book.thumbnail height=436 %} 2x"
+            alt="{{ book.thumbnail_label }}" title="{{ book.thumbnail_label }}"/>
+    {% else %}
+    <img class="ui image placeholder"/>
+    {% endif %}
+</div>

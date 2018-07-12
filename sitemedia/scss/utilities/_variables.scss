@@ -1,0 +1,24 @@
+// typography
+$rem: 14px;
+
+// nav
+$nav-height: 4rem;
+
+// banner
+$banner-height-l: 50.625rem;
+$banner-height-m: 33.5rem;
+$banner-height-s: 22.125rem;
+
+// search result
+$result-card-height: pxToRem(160px);
+$result-image-height: pxToRem(218px);
+$result-card-width: pxToRem(290px);
+$result-card-width-m: pxToRem(300px);
+$result-card-width-l: pxToRem(400px);
+
+// breakpoints
+$mobile: 320px;
+$tablet: 735px;
+$computer: 1068px;
+$largeMonitor: 1440px;
+$widescreenMonitor: 1920px;

@@ -138,7 +138,7 @@ class TestBookViews(TestCase):
 
         # annotated badge should be displayed for books marked as annotated
         annotated_count = books.filter(is_annotated=True).count()
-        self.assertContains(response, '<div class="ui label">annotated</div>',
+        self.assertContains(response, '<div class="ui basic circular label">annotated</div>',
                             count=annotated_count)
 
         # check a book with a digital edition
