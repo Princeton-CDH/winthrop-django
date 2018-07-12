@@ -1,0 +1,59 @@
+/* search result */
+
+.result {
+    margin: 1rem 0;
+
+    @media (min-width: $tablet) {
+        margin: 2rem 0;
+    }
+
+    .segment {
+        margin: 0 auto;
+        padding: .5rem 10rem .5rem 1rem;
+        height: $result-card-height;
+        width: $result-card-width;
+
+        @media (min-width: $tablet) {
+            margin: 0;
+            margin-right: auto;
+            width: $result-card-width-m;
+        }
+
+        @media (min-width: $computer) {
+            width: $result-card-width-l;
+        }
+    }
+
+    .title {
+        font-weight: bold;
+    }
+
+    .label {
+        position: absolute;
+        bottom: .5rem;
+        left: 1rem;
+    }
+
+    .image {
+        z-index: 1;
+        position: absolute;
+        height: $result-card-height;
+        bottom: 2rem;
+        right: calc(50% - #{$result-card-width} / 2);
+
+        @media (min-width: $tablet) {
+            height: $result-image-height;
+            top: calc((#{$result-card-height} / 2) - (#{$result-image-height} / 2) + 3rem);
+            right: 1rem;
+        }
+
+        &.placeholder {
+            width: pxToRem(100px);
+            background-color: grey;
+
+            @media (min-width: $tablet) {
+                width: pxToRem(140px);
+            }
+        }
+    }
+}

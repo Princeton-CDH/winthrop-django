@@ -1,0 +1,12 @@
+/* book list page */
+
+#book-list {
+    #header {
+        @include responsive-banner("/static/img/winthrop_banner_book");
+    }
+
+    .results-count {
+        color: white;
+        font-weight: normal;
+    }
+}

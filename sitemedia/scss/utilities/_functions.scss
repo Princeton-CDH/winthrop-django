@@ -1,0 +1,5 @@
+// convert pixels to rem using the base rem size
+@function pxToRem($px) {
+    $remSize: $px / $rem;
+    @return #{$remSize}rem;
+}

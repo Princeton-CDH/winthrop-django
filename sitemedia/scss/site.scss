@@ -22,9 +22,14 @@ The Winthrop Family on the Page Project
 The Center for Digital Humanities @ Princeton University
 https://github.com/Princeton-CDH/winthrop-django
 */
-@import 'snippets/variables';
-@import 'snippets/a11y';
-@import 'snippets/nav';
-@import 'snippets/header';
+@import 'utilities/functions'; // utilities
+@import 'utilities/variables'; 
+@import 'utilities/mixins';
+@import 'utilities/globals';
+@import 'utilities/a11y';
+@import 'snippets/header'; // snippets
 @import 'snippets/main';
 @import 'snippets/footer';
+@import 'snippets/search-result';
+@import 'pages/book-detail'; // pages
+@import 'pages/book-list';

@@ -3,55 +3,40 @@
 
 {% block page-subtitle %}Books | {% endblock %}
 
+{% block page-context-id %}book-list{% endblock %}
+
+{% block page_header %}
+<header id="header" class="ui inverted center aligned basic segment">
+	<h1 class="ui header">Books</h1>
+</header>
+{% endblock %}
+
 {% block content %}
-<h1>Books</h1>
-<h1><img class="ui fluid image" src="{% static 'img/winthrop_banner-book.png' %}"
-    alt="Books"/></h1>
 <div class="ui container">
-
-{# provisional search form display #}
-<form>
-{{ search_form.as_p }}
-<input type="submit"/>
-</form>
-
-
-
- {% if paginator.count %}
-  <p>Displaying {{ paginator.count|intcomma }} book{{ paginator.count|pluralize }}</p>
- {% else %}
-   <div class="ui error message container">
-      <p>{% firstof error "No results found" %}</p>
-  </div>
- {% endif %}
-
-  <div class="ui grid">
-    {% for book in object_list %}
-      <div class="eight wide column">
-        <div class="ui segment">
-          <a href="{% url 'books:detail' book.slug %}">
-          {% if book.thumbnail %}
-          <img class="ui right floated image" src="{% iiif_image book.thumbnail height=218 %}"
-              srcset="{% iiif_image book.thumbnail height=436 %} 2x"
-              alt="{{ book.thumbnail_label }}" title="{{ book.thumbnail_label }}"/>
-          {% endif %}
-          <b>{{ book.short_title }}</b>
-          {% for author in book.authors %}
-              <p>{{ author }}</p>
-          {% endfor %}
-          <p>{{ book.pub_year }}</p>
-
-          {% if book.is_annotated %}
-          <div class="ui label">annotated</div>
-          {% endif %}
-         </div>
-       </a>
-      </div>
-    {% endfor %}
-  </div>
-
-    {% include 'snippets/pagination.html' %}
-
+	<div class="ui center aligned text container">
+		{% if paginator.count %}
+			<h4 class="results-count ui header">Displaying {{ paginator.count|intcomma }} book{{ paginator.count|pluralize }}</h4>
+		{% endif %}
+	</div>
+	<div class="search-form ui segment">
+		<form>
+		{{ search_form.as_p }}
+		<input type="submit"/>
+		</form>
+	</div>
+	{% if paginator.count %}
+	<div class="ui two column stackable grid">
+		{% for book in object_list %}
+		<div class="six wide column">
+			{% include 'books/snippets/book_result.html' %}
+		</div>
+		{% endfor %}
+	</div>
+	{% else %}
+	<div class="ui error message">
+			<p>{% firstof error "No results found" %}</p>
+	</div>
+	{% endif %}
+	{% include 'snippets/pagination.html' %}
 </div>
-
 {% endblock %}
