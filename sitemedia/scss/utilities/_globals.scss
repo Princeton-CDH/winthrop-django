@@ -3,4 +3,9 @@
 html,
 body {
     font-size: $rem;
+    @include font-smooth; // use antialiased fonts by default
+}
+
+.ui.segment:not(.inverted) {
+    @include no-font-smooth; // don't use AA for black on white
 }
