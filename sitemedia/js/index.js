@@ -1,5 +1,3 @@
-import PitBar from './snippets/pitbar'
-
 $(document).ready(function(){
     var $ribbon = $('.ribbon');
     if ($ribbon) {
@@ -21,18 +19,16 @@ $(document).ready(function(){
     const $searchButton = $('.search.item')
 
     /* bindings */
-    new PitBar($mainNav, $mobileNav)
+    // $mobileNav
+    //     .sidebar('attach events', $menuButton)
+    //     .sidebar('setting', {
+    //         onChange: () => {
+    //             // swap the hamburger icon for a close icon
+    //             $('.times.icon').toggle()
+    //             $('.sidebar.icon').toggle()
+    //         }
+    // })
 
-    $mobileNav
-        .sidebar('attach events', $menuButton)
-        .sidebar('setting', {
-            onChange: () => {
-                // swap the hamburger icon for a close icon
-                $('.times.icon').toggle()
-                $('.sidebar.icon').toggle()
-            }
-    })
-
-    $siteSearch
-        .sidebar('attach events', $searchButton)
+    // $siteSearch
+    //     .sidebar('attach events', $searchButton)
 });

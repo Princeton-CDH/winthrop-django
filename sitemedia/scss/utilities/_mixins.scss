@@ -1,11 +1,10 @@
 @mixin responsive-banner($src) {
     background-position: center bottom;
-    background-size: auto 100%;
+    background-size: fit;
     background-repeat: no-repeat;
     
     // small 1x and 2x
-    height: $banner-height-s;
-    margin-bottom: -120px;
+    height: $banner-height;
     background-image: url("#{$src}_S@1x.png");
     @media (-webkit-min-device-pixel-ratio: 2),
             (min-resolution: 192dpi) {
@@ -15,7 +14,7 @@
     // medium 1x and 2x
     @media (min-width: $tablet) {
         height: $banner-height-m;
-        margin-bottom: -200px;
+        margin-bottom: -30px;
         background-image: url("#{$src}_M@1x.png");
         @media (-webkit-min-device-pixel-ratio: 2),
             (min-resolution: 192dpi) {
@@ -25,7 +24,7 @@
 
     // large 1x and 2x
     @media (min-width: $computer) {
-        margin-bottom: -150px;
+        margin-bottom: -140px;
         height: $banner-height-l;
         background-image: url("#{$src}@1x.png");
         @media (-webkit-min-device-pixel-ratio: 2),

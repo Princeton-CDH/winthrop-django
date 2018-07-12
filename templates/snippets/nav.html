@@ -1,5 +1,6 @@
+{% load static %}
 <!-- site search -->
-<div class="ui top sidebar inverted vertical borderless menu" id="site-search">
+<div class="ui sidebar inverted vertical borderless menu" id="site-search">
     <div class="ui category search item">
         <div class="ui transparent icon input">
             <input class="prompt" placeholder="Search..." type="text">
@@ -7,8 +8,8 @@
         </div>
     </div>
 </div>
-<!-- mobile navigation -->
-<nav class="ui top sidebar inverted vertical borderless menu" id="mobile-nav">
+<!-- mobile menu -->
+<nav class="ui sidebar inverted vertical borderless menu" id="mobile-nav">
     <a class="item" href="{% url 'books:list' %}">Books</a>
     <a class="item">People</a>
     <a class="item">Annotations</a>
@@ -16,11 +17,11 @@
     <a class="item">Bibliography</a>
     <a class="item">Download Data</a>
 </nav>
-<!-- main navigation -->
-<nav class="ui top fixed inverted borderless menu" id="main-nav">
+<!-- navigation menu -->
+<nav class="ui inverted borderless menu" id="main-nav">
     <div class="brand">
         <a class="item" href="/" alt="home">
-            W
+            <img src="{% static 'img/logo/winthrop_logo_W_light.svg' %}" />
         </a>
     </div>
     <a class="toc item">

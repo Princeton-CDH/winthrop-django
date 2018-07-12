@@ -1,12 +1,13 @@
 /* navigation */
 
 #main-nav {
+    margin: 0;
     min-height: $nav-height;
     z-index: 103; // above mobile nav
     transition: all 0.25s;
 
-    &.hidden {
-        margin-top: -$nav-height;
+    @media (min-width: $tablet) {
+        background: transparent;
     }
 
     .center.menu {
@@ -24,12 +25,16 @@
         justify-content: center;
         margin: 0;
 
-        @media (min-width: $computer) {
+        @media (min-width: $tablet) {
             justify-content: start;
         }
 
         .item {
             display: flex;
+
+            img {
+                width: 3rem;
+            }
         }
     }
 
@@ -37,7 +42,7 @@
         z-index: 1;
         display: none;
 
-        @media (min-width: $computer) {
+        @media (min-width: $tablet) {
             display: flex;
         }
 
@@ -48,7 +53,7 @@
         &.toc {
             display: flex;
 
-            @media (min-width: $computer) {
+            @media (min-width: $tablet) {
                 display: none;
             }
         }
