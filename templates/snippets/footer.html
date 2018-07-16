@@ -2,7 +2,10 @@
 <!-- footer -->
 <footer class="ui basic inverted segment" id="footer">
     <div class="ui stackable centered grid container">
-        <nav class="ui inverted stackable borderless menu">
+        <div class="ui row">
+            <img class="manicule ui image" src="{% static 'img/logo/winthrop_logo_manicule.svg' %}" alt="Winthrop manicule" />
+        </div>
+        <nav class="ui inverted borderless menu">
             <a class="item" href="{% url 'books:list' %}">Books</a>
             <a class="item">People</a>
             <a class="item">Annotations</a>
@@ -10,6 +13,9 @@
             <a class="item">Bibliography</a>
             <a class="item">Download Data</a>
         </nav>
+        <div class="ui row">
+            <img class="project-logo ui image" src="{% static 'img/logo/winthrop_logo_whole_light.svg' %}" alt="The Winthrop Family On the Page logo" />
+        </div>
         <div class="ui inverted horizontal link list row">
             <a class="item">Contact</a>
             <a class="item">Home</a>
@@ -18,11 +24,11 @@
             <a class="item">Technical</a>
         </div>
         <div class="logos ui inverted horizontal list row">
-            <a class="item ui tiny image" href="https://cdh.princeton.edu/">
-                <img src="{% static 'img/CDH_logo_W.svg' %}" alt="The Center for Digital Humanities at Princeton" />
-            </a>
             <a class="item ui small image" href="https://www.princeton.edu/">
                 <img src="{% static 'img/PUsig2-ww-ws.svg' %}" alt="Princeton University" />
+            </a>
+            <a class="item ui tiny image" href="https://cdh.princeton.edu/">
+                <img src="{% static 'img/CDH_logo_W.svg' %}" alt="The Center for Digital Humanities at Princeton" />
             </a>
         </div>
     </div>

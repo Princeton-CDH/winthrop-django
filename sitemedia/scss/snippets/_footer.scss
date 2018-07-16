@@ -4,8 +4,35 @@
     padding: 1rem 0;
     margin: 0 auto;
     width: 100%;
+    background: transparent;
+    background-image: linear-gradient(to bottom, rgba(64, 64, 64, 0), rgba(39, 39, 39, 0.73) 8%, $black 20%, $black);
+
+    @media (min-width: $tablet) {
+        background-image: linear-gradient(to bottom, rgba(64, 64, 64, 0), rgba(39, 39, 39, 0.73) 15%, $black 44%, $black);
+    }
+
+    @media (min-width: $computer) {
+        background-image: linear-gradient(to bottom, rgba(64, 64, 64, 0), rgba(39, 39, 39, 0.73) 25%, $black 57%, $black);
+    }
+
+    .grid.container {
+        padding-top: 4rem;
+
+        @media (min-width: $tablet) {
+            padding-top: 10rem;
+        }
+
+        @media (min-width: $computer) {
+            padding-top: 12rem;
+        }
+    }
+
+    .manicule {
+        width: 63px;
+    }
 
     nav.menu {
+        background: transparent;
         justify-content: center;
         flex-wrap: wrap;
 
@@ -16,7 +43,17 @@
 
     .menu .item {
         @media (max-width: $tablet) {
+            padding: .5rem;
             justify-content: center;
+        }
+    }
+
+    .project-logo {
+        width: 200px;
+        margin-bottom: 1rem;
+
+        @media (min-width: $tablet) {
+            margin: 0;
         }
     }
 
@@ -26,19 +63,24 @@
         }
 
         @media (min-width: $computer) {
-            padding: 2rem 0;
+            padding: 1rem 0;
         }
     }
 
     .logos {
         margin: 2rem;
+        justify-content: space-between;
 
-        @media (min-width: $tablet) {
-            margin-top: 0;
+        .tiny.image {
+            margin-right: 1rem;
         }
 
-        @media (min-width: $computer) {
+        @media (min-width: $tablet) {
             margin: 0;
+        }
+        
+        @media (min-width: $computer) {
+            padding: 0;
         }
     }
 
