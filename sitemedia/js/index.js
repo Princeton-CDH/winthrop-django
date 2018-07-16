@@ -16,19 +16,40 @@ $(document).ready(function(){
     const $mobileNav = $('#mobile-nav')
     const $siteSearch = $('#site-search')
     const $menuButton = $('.toc.item')
-    const $searchButton = $('.search.item')
-
+    const $searchButton = $('#main-nav .search.item')
+    const $closeSearchButton = $('#site-search .close.item')
+    
     /* bindings */
-    // $mobileNav
-    //     .sidebar('attach events', $menuButton)
-    //     .sidebar('setting', {
-    //         onChange: () => {
-    //             // swap the hamburger icon for a close icon
-    //             $('.times.icon').toggle()
-    //             $('.sidebar.icon').toggle()
-    //         }
-    // })
-
-    // $siteSearch
-    //     .sidebar('attach events', $searchButton)
+    $mobileNav
+        .sidebar('attach events', $menuButton)
+        .sidebar('setting', {
+            exclusive: true,
+            dimPage: false,
+            scrollLock: true,
+            onChange: () => {
+                $('.sidebar.icon').toggle()
+                $('#main-nav .times.icon').toggle()
+            }
+        })
+    
+    $siteSearch
+        .sidebar('attach events', $searchButton, 'open')
+        .sidebar('attach events', $closeSearchButton, 'close')
+        .sidebar('setting', {
+            exclusive: true,
+            dimPage: false,
+            closable: false,
+            transition: 'push',
+            onChange: () => {
+                if ($('#main-nav .right.menu').css('visibility') == 'hidden') {
+                    $('#main-nav .right.menu').css('visibility', 'visible')
+                }
+                else {
+                    $('#main-nav .right.menu').css('visibility', 'hidden')
+                }
+            },
+            onVisible: () => $('#site-search .prompt').focus()
+        })
+    
+    $('.ui.dropdown').dropdown()
 });

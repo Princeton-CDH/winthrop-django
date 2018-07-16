@@ -27,7 +27,9 @@ https://github.com/Princeton-CDH/winthrop-django
 @import 'utilities/mixins';
 @import 'utilities/globals';
 @import 'utilities/a11y';
-@import 'snippets/nav'; // snippets
+@import 'snippets/site-search'; // snippets
+@import 'snippets/nav';
+@import 'snippets/mobile-nav';
 @import 'snippets/header';
 @import 'snippets/main';
 @import 'snippets/footer';

@@ -1,0 +1,15 @@
+/* site search */
+
+#site-search {
+    height: $nav-height !important;
+    margin: 0;
+
+    .dropdown.item {
+        min-width: 160px;
+    }
+
+    .dropdown.icon {
+        margin: auto;
+        margin-right: 1em;
+    }
+}
