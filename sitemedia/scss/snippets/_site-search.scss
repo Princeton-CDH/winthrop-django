@@ -1,15 +1,38 @@
 /* site search */
 
 #site-search {
-    height: $nav-height !important;
+    background: $parchment;
     margin: 0;
+    flex-wrap: wrap;
 
-    .dropdown.item {
-        min-width: 160px;
+    .search.item {
+        min-height: $nav-height;
+        width: 100%;
+
+        @media (min-width: $tablet) {
+            flex: 1;
+        }
     }
 
-    .dropdown.icon {
-        margin: auto;
-        margin-right: 1em;
+    .dropdown.item {
+        flex: 1;
+        min-height: $nav-height;
+        background: white;
+
+        @media (min-width: $tablet) {
+            max-width: 160px;
+            margin-right: 6rem;
+        }
+
+        .dropdown.icon {
+            margin: auto;
+            margin-right: 1em;
+        }
+    }
+
+    .close.item {
+        position: absolute;
+        top: 0.75rem;
+        right: 0;
     }
 }

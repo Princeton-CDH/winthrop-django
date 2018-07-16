@@ -60,6 +60,10 @@
     .link.list {
         @media (max-width: $mobile) {
             flex-direction: column;
+
+            .item {
+                margin-left: 0;
+            }
         }
 
         @media (min-width: $computer) {
