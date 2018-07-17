@@ -4,13 +4,26 @@
     background: $parchment;
     margin: 0;
     flex-wrap: wrap;
+    overflow-y: visible !important; // makes dropdown visible
+
+    @include no-font-smooth;
+
+    i.icon {
+        color: $black;
+    }
 
     .search.item {
         min-height: $nav-height;
         width: 100%;
 
+        @include responsive-margin('left', 4);
+
         @media (min-width: $tablet) {
             flex: 1;
+        }
+
+        #id_query {
+            font-size: 1.25rem;
         }
     }
 
@@ -18,15 +31,28 @@
         flex: 1;
         min-height: $nav-height;
         background: white;
+        border: none;
+
+        @include responsive-margin('right', 4);
+
+        @media (max-width: $tablet) {
+            margin-right: 0;
+        }
 
         @media (min-width: $tablet) {
             max-width: 160px;
-            margin-right: 6rem;
         }
 
         .dropdown.icon {
-            margin: auto;
-            margin-right: 1em;
+            margin: 1rem;
+        }
+
+        .text {
+            padding-left: 3.75rem;
+
+            @media (min-width: $tablet) {
+                padding-left: .75rem;
+            }
         }
     }
 
