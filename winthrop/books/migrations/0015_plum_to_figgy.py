@@ -103,8 +103,6 @@ def migrate_plum_to_figgy(apps, schema_editor):
                 ann.extra_data['image_selection']['uri'] = str(img)
                 ann.extra_data['image_selection']['src'] = str(img)
 
-
-
             ann.save()
 
     # as a sanity check, in case anything went wrong -
