@@ -58,7 +58,7 @@ class SearchForm(forms.Form):
         required=False)
 
     # fields to request a facet from solr
-    facet_fields = ['author_exact']
+    facet_fields = ['author_exact', 'editor_exact', 'translator_exact']
 
 
     def __init__(self, data=None, *args, **kwargs):

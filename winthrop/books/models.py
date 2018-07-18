@@ -288,6 +288,9 @@ class Book(Notable, Indexable):
             # first author only, for sorting
             # FIXME: sort on last name first? not an ordered relationship currently
             'author_exact': str(self.authors().first()) if self.authors().exists() else None,
+            # TODO: split out sort author and facet author? facet can be multiple, sort cannot
+            'editor_exact': str(self.editors().first()) if self.editors().exists() else None,
+            'translator_exact': str(self.translators().first()) if self.translators().exists() else None,
             'pub_year': self.pub_year,
             # NOTE: this indicates whether the book is annotated, does not
             # necessarily mean there are annotations documented in our system
