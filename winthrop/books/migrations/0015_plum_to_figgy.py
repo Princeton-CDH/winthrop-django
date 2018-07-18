@@ -89,9 +89,13 @@ def migrate_plum_to_figgy(apps, schema_editor):
             # image id without modifying other image parameters
             # - parse image selection uri as iiif image
             if 'image_selection' in ann.extra_data:
-                img = iiif.IIIFImageClient.init_from_url(ann.extra_data['image_selection']['uri'])
+                img = iiif.IIIFImageClient.init_from_url(
+                    ann.extra_data['image_selection']['uri']
+                )
                 # - load iiif image service as iiifimage
-                figgy_img = iiif.IIIFImageClient(*new_canvas.images[0].resource.service.id.rsplit('/', 1))
+                figgy_img = iiif.IIIFImageClient(
+                    *new_canvas.images[0].resource.service.id.rsplit('/', 1)
+                    )
                 # update existing iiif image url with new server & image id
                 img.api_endpoint = figgy_img.api_endpoint
                 img.image_id = figgy_img.image_id
@@ -105,15 +109,18 @@ def migrate_plum_to_figgy(apps, schema_editor):
 
     # as a sanity check, in case anything went wrong -
     # check for any unmigrated plum uris and warn if any are found
+    # NOTE: This lines are longer than PEP8, but splitting them results in
+    # more confusion than not.
     unmigrated = {
         'manifest': Manifest.objects.filter(uri__contains='plum.princeton').count(),
         'canvas': Canvas.objects.filter(uri__contains='plum.princeton').count(),
         'intervention': Annotation.objects.filter(models.Q(uri__contains='plum.princeton') |
-                                                  models.Q(extra_data__contains='plum.princeton')) \
+                                                  models.Q(extra_data__contains='plum.princeton'))
                                                   .count()
     }
     if any(unmigrated.values()):
-        print('Found unmigrated content: %(manifest)d manifests, %(canvas)d canvases, %(intervention)d interventions' %
+        print('Found unmigrated content: %(manifest)d manifests, '
+              '%(canvas)d canvases, %(intervention)d interventions' %
               unmigrated)
         # This will trigger an error
         assert False
