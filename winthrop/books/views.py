@@ -59,6 +59,31 @@ class BookListView(ListView, LastModifiedListMixin):
             # display it for debugging solr indexing
             # fields = '*,score'
 
+        ## faceting and filtering
+
+        # list of filter queries; restrict to books, filter by
+        # any facet fields that are specified
+        filter_qs = ['content_type:(%s)' % Book.content_type()]
+        # check for facet filters that should be enabled
+        for solr_field, form_field in self.form.solr_facet_fields.items():
+            field_values = search_opts.get(form_field, None)
+            if field_values:
+                # Find matches for any of the terms.
+                # Tag the filter using the form field name so that it
+                # can be excluded when generating the facet, to get proper counts
+                filter_qs.append('{!tag=%s}%s:(%s)' % \
+                    (form_field, solr_field,
+                     ' OR '.join('"%s"' % val for val in field_values)))
+
+        # Construct list of facet fields to return.
+        # Exclude tags based on form field name, so that counts will be
+        # correct for multi-select faceting.
+        # See https://lucene.apache.org/solr/guide/6_6/faceting.html#Faceting-TaggingandExcludingFilters
+        # Use key to Set output label to form field name instead of solr field
+        facet_fields = ['{!ex=%s key=%s}%s' % (form_field, form_field, solr_field)
+                        for solr_field, form_field in self.form.solr_facet_fields.items()]
+
+        ## sorting
         solr_sort = 'last_modified desc'
         sort = search_opts.get("sort", None)
 
@@ -71,10 +96,10 @@ class BookListView(ListView, LastModifiedListMixin):
             # 'fl': fields,
             # turn on faceting and add any self.form facet_fields
             'facet': 'true',
-            'facet.field': [field for field in self.form.facet_fields],
+            'facet.field': facet_fields,
             # sort by alpha on facet label rather than count
             'facet.sort': 'index',
-            'fq': 'content_type:(%s)' % Book.content_type()
+            'fq': filter_qs
         }
 
     def get_queryset(self, **kwargs):
@@ -100,6 +125,10 @@ class BookListView(ListView, LastModifiedListMixin):
                 # NOTE: this error should possibly be raised; 500 error?
                 error_msg = 'Something went wrong.'
             context['error'] = error_msg
+
+        # populate form field choices based on facets
+        # (may not actually be displayed except as a fallback and for testing)
+        self.form.set_choices_from_facets(self.object_list.get_facets())
 
         context.update({
             'search_form': self.form,

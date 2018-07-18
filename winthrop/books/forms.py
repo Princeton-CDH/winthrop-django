@@ -1,5 +1,5 @@
 from django import forms
-
+from django.utils.safestring import mark_safe
 
 ## Disabled input logic borrowed from PPA (ppa.archive.forms)
 
@@ -36,6 +36,26 @@ class RadioSelectWithDisabled(SelectDisabledMixin, forms.RadioSelect):
     a choice as disabled.
     '''
 
+class FacetChoiceField(forms.MultipleChoiceField):
+    '''Add CheckboxSelectMultiple field with facets taken from solr query'''
+    # Borrowed from https://github.com/Princeton-CDH/derrida-django/blob/develop/derrida/books/forms.py
+    # customize multiple choice field for use with facets.
+    # no other adaptations needed
+    # - turn of choice validation (shouldn't fail if facets don't get loaded)
+    # - default to not required
+    # - use checkbox select multiple as default widget
+
+    # TODO: maybe disable this and go back to multiselect box
+    widget = forms.CheckboxSelectMultiple
+
+    def __init__(self, *args, **kwargs):
+        if 'required' not in kwargs:
+            kwargs['required'] = False
+        super().__init__(*args, **kwargs)
+
+    def valid_value(self, value):
+        return True
+
 
 class SearchForm(forms.Form):
     '''Search form for searching across :class:`~winthrop.books.models.Books`.'''
@@ -55,11 +75,14 @@ class SearchForm(forms.Form):
     query = forms.CharField(label='Keyword or Phrase', required=False)
 
     sort = forms.ChoiceField(widget=RadioSelectWithDisabled, choices=SORT_CHOICES,
-        required=False)
+                             required=False)
 
-    # fields to request a facet from solr
-    facet_fields = ['author_exact', 'editor_exact', 'translator_exact']
-
+    # Solr facet choice fields
+    author = FacetChoiceField(label='Author')
+    # map solr facet field to corresponding form input
+    solr_facet_fields = {
+        'author_exact': 'author',
+    }
 
     def __init__(self, data=None, *args, **kwargs):
         '''
@@ -71,6 +94,18 @@ class SearchForm(forms.Form):
         if not data or not data.get('query', None):
             self.fields['sort'].widget.choices[-1] = \
                 ('relevance', {'label': 'Relevance', 'disabled': True})
+
+
+    def set_choices_from_facets(self, facets):
+        # configure field choices based on facets returned from Solr
+        # (adapted from derrida codebase)
+        for facet, counts in facets.items():
+            # use field from facet fields map or else field name as is
+            formfield = self.solr_facet_fields.get(facet, facet)
+            if formfield in self.fields:
+                self.fields[formfield].choices = [
+                    (val, mark_safe('%s <span>%d</span>' % (val, count)))
+                    for val, count in counts.items()]
 
     # map form sort options to solr sort field
     solr_sort_fields = {
