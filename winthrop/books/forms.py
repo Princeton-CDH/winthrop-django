@@ -78,10 +78,14 @@ class SearchForm(forms.Form):
                              required=False)
 
     # Solr facet choice fields
-    author = FacetChoiceField(label='Author')
+    author = FacetChoiceField()
+    editor = FacetChoiceField()
+    translator = FacetChoiceField()
     # map solr facet field to corresponding form input
     solr_facet_fields = {
         'author_exact': 'author',
+        'editor_exact': 'editor',
+        'translator_exact': 'translator',
     }
 
     def __init__(self, data=None, *args, **kwargs):
