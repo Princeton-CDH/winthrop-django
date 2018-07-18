@@ -19,6 +19,7 @@ to link the cached manifest in the django database with the appropriate
 :class:`winthrop.books.models.Book`.
 '''
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 from djiffy.importer import ManifestImporter
 
@@ -40,7 +41,7 @@ class WinthropManifestImporter(ManifestImporter):
 
         # attempt to find the corresponding Winthrop book object
         # for this digital edition and associate them
-        # - edited NYSL winthrop volumes in Plum will have a winthrop
+        # - edited NYSL winthrop volumes in Figgy will have a winthrop
         #   call number set as a local identifier
         if 'Local identifier' in db_manifest.metadata:
             winthrop_num = db_manifest.metadata['Local identifier'][0]
@@ -80,5 +81,3 @@ class Command(BaseCommand):
         WinthropManifestImporter(stdout=self.stdout, stderr=self.stderr,
                                  style=self.style) \
             .import_paths(manifest_paths)
-
-

@@ -1,11 +1,18 @@
-from django.apps import apps
+import os
+import pickle
+import re
+from unittest.mock import patch
+
 from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
 from django.test import TransactionTestCase
 from django.utils.text import slugify
 import pytest
 
+from winthrop.annotation.models import Annotation
 
+FIXTURE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                           '..', 'fixtures')
 
 ## migration test case adapted from
 # https://www.caktusgroup.com/blog/2016/02/02/writing-unit-tests-django-migrations/
@@ -18,8 +25,6 @@ class TestMigrations(TransactionTestCase):
     app = None
     migrate_from = None
     migrate_to = None
-
-
 
     def setUp(self):
         assert self.migrate_from and self.migrate_to, \
@@ -53,7 +58,6 @@ class TestMigrations(TransactionTestCase):
 
 @pytest.mark.last
 class TestBookAddSlugs(TestMigrations):
-
 
     app = 'books'
     migrate_from = '0011_add_book_digital_edition_remove_is_digitized'
@@ -90,3 +94,74 @@ class TestBookAddSlugs(TestMigrations):
         assert princeps.slug == \
             slugify('Machiavelli %s %s' % (princeps.short_title, princeps.pub_year))
 
+
+@pytest.mark.last
+class TestMigratePlumToFiggy(TestMigrations):
+
+    app = 'books'
+    migrate_from = '0014_make_book_slugs_unique'
+    migrate_to = '0015_plum_to_figgy'
+    serialized_rollback = True
+
+    # loads a book with the old plum manifest and related canvas with
+    # i.e., most complex example that should be handled correctly
+    fixtures = ['test_plum_figgy']
+
+    @patch('winthrop.books.migrations.0015_plum_to_figgy.iiif')
+    @patch('winthrop.books.migrations.0015_plum_to_figgy.IIIFPresentation')
+    @patch('winthrop.books.migrations.0015_plum_to_figgy.requests')
+    def setUp(self, mockrequests, mockpres, mockiiif):
+        # mock out data fixtures for calls to figgy
+        requestpickle = os.path.join(FIXTURE_DIR, "test_plum_figgy_request.pickle")
+        newmanif = os.path.join(FIXTURE_DIR, "test_plum_figgy_newmanif.pickle")
+        iiif = os.path.join(FIXTURE_DIR, "test_plum_figgy_iiif.pickle")
+
+        with open(requestpickle, "rb") as data:
+            response = pickle.load(data)
+        with open(newmanif, "rb") as data:
+            newmanif = pickle.load(data)
+        with open(iiif, "rb") as data:
+            iiif_list = pickle.load(data)
+        self.iiif_list = iiif_list
+        # response from figgy
+        mockrequests.head.return_value = response
+        # manifests for this book from Figgy
+        mockpres.from_url.return_value = newmanif
+        mockpres.short_id.return_value = 'e75a2026-cf91-40d0-b592-176faae9b12c'
+        # mocks for iiif calls
+        # first element is a list of IIIF images init'd from url
+        # second element is a lost of IIIF images from figgy
+        mockiiif.IIIFImageClient.init_from_url.side_effect = iiif_list[0]
+        mockiiif.IIIFImageClient.side_effect = iiif_list[1]
+
+        super().setUp()
+
+    def test_plum_to_figgy(self):
+        Manifest = self.apps.get_model('djiffy', 'Manifest')
+        # there should be one manifest
+        assert Manifest.objects.count() == 1
+        # retrieve that manifest
+        manif = Manifest.objects.all()[0]
+        # check that the manifest's uri has figgy and not plum
+        assert 'plum.princeton' not in manif.uri
+        assert 'figgy.princeton' in manif.uri
+        # check that we have a uuid for the identifier
+        # https://stackoverflow.com/questions/136505/searching-for-uuids-in-text-with-regex/14166194
+        uuid_regex = re.compile(r'[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')
+        assert re.search(uuid_regex, manif.uri)
+        assert re.search(uuid_regex, manif.short_id)
+        # check that canvases have no plum in their ids and a UUID
+        for canvas in manif.canvases.all():
+            assert re.search(uuid_regex, canvas.uri)
+            assert 'plum.princeton' not in manif.uri
+            assert 'figgy.princeton' in manif.uri
+        # check that annotations and images are set correctly
+        # the only change in the uris is the inclusion of
+        # full/!1000,1000/ in the uri
+        for ann in Annotation.objects.all():
+            src = ann.extra_data['image_selection']['src']
+            uri = ann.extra_data['image_selection']['uri']
+            assert 'full/full' not in src
+            assert 'full/full' not in uri
+            assert 'full/!1000,1000/' in src
+            assert 'full/!1000,1000/' in src
