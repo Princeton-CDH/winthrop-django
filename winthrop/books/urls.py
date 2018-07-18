@@ -2,11 +2,13 @@ from django.conf.urls import url
 from django.contrib.admin.views.decorators import staff_member_required
 
 from winthrop.books.views import PublisherAutocomplete, CanvasAutocomplete, \
-    LanguageAutocomplete, SubjectAutocomplete, BookListView, BookDetailView
+    LanguageAutocomplete, SubjectAutocomplete, BookListView, BookDetailView, \
+    BookFacetJSONView
 
 
 urlpatterns = [
     url(r'^$', BookListView.as_view(), name='list'),
+    url(r'^facets/$', BookFacetJSONView.as_view(), name='facets'),
     url(r'^(?P<slug>[-\w]+)/$', BookDetailView.as_view(), name='detail'),
     url(r'^autocomplete/publisher/$', staff_member_required(PublisherAutocomplete.as_view()),
         name='publisher-autocomplete'),

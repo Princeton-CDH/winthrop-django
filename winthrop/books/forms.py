@@ -57,6 +57,10 @@ class SearchForm(forms.Form):
     sort = forms.ChoiceField(widget=RadioSelectWithDisabled, choices=SORT_CHOICES,
         required=False)
 
+    # fields to request a facet from solr
+    facet_fields = ['author_exact']
+
+
     def __init__(self, data=None, *args, **kwargs):
         '''
         Set choices dynamically based on form kwargs and presence of keywords.

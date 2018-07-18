@@ -1,6 +1,7 @@
 from dal import autocomplete
 from django.core.validators import ValidationError
 from django.db.models import Q
+from django.http import JsonResponse
 from django.views.generic import ListView, DetailView
 from djiffy.models import Canvas
 from SolrClient.exceptions import SolrError
@@ -68,6 +69,11 @@ class BookListView(ListView, LastModifiedListMixin):
             'q': solr_q,
             'sort': solr_sort,
             # 'fl': fields,
+            # turn on faceting and add any self.form facet_fields
+            'facet': 'true',
+            'facet.field': [field for field in self.form.facet_fields],
+            # sort by alpha on facet label rather than count
+            'facet.sort': 'index',
             'fq': 'content_type:(%s)' % Book.content_type()
         }
 
@@ -122,6 +128,20 @@ class BookListView(ListView, LastModifiedListMixin):
                 return self.solr_timestamp_to_datetime(psq[0]['last_modified'])
         except SolrError:
             pass
+
+
+class BookFacetJSONView(BookListView):
+
+    def get_context_data(self, **kwargs):
+        # skip normal context handling and only return count and facets
+        # TODO: handle solr error, no results
+        return {
+            'total': self.object_list.count(),
+            'facets': self.object_list.get_facets()
+        }
+
+    def render_to_response(self, context, **response_kwargs):
+        return JsonResponse(context, **response_kwargs)
 
 
 class BookDetailView(DetailView, LastModifiedMixin):
