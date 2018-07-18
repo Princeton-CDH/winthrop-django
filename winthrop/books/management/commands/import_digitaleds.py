@@ -66,7 +66,7 @@ class Command(BaseCommand):
 
     # shorthand for known URIs to be imported
     manifest_uris = {
-        'NYSL': 'https://plum.princeton.edu/collections/p4j03fz143/manifest'
+        'NYSL': 'https://figgy.princeton.edu/collections/9aac0332-2140-48d9-8da8-558793317a88/manifest'
     }
 
     def add_arguments(self, parser):
