@@ -6,6 +6,7 @@
 
 from __future__ import unicode_literals
 
+from django.core.exceptions import ValidationError
 from django.db import migrations, models
 from djiffy.models import IIIFPresentation
 from piffle import iiif
@@ -73,8 +74,6 @@ def migrate_plum_to_figgy(apps, schema_editor):
         # use standard import/update logic to update everything else
         mnf_importer.import_manifest(newmanif, newmanif.id)
 
-        imgs = []
-        figgy_imgs = []
         for ann in Annotation.objects.filter(uri__contains=plum_uri):
             # annotations have a db-association with canvas objects,
             # but also reference canvas URI as annotation target and
@@ -107,7 +106,7 @@ def migrate_plum_to_figgy(apps, schema_editor):
 
     # as a sanity check, in case anything went wrong -
     # check for any unmigrated plum uris and warn if any are found
-    # NOTE: This lines are longer than PEP8, but splitting them results in
+    # NOTE: These lines are longer than PEP8, but splitting them results in
     # more confusion than not.
     unmigrated = {
         'manifest': Manifest.objects.filter(uri__contains='plum.princeton').count(),
@@ -117,12 +116,11 @@ def migrate_plum_to_figgy(apps, schema_editor):
                                                   .count()
     }
     if any(unmigrated.values()):
-        print('Found unmigrated content: %(manifest)d manifests, '
-              '%(canvas)d canvases, %(intervention)d interventions' %
-              unmigrated)
-        # This will trigger an error
-        assert False
-
+        raise ValidationError(
+            'Found unmigrated content: %(manifest)d manifests, '
+            '%(canvas)d canvases, %(intervention)d interventions' %
+            unmigrated
+        )
 
 class Migration(migrations.Migration):
 
