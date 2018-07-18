@@ -48,8 +48,11 @@ $(document).ready(function(){
                     $('#main-nav .right.menu').css('visibility', 'hidden')
                 }
             },
-            onVisible: () => $('#site-search .prompt').focus()
+            onShow: () => setTimeout(() => $('#site-search #id_query')[0].focus(), 1),
+            onHide: () => setTimeout(() => $('#site-search #id_query')[0].blur(), 1)
         })
     
     $('.ui.dropdown').dropdown()
+    $('.tabular.menu .item').tab()
+    // $('.ui.checkbox').checkbox()
 });
