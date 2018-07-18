@@ -129,7 +129,6 @@ class BookListView(ListView, LastModifiedListMixin):
                 # NOTE: this error should possibly be raised; 500 error?
                 error_msg = 'Something went wrong.'
             context['error'] = error_msg
-
         context.update({
             'search_form': self.form,
         })
@@ -160,17 +159,30 @@ class BookListView(ListView, LastModifiedListMixin):
 
 
 class BookFacetJSONView(BookListView):
+    error_code = None
 
     def get_context_data(self, **kwargs):
         # skip normal context handling and only return count and facets
         # TODO: handle solr error, no results
-        return {
-            'total': self.object_list.count(),
-            'facets': self.object_list.get_facets()
-        }
+        try:
+            return {
+                'total': self.object_list.count(),
+                'facets': self.object_list.get_facets()
+            }
+        except SolrError as solr_err:
+            error_msg = 'Something went wrong.'
+            self.error_code = 500
+            if 'Cannot parse' in str(solr_err):
+                error_msg = 'Unable to parse search query; please revise and try again.'
+                self.error_code = 400
+            return {'error': error_msg}
 
     def render_to_response(self, context, **response_kwargs):
-        return JsonResponse(context, **response_kwargs)
+        response = JsonResponse(context, **response_kwargs)
+        # if something went wrong, set an error code on the response before returning
+        if 'error' in context and self.error_code:
+            response.status_code = self.error_code
+        return response
 
 
 class BookDetailView(DetailView, LastModifiedMixin):
