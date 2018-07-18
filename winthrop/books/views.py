@@ -117,6 +117,10 @@ class BookListView(ListView, LastModifiedListMixin):
             # (e.g., incomplete exact phrase)
             context = super().get_context_data(**kwargs)
 
+            # populate form field choices based on facets
+            # (may not actually be displayed except as a fallback and for testing)
+            self.form.set_choices_from_facets(self.object_list.get_facets())
+
         except SolrError as solr_err:
             context = {'object_list': []}
             if 'Cannot parse' in str(solr_err):
@@ -125,10 +129,6 @@ class BookListView(ListView, LastModifiedListMixin):
                 # NOTE: this error should possibly be raised; 500 error?
                 error_msg = 'Something went wrong.'
             context['error'] = error_msg
-
-        # populate form field choices based on facets
-        # (may not actually be displayed except as a fallback and for testing)
-        self.form.set_choices_from_facets(self.object_list.get_facets())
 
         context.update({
             'search_form': self.form,
