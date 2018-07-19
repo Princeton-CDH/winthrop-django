@@ -5,6 +5,10 @@
 
 {% block page-context-id %}book-list{% endblock %}
 
+{% block js %}
+<script src="{% static 'js/search.js' %}" type="module"></script>
+{% endblock %}
+
 {% block page_header %}
 <header id="header" class="ui inverted center aligned basic segment">
 	<h1 class="ui header">Books</h1>
@@ -18,12 +22,8 @@
 			<h4 class="results-count ui header">Displaying {{ paginator.count|intcomma }} book{{ paginator.count|pluralize }}</h4>
 		{% endif %}
 	</div>
-	<div class="search-form ui segment">
-		<form>
-		{{ search_form.as_p }}
-		<input type="submit"/>
-		</form>
-	</div>
+	<books-search></books-search>
+	{% comment %} {% include 'books/snippets/search_form.html' %} {% endcomment %}
 	{% if paginator.count %}
 	<div class="ui two column stackable grid">
 		{% for book in object_list %}
