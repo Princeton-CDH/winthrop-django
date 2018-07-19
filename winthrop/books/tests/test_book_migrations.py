@@ -1,13 +1,14 @@
+import json
 import os
-import pickle
 import re
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
 from django.test import TransactionTestCase
 from django.utils.text import slugify
 import pytest
+import requests
 
 from winthrop.annotation.models import Annotation
 
@@ -107,32 +108,35 @@ class TestMigratePlumToFiggy(TestMigrations):
     # i.e., most complex example that should be handled correctly
     fixtures = ['test_plum_figgy']
 
-    @patch('winthrop.books.migrations.0015_plum_to_figgy.iiif')
-    @patch('winthrop.books.migrations.0015_plum_to_figgy.IIIFPresentation')
+    @patch('djiffy.models.requests')
     @patch('winthrop.books.migrations.0015_plum_to_figgy.requests')
-    def setUp(self, mockrequests, mockpres, mockiiif):
-        # mock out data fixtures for calls to figgy
-        requestpickle = os.path.join(FIXTURE_DIR, "test_plum_figgy_request.pickle")
-        newmanif = os.path.join(FIXTURE_DIR, "test_plum_figgy_newmanif.pickle")
-        iiif = os.path.join(FIXTURE_DIR, "test_plum_figgy_iiif.pickle")
+    def setUp(self, mockrequests, mockdjiffyrequests):
+        # By mocking out requests in the two places where it appears, the
+        # fixture provides mocked manifest data and constructs. The uri
+        # below supplies the remaining information.
 
-        with open(requestpickle, "rb") as data:
-            response = pickle.load(data)
-        with open(newmanif, "rb") as data:
-            newmanif = pickle.load(data)
-        with open(iiif, "rb") as data:
-            iiif_list = pickle.load(data)
-        self.iiif_list = iiif_list
-        # response from figgy
-        mockrequests.head.return_value = response
-        # manifests for this book from Figgy
-        mockpres.from_url.return_value = newmanif
-        mockpres.short_id.return_value = 'e75a2026-cf91-40d0-b592-176faae9b12c'
-        # mocks for iiif calls
-        # first element is a list of IIIF images init'd from url
-        # second element is a lost of IIIF images from figgy
-        mockiiif.IIIFImageClient.init_from_url.side_effect = iiif_list[0]
-        mockiiif.IIIFImageClient.side_effect = iiif_list[1]
+        # The test_plum_figgy_manifest fixture was produced by using the
+        # .json() method of a request response to the actual manifest uri
+
+        manifest_uri = 'https://figgy.princeton.edu/concern/scanned_resources/e75a2026-cf91-40d0-b592-176faae9b12c/manifest'
+
+        # redirect response from figgy
+        mockresponse = Mock()
+        mockresponse.status_code = requests.codes.found
+        mockresponse.headers = {'location': manifest_uri}
+        mockrequests.head.return_value = mockresponse
+
+        # mocks for IIIFManifest, patched in to djiffy logic so that
+        # it can provide a manifest and let IIIFManifest.from_url actually
+        # run
+        mockdjiffyresponse = Mock()
+        mockdjiffyresponse.status_code = requests.codes.ok
+        raw_json = os.path.join(FIXTURE_DIR, "test_plum_figgy_manifest.json")
+        with open(raw_json, "r") as data:
+            mockdjiffyresponse.json.return_value = json.load(data)
+        mockdjiffyrequests.get.return_value = mockdjiffyresponse
+        # since mocking requests, also need to provide this info for Djiffy
+        mockdjiffyrequests.codes.ok = 200
 
         super().setUp()
 
