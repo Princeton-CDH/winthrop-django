@@ -33,7 +33,7 @@ def migrate_plum_to_figgy(apps, schema_editor):
         response = requests.head(figgy_uri)
         # expect a 302; ignore if we got something else
         if not response.status_code == requests.codes.found:
-            # Leave this be, but raise an assert error in check
+            # Leave this be, but raise a ValidationError in check
             # for unconverted uris down so that we know the migration did
             # not work as expected
             next
@@ -62,7 +62,6 @@ def migrate_plum_to_figgy(apps, schema_editor):
             except KeyError:
                 # if short id lookup fails, map by index
                 db_canvas.uri = newmanif.sequences[0].canvases[index].id
-
             db_canvas.save()
 
             # NOTE: not updating other canvas metadata here; use
@@ -87,6 +86,7 @@ def migrate_plum_to_figgy(apps, schema_editor):
             # use piffle iiif image handling to update iiif server and
             # image id without modifying other image parameters
             # - parse image selection uri as iiif image
+
             if 'image_selection' in ann.extra_data:
                 img = iiif.IIIFImageClient.init_from_url(
                     ann.extra_data['image_selection']['uri']
