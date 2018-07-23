@@ -4,6 +4,7 @@ from time import sleep
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
+from django.http import JsonResponse
 from django.template.defaultfilters import escape
 from django.test import TestCase
 from django.urls import reverse
@@ -283,3 +284,39 @@ class TestBookViews(TestCase):
         # bogus id should 404
         response = self.client.get(reverse('books:detail', args=['foo']))
         assert response.status_code == 404
+
+    @pytest.mark.usefixtures('solr')
+    def test_book_facet_json(self):
+
+        url = reverse('books:facets')
+
+        # unerrored run to view
+        response = self.client.get(url)
+        # response should be 200
+        assert response.status_code == 200
+        # should be an instance of JsonResponse
+        assert isinstance(response, JsonResponse)
+        # should have JSON with a 'total' key and a 'facets' key
+        res_dict = response.json()
+        # should be a dictionary response, with a dictionary of facets and
+        # a total that is an int
+        assert isinstance(res_dict['facets'], dict)
+        assert isinstance(res_dict['total'], int)
+
+        # simulate a solr error, both 500 and bad search
+        with patch('winthrop.books.views.PagedSolrQuery') as mockpsq:
+            # mock out the last_modified header for BookListView
+            mockpsq.return_value.__getitem__.return_value = \
+                {'last_modified': '2018-07-23T00:00:00Z'}
+            mockpsq.return_value.get_facets.side_effect = SolrError
+            response = self.client.get(url)
+            # no error message asserting parsing issues
+            assert response.status_code == 500
+            assert response.json()['error'] == 'Something went wrong.'
+            # mock out a parsing error
+            mockpsq.return_value.get_facets.side_effect = \
+                SolrError('Cannot parse')
+            response = self.client.get(url)
+            assert response.status_code == 400
+            assert response.json()['error'] == ('Unable to parse search query; '
+                                                'please revise and try again.')

@@ -31,6 +31,7 @@ class LastModifiedMixin(View):
         # Solr stores date in isoformat; convert to datetime object
         # - microseconds only included when second is not exact; strip out if
         #    they are present
+        print(solr_time)
         if '.' in solr_time:
             solr_time = '%sZ' % solr_time.split('.')[0]
         return datetime.strptime(solr_time, '%Y-%m-%dT%H:%M:%SZ')
