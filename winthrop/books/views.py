@@ -122,6 +122,7 @@ class BookListView(ListView, LastModifiedListMixin):
             self.form.set_choices_from_facets(self.object_list.get_facets())
 
         except SolrError as solr_err:
+            print(solr_err)
             context = {'object_list': []}
             if 'Cannot parse' in str(solr_err):
                 error_msg = 'Unable to parse search query; please revise and try again.'
@@ -173,7 +174,8 @@ class BookFacetJSONView(BookListView):
             error_msg = 'Something went wrong.'
             self.error_code = 500
             if 'Cannot parse' in str(solr_err):
-                error_msg = 'Unable to parse search query; please revise and try again.'
+                error_msg = ('Unable to parse search query; '
+                             'please revise and try again.')
                 self.error_code = 400
             return {'error': error_msg}
 
@@ -221,6 +223,7 @@ class CanvasAutocomplete(autocomplete.Select2QuerySetView):
             Q(label__icontains=self.q) |
             Q(uri__contains=self.q)
         )
+
 
 class LanguageAutocomplete(autocomplete.Select2QuerySetView):
     '''Autocomplete for languages in the controlled vocabulary list'''

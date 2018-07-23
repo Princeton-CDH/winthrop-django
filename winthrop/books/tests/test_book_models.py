@@ -269,6 +269,21 @@ class TestBook(TestCase):
         assert index_data['authors'] == []
         assert index_data['author_exact'] is None
 
+        # no languages on books in fixture, so test that state first
+        index_data = book.index_data()
+        assert index_data['languages_exact'] == []
+        # now add languages and assert that they are in index_data
+        english = Language.objects.get(name='English')
+        french = Language.objects.get(name='French')
+        BookLanguage.objects.bulk_create([
+            BookLanguage(book=book, language=english, is_primary=True),
+            BookLanguage(book=book, language=french, is_primary=False),
+        ])
+
+        index_data = book.index_data()
+        assert 'English' in index_data['languages_exact']
+        assert 'French' in index_data['languages_exact']
+        
     def test_generate_slug(self):
         # model method
         book = Book.objects.all().first()

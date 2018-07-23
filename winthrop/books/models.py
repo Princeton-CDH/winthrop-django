@@ -291,6 +291,7 @@ class Book(Notable, Indexable):
             # TODO: split out sort author and facet author? facet can be multiple, sort cannot
             'editor_exact': str(self.editors().first()) if self.editors().exists() else None,
             'translator_exact': str(self.translators().first()) if self.translators().exists() else None,
+            'languages_exact': [language.name for language in self.languages.all()],
             'pub_year': self.pub_year,
             # NOTE: this indicates whether the book is annotated, does not
             # necessarily mean there are annotations documented in our system
@@ -326,14 +327,13 @@ class BookSubject(Notable):
     book = models.ForeignKey(Book)
     is_primary = models.BooleanField()
 
-
     class Meta:
         unique_together = ('subject', 'book')
 
-
     def __str__(self):
         return '%s %s%s' % (self.book, self.subject,
-            ' (primary)' if self.is_primary else '')
+                            ' (primary)' if self.is_primary else '')
+
 
 class BookLanguage(Notable):
     '''Through-model for book-language relationship, to allow designating
@@ -363,6 +363,7 @@ class Creator(Notable):
 
     def __str__(self):
         return '%s %s %s' % (self.person, self.creator_type, self.book)
+
 
 class PersonBookRelationshipType(Named, Notable):
     '''Type of non-annotation relationship assocating a person
