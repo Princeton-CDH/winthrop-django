@@ -1,4 +1,4 @@
-import SearchFacetChoice from './SearchFacetChoice'
+import FacetChoice from './FacetChoice'
 
 export default Vue.component('SearchFacet', {
     template: `
@@ -8,27 +8,24 @@ export default Vue.component('SearchFacet', {
             <div v-if="search" class="search" />
             <div v-if="search" class="rolodex" />
             <div v-if="choices" class="facets">
-                <search-facet-choice
+                <facet-choice
                     v-for="choice in choices"
-                    :facet="label"
+                    @input="$emit('input')"
+                    :key="choice.label"
+                    :name="label"
                     :label="choice.label"
                     :count="choice.count"
+                    :value="choice.label"
                 />
             </div>
-            <div>{{ values }}</div>
         </template>
         <template v-if="type === 'range'">
             <h1>range facet</h1>
         </template>
     </sui-grid-column>
     `,
-    data() {
-        return {
-            values: this.choices
-        }
-    },
     components: {
-        SearchFacetChoice
+        FacetChoice
     },
     props: {
         type: String,
@@ -39,5 +36,5 @@ export default Vue.component('SearchFacet', {
         },
         width: Number,
         choices: Array
-    },
+    }
 })

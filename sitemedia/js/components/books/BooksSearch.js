@@ -21,6 +21,7 @@ export default Vue.component('BooksSearch', {
             <div class="ui equal width stackable grid">
                 <search-facet
                     v-for="facet in tab"
+                    @input="submit"
                     :key="facet"
                     :label="facet"
                     :type="facets[facet].type"
@@ -120,5 +121,9 @@ export default Vue.component('BooksSearch', {
         select(tabIndex) {
           this.active = tabIndex
         },
+        submit() {
+            let data = $(this.$el).serializeArray()
+            console.log(data)
+        }
     },
 })

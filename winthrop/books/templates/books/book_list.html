@@ -22,8 +22,7 @@
 			<h4 class="results-count ui header">Displaying {{ paginator.count|intcomma }} book{{ paginator.count|pluralize }}</h4>
 		{% endif %}
 	</div>
-	<books-search></books-search>
-	{% comment %} {% include 'books/snippets/search_form.html' %} {% endcomment %}
+	<books-search />
 	{% if paginator.count %}
 	<div class="ui two column stackable grid">
 		{% for book in object_list %}
@@ -34,7 +33,7 @@
 	</div>
 	{% else %}
 	<div class="ui error message">
-			<p>{% firstof error "No results found" %}</p>
+		<p>{% firstof error "No results found" %}</p>
 	</div>
 	{% endif %}
 	{% include 'snippets/pagination.html' %}
