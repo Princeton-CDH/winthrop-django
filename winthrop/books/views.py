@@ -60,10 +60,48 @@ class BookListView(ListView, LastModifiedListMixin):
             # fields = '*,score'
 
         ## faceting and filtering
-
         # list of filter queries; restrict to books, filter by
         # any facet fields that are specified
+        # range logic adapted from PPA/Derrida projects
+        range_opts = {
+            'facet.range': self.form.range_facets
+        }
         filter_qs = ['content_type:(%s)' % Book.content_type()]
+
+        for range_facet in self.form.range_facets:
+            # range filter requested in search options
+            start = end = None
+            # if start or end is specified on the form, add a filter query
+            if range_facet in search_opts and search_opts[range_facet]:
+                start, end = search_opts[range_facet].split('-')
+                range_filter = '[%s TO %s]' % (start or '*', end or '*')
+                # find works restricted by range
+                filter_qs.append('%s:%s' % (range_facet, range_filter))
+
+            # get minimum and maximum pub date values from the db
+            pubmin, pubmax = self.form.pub_date_minmax()
+
+            # NOTE: hard-coded values are fallback logic for when
+            # no contents are in the database and pubmin/pubmax are None
+            start = int(start) if start else pubmin or 0
+            end = int(end) if end else pubmax or 1800
+
+            # Configure range facet options specific to current field, to
+            # support more than one range facet (even though not currently needed)
+            range_opts.update({
+                # current range filter
+                'f.%s.facet.range.start' % range_facet: start,
+                # NOTE: per facet.range.include documentation, default behavior
+                # is to include lower bound and exclude upper bound.
+                # For simplicity, increase range end by one.
+                'f.%s.facet.range.end' % range_facet: end + 1,
+                # calculate gap based start and end & desired number of slices
+                # ideally, generate 24 slices; minimum gap size of 1
+                'f.%s.facet.range.gap' % range_facet: max(1, int((end - start) / 24)),
+                # restrict last range to *actual* maximum value
+                'f.%s.facet.range.hardend' % range_facet: True
+            })
+
         # check for facet filters that should be enabled
         for solr_field, form_field in self.form.solr_facet_fields.items():
             field_values = search_opts.get(form_field, None)
@@ -90,7 +128,7 @@ class BookListView(ListView, LastModifiedListMixin):
         if sort:
             solr_sort = self.form.get_solr_sort_field(sort)
 
-        return {
+        solr_opts = {
             'q': solr_q,
             'sort': solr_sort,
             # 'fl': fields,
@@ -101,6 +139,8 @@ class BookListView(ListView, LastModifiedListMixin):
             'facet.sort': 'index',
             'fq': filter_qs
         }
+        solr_opts.update(range_opts)
+        return solr_opts
 
     def get_queryset(self, **kwargs):
         # return all books, filtering on content type
@@ -168,7 +208,8 @@ class BookFacetJSONView(BookListView):
         try:
             return {
                 'total': self.object_list.count(),
-                'facets': self.object_list.get_facets()
+                'facets': self.object_list.get_facets(),
+                'range_facets': self.object_list.get_facets_ranges()
             }
         except SolrError as solr_err:
             error_msg = 'Something went wrong.'
@@ -204,7 +245,6 @@ class BookDetailView(DetailView, LastModifiedMixin):
                 return self.solr_timestamp_to_datetime(psq[0]['last_modified'])
         except SolrError:
             pass
-
 
 
 class PublisherAutocomplete(autocomplete.Select2QuerySetView):
