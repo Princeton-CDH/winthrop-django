@@ -1,10 +1,12 @@
 from datetime import datetime
 import json
+import re
 from time import sleep
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
+from django.db.models import Q
 from django.template.defaultfilters import escape
 from django.test import TestCase
 from django.urls import reverse
@@ -180,10 +182,39 @@ class TestBookViews(TestCase):
             .order_by('creator__person__authorized_name')
         assert response.context['object_list'][0]['short_title'] == \
             authored_books.first().short_title
-
+        # ordered by pub_year_asc
         response = self.client.get(url, {'sort': 'pub_year_asc'})
         books = Book.objects.order_by('pub_year')
         assert response.context['object_list'][0]['pub_year'] == books.first().pub_year
+
+        ## filtering
+        # by author
+        # NOTE: db lookups rely on the fixture not having someone who is a
+        # contributor on multiple books
+        
+        # should be two results
+        response = self.client.get(url, {'author': ['Hesiod',
+                                         'Abelin, Johann Philipp']})
+        assert len(response.context['object_list']) == 2
+        # get matching book titles from database object
+        matching_books = books.filter(
+            Q(creator__person__authorized_name='Hesiod') |
+            Q(creator__person__authorized_name='Abelin, Johann Philipp')
+        ).values_list('title', flat=True)
+        # both titles should be in the list
+        assert response.context['object_list'][0]['title'] in matching_books
+        assert response.context['object_list'][1]['title'] in matching_books
+        # by editor
+        response = self.client.get(url, {'editor': ['Heinsius, Daniel']})
+        assert len(response.context['object_list']) == 1
+        # should retrieve the same book as the parallel db query
+        assert response.context['object_list'][0]['title'] == \
+            books.get(creator__person__authorized_name='Heinsius, Daniel').title
+        # by translator
+        response = self.client.get(url, {'translator': ['Tellus, Sylvester']})
+        assert len(response.context['object_list']) == 1
+        assert response.context['object_list'][0]['title'] == \
+            books.get(creator__person__authorized_name='Tellus, Sylvester').title
 
     @pytest.mark.usefixtures("solr")
     def test_book_detail(self):
@@ -288,6 +319,8 @@ class TestBookViews(TestCase):
     @pytest.mark.usefixtures('solr')
     def test_book_facet_json(self):
 
+        # since tests check filtering by query string on book list view, and
+        # this is a subclass, primarily checking structure and method logic
         url = reverse('books:facets')
 
         # unerrored run to view
@@ -299,9 +332,32 @@ class TestBookViews(TestCase):
         # should have JSON with a 'total' key and a 'facets' key
         res_dict = response.json()
         # should be a dictionary response, with a dictionary of facets and
-        # a total that is an int
+        # a total that is an int, as well as a range facets dict
         assert isinstance(res_dict['facets'], dict)
         assert isinstance(res_dict['total'], int)
+        assert isinstance(res_dict['range_facets']['pub_year'], dict)
+        # the pub_year range facet dict should be a series of keys that are
+        # a year and an int count
+        for key, value in res_dict['range_facets']['pub_year'].items():
+            # at least check that they're digits
+            assert re.search(r'\d+', key)
+            assert isinstance(value, int)
+        # no books in Solr,
+        # so all the facets (except range, which uses defaults), should
+        # be empty dicts
+        for key, value in res_dict['facets'].items():
+            assert not value
+            assert isinstance(value, dict)
+
+        books = Book.objects.all()
+        # index for subsequent searches
+        Indexable.index_items(books, params={'commitWithin': 500})
+        sleep(2)
+        response = self.client.get(url)
+        res_dict = response.json()
+        # now facets should be supplied with values
+        for key, value in res_dict['facets'].items():
+            assert value
 
         # simulate a solr error, both 500 and bad search
         with patch('winthrop.books.views.PagedSolrQuery') as mockpsq:
