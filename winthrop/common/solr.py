@@ -56,10 +56,11 @@ class SolrSchema(object):
         {'name': 'author_exact', 'type': 'string', 'required': False},
         {'name': 'editor_exact', 'type': 'string', 'required': False},
         {'name': 'translator_exact', 'type': 'string', 'required': False},
-        # multi valued because we want to be able to detect that
-        # a book has multiple languages and match accordingly.
-        {'name': 'languages_exact', 'type': 'string', 'required': False,
-            'multiValued': True},
+        {'name': 'language_exact', 'type': 'string', 'required': False,
+         'multiValued': True},
+        {'name': 'subject_exact', 'type': 'string', 'required': False,
+         'multiValued': True}
+
     ]
     #: fields to be copied into general purpose text field for searching
     text_fields = ['title', 'short_title', 'authors', 'pub_year']

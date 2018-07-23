@@ -271,7 +271,7 @@ class TestBook(TestCase):
 
         # no languages on books in fixture, so test that state first
         index_data = book.index_data()
-        assert index_data['languages_exact'] == []
+        assert index_data['language_exact'] == []
         # now add languages and assert that they are in index_data
         english = Language.objects.get(name='English')
         french = Language.objects.get(name='French')
@@ -279,11 +279,24 @@ class TestBook(TestCase):
             BookLanguage(book=book, language=english, is_primary=True),
             BookLanguage(book=book, language=french, is_primary=False),
         ])
-
         index_data = book.index_data()
-        assert 'English' in index_data['languages_exact']
-        assert 'French' in index_data['languages_exact']
-        
+        assert 'English' in index_data['language_exact']
+        assert 'French' in index_data['language_exact']
+
+        # no subjects in book fixture
+        index_data = book.index_data()
+        assert index_data['subject_exact'] == []
+        # add subjects and assert that they are in index_data
+        alchemy = Subject.objects.get(name='Alchemy')
+        historia = Subject.objects.get(name='Historia')
+        BookSubject.objects.bulk_create([
+            BookSubject(book=book, subject=alchemy, is_primary=True),
+            BookSubject(book=book, subject=historia, is_primary=True),
+        ])
+        index_data = book.index_data()
+        assert 'Alchemy' in index_data['subject_exact']
+        assert 'Historia' in index_data['subject_exact']
+
     def test_generate_slug(self):
         # model method
         book = Book.objects.all().first()

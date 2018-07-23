@@ -291,7 +291,8 @@ class Book(Notable, Indexable):
             # TODO: split out sort author and facet author? facet can be multiple, sort cannot
             'editor_exact': str(self.editors().first()) if self.editors().exists() else None,
             'translator_exact': str(self.translators().first()) if self.translators().exists() else None,
-            'languages_exact': [language.name for language in self.languages.all()],
+            'language_exact': [language.name for language in self.languages.all()],
+            'subject_exact': [subject.name for subject in self.subjects.all()],
             'pub_year': self.pub_year,
             # NOTE: this indicates whether the book is annotated, does not
             # necessarily mean there are annotations documented in our system
