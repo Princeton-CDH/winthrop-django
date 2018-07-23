@@ -1,7 +1,10 @@
 import SearchFacet from '../SearchFacet'
+import SearchFilter from '../SearchFilter'
+import initialData from './initialData'
 
 export default Vue.component('BooksSearch', {
-    template: `<form class="search-form ui form">
+    template: `
+    <form class="search-form ui form">
         <sui-menu tabular attached="top">
             <div
                 is="sui-menu-item"
@@ -21,98 +24,38 @@ export default Vue.component('BooksSearch', {
             <div class="ui equal width stackable grid">
                 <search-facet
                     v-for="facet in tab"
-                    @input="submit"
+                    v-bind="facets.filter(f => f.label===facet)"
+                    @input="onStateChange"
                     :key="facet"
                     :label="facet"
-                    :type="facets[facet].type"
-                    :search="facets[facet].search"
-                    :choices="facets[facet].choices"
-                    :width="facets[facet].width"
                 />
             </div>
         </sui-segment>
+        <search-filter
+            v-for="filter in filters"
+            v-bind="filter"
+            @input="onStateChange"
+            :key="filter.label"
+        />
+        <sui-segment inverted>
+            <label>Selected</label>
+            {{ formState }}
+        </sui-segment>
     </form>`,
     components: {
-        SearchFacet
+        SearchFacet,
+        SearchFilter
     },
     data() {
-        return {
-            tabs: [
-                ['Author', 'Editor', 'Translator'],
-                ['Publisher', 'Publication Year'],
-                ['Language', 'Subject'],
-                ['Annotator']
-            ],
-            active: 0,
-            facets: {
-                'Author': {
-                    'type': 'text',
-                    'search': true,
-                    'width': 6,
-                    'choices': [
-                        {'label': 'Copus, Martinus', 'count': 1},
-                        {'label': 'Rous, Francis, 1615-', 'count': 6},
-                        {'label': 'Biancani, Giuseppe', 'count': 12},
-                        {'label': 'Herdson, Henry', 'count': 1},
-                        {'label': 'Moolen, Simon va: de', 'count': 2},
-                        {'label': 'Clüver, Philipp: 1580-1622', 'count': 3},
-                        {'label': 'Sira, Ben', 'count': 1},
-                    ],
-                },
-                'Editor': {
-                    'type': 'text',
-                    'choices': [
-                        {'label': 'Copus, Martinus', 'count': 1},
-                        {'label': 'Rous, Francis, 1615-', 'count': 6},
-                        {'label': 'Biancani, Giuseppe', 'count': 12},
-                        {'label': 'Herdson, Henry', 'count': 1},
-                        {'label': 'Moolen, Simon va: de', 'count': 2},
-                        {'label': 'Clüver, Philipp: 1580-1622', 'count': 3},
-                        {'label': 'Sira, Ben', 'count': 1},
-                    ],
-                },
-                'Translator': {
-                    'type': 'text',
-                    'choices': [
-                        {'label': 'Copus, Martinus', 'count': 1},
-                        {'label': 'Rous, Francis, 1615-', 'count': 6},
-                        {'label': 'Biancani, Giuseppe', 'count': 12},
-                        {'label': 'Herdson, Henry', 'count': 1},
-                        {'label': 'Moolen, Simon va: de', 'count': 2},
-                        {'label': 'Clüver, Philipp: 1580-1622', 'count': 3},
-                        {'label': 'Sira, Ben', 'count': 1},
-                    ],
-                },
-                'Publisher': {
-                    'type': 'text',
-                    'search': true,
-                    'width': 8,
-                    'choices': [
-                        {'label': 'Copus, Martinus', 'count': 1},
-                        {'label': 'Rous, Francis, 1615-', 'count': 6},
-                        {'label': 'Biancani, Giuseppe', 'count': 12},
-                        {'label': 'Herdson, Henry', 'count': 1},
-                        {'label': 'Moolen, Simon va: de', 'count': 2},
-                        {'label': 'Clüver, Philipp: 1580-1622', 'count': 3},
-                        {'label': 'Sira, Ben', 'count': 1},
-                    ],
-                },
-                'Publication Year': {
-                    'type': 'range',
-                    'choices': [
-                        {'label': '1765', 'count': 5},
-                        {'label': '1766', 'count': 2},
-                        {'label': '1768', 'count': 1},
-                        {'label': '1785', 'count': 1},
-                        {'label': '1795', 'count': 1},
-                        {'label': '1843', 'count': 9},
-                    ]
-                },
-                'Language': {},
-                'Subject': {},
-                'Annotator': {},
-            }
-        }
+        return initialData
+    },
+    computed: {
+        // activeFilters() {
+        //     return this.formState.filter(field => this.filters.map(filter => filter.label).includes(field.name)) 
+        // },
+        // activeFacets() {
+        //     return this.formState.filter(field => this.facets.map(facet => facet.label).includes(field.name))
+        // }
     },
     methods: {
         isActive(tabIndex) {
@@ -121,9 +64,8 @@ export default Vue.component('BooksSearch', {
         select(tabIndex) {
           this.active = tabIndex
         },
-        submit() {
-            let data = $(this.$el).serializeArray()
-            console.log(data)
+        onStateChange() {
+            this.formState = $(this.$el).serializeArray()
         }
     },
 })

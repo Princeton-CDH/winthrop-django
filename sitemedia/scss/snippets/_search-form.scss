@@ -37,6 +37,10 @@
         .letter {
             width: calc((1 / 13) * 100%);
             text-align: center;
+
+            &.active {
+                text-decoration: underline;
+            }
         }
     }
 
