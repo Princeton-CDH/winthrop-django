@@ -7,9 +7,9 @@ export default Vue.component('SearchFilter', {
             <filter-choice
                 v-for="choice in choices"
                 @input="$emit('input')"
-                :key="choice.label"
+                :key="choice"
                 :name="label"
-                :label="choice"
+                :label="fieldLabels[choice]"
                 :value="choice"
             />
         <label>books</label>
@@ -20,6 +20,7 @@ export default Vue.component('SearchFilter', {
     },
     props: {
         label: String,
+        fieldLabels: Object,
         choices: Array
     },
     data() {

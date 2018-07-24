@@ -7,14 +7,15 @@ export default Vue.component('SearchFacet', {
         <template v-if="type === 'text'">
             <sui-input v-if="search" iconPosition="left" icon="search" placeholder="Search or select" v-model="filter" />
             <div v-if="search" class="rolodex">
-                <a
+                <button
                     v-for="letter in alphabet"
+                    :key="letter"
                     class="letter"
                     :class="{active: alphaFilter == letter}"
-                    @click="alphaFilter = alphaFilter == letter ? '' : letter"
+                    @click.prevent="alphaFilter = alphaFilter == letter ? '' : letter"
                 >
                 {{ letter }}
-                </a>
+                </button>
             </div>
             <div v-if="choices" class="facets">
                 <facet-choice
@@ -22,7 +23,7 @@ export default Vue.component('SearchFacet', {
                     v-show="availableChoices.includes(choice.label)"
                     @input="$emit('input')"
                     :key="choice.label"
-                    :name="label"
+                    :name="name"
                     :label="choice.label"
                     :count="choice.count"
                     :value="choice.label"
@@ -41,7 +42,7 @@ export default Vue.component('SearchFacet', {
         return {
             filter: '',
             alphaFilter: '',
-            alphabet: [...Array(26)].map((_,w) => String.fromCharCode(w+97).toUpperCase())
+            alphabet: String.fromCharCode(...Array(91).keys()).slice(65)
         }
     },
     computed: {
@@ -55,6 +56,7 @@ export default Vue.component('SearchFacet', {
     props: {
         type: String,
         label: String,
+        name: String,
         search: {
             type: Boolean,
             default: false
@@ -75,7 +77,7 @@ export default Vue.component('SearchFacet', {
         },
         /**
          * Compares two strings using normalize().
-         * Return true if str1 matches str2.
+         * Return true if str2 matches str1.
          *
          * @param {String} str1
          * @param {String} str2
