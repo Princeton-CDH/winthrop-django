@@ -96,6 +96,26 @@ class TestBook(TestCase):
 
         assert de_christelicke.catalogue_call_numbers() == 'Win 60, NY789'
 
+    def test_annotators(self):
+        de_christelicke = Book.objects.get(short_title__contains="De Christelicke")
+        # no annotators by default in fixture
+        de_christelicke.annotators().count() == 0
+        # create an annotation to check
+        # get the first manifest from the fixture
+        de_christelicke.digital_edition = Manifest.objects.first()
+        de_christelicke.save()
+        canvas = de_christelicke.digital_edition.canvases.first()
+        person = Person.objects.first()
+        # create annotation with first person in manifest
+        Annotation.objects.create(
+            canvas=canvas,
+            author=person
+        )
+        # should be one annotator, and that annotator should be person
+        de_christelicke.annotators().count() == 1
+        de_christelicke.annotators() == Person.objects\
+            .filter(annotation__canvas__manifest__book=de_christelicke)
+
     def test_authors(self):
         de_christelicke = Book.objects.get(short_title__contains="De Christelicke")
 
