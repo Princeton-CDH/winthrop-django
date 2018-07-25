@@ -203,11 +203,11 @@ class SearchForm(forms.Form):
         'relevance': 'score desc',
         'pub_year_asc': 'pub_year asc',
         'pub_year_desc': 'pub_year desc',
-        'author_asc': 'author_exact asc',
-        'author_desc': 'author_exact desc',
+        'author_asc': 'author_sort asc',
+        'author_desc': 'author_sort desc',
     }
 
-    PUBDATE_CACHE_KEY = 'digitizedwork_pubdate_maxmin'
+    PUBDATE_CACHE_KEY = 'book_pubdate_maxmin'
 
     def pub_date_minmax(self):
         '''Get minimum and maximum values for

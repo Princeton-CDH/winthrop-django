@@ -222,7 +222,7 @@ class Book(Notable, Indexable):
         # get a list of ids for collected works before clearing them
         book_ids = instance.book_set.values_list('id', flat=True)
 
-        logger.debug('peson delete, reindexing %d book(s)', len(book_ids))
+        logger.debug('person delete, reindexing %d book(s)', len(book_ids))
         # find the items based on the list of ids to reindex
         books = Book.objects.filter(id__in=list(book_ids))
 
@@ -247,7 +247,7 @@ class Book(Notable, Indexable):
         'creator_set': {
             'post_save': handle_creator_change,
             'post_delete': handle_creator_change,
-        }
+        },
     }
 
     def index_id(self):
@@ -287,12 +287,12 @@ class Book(Notable, Indexable):
             'authors': [str(author) for author in self.authors()],
             # first author only, for sorting
             # FIXME: sort on last name first? not an ordered relationship currently
-            'author_exact': str(self.authors().first()) if self.authors().exists() else None,
-            # TODO: split out sort author and facet author? facet can be multiple, sort cannot
-            'editor_exact': str(self.editors().first()) if self.editors().exists() else None,
-            'translator_exact': str(self.translators().first()) if self.translators().exists() else None,
-            'language_exact': [language.name for language in self.languages.all()],
-            'subject_exact': [subject.name for subject in self.subjects.all()],
+            # NOTE: author_exact is a copy field.
+            'author_sort': str(self.authors().first()) if self.authors().exists() else None,
+            'editor_exact': [str(editor) for editor in self.editors()],
+            'translator_exact': [str(translator) for translator in self.translators()],
+            'language_exact': [str(language) for language in self.languages.all()],
+            'subject_exact': [str(subject) for subject in self.subjects.all()],
             'pub_year': self.pub_year,
             # NOTE: this indicates whether the book is annotated, does not
             # necessarily mean there are annotations documented in our system

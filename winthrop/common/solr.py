@@ -53,9 +53,13 @@ class SolrSchema(object):
 
         # sort/facet copy fields
         # {'name': 'title_exact', 'type': 'string', 'required': False},
-        {'name': 'author_exact', 'type': 'string', 'required': False},
-        {'name': 'editor_exact', 'type': 'string', 'required': False},
-        {'name': 'translator_exact', 'type': 'string', 'required': False},
+        {'name': 'author_sort', 'type': 'string', 'required': False},
+        {'name': 'author_exact', 'type': 'string', 'required': False,
+         'multiValued': True},
+        {'name': 'editor_exact', 'type': 'string', 'required': False,
+         'multiValued': True},
+        {'name': 'translator_exact', 'type': 'string', 'required': False,
+         'multiValued': True},
         {'name': 'language_exact', 'type': 'string', 'required': False,
          'multiValued': True},
         {'name': 'subject_exact', 'type': 'string', 'required': False,
@@ -67,7 +71,7 @@ class SolrSchema(object):
     #: copy fields, e.g. for facets
     copy_fields = [
         # ('title', 'title_exact'),
-        # ('authors', 'author_exact'),
+        ('authors', 'author_exact'),
     ]
 
     def __init__(self):
@@ -383,6 +387,5 @@ class Indexable(object):
                     # reverse relationship of a many to many
                     elif isinstance(attr, ReverseManyToOneDescriptor):
                         related[attr.rel.related_model] = opts
-
         cls.related = related
         cls.m2m = m2m
