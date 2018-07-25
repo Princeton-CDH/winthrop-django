@@ -48,6 +48,8 @@ class TestSearchForm(TestCase):
         assert searchform.fields['sort'].widget.choices[-1][1] == 'Relevance'
 
     def test_get_solr_sort_field(self):
-        assert SearchForm().get_solr_sort_field('relevance') == 'score desc'
-        assert SearchForm().get_solr_sort_field('author_asc') == 'author_exact asc'
-
+        form = SearchForm()
+        assert form.get_solr_sort_field('relevance') == \
+            form.solr_sort_fields['relevance']
+        assert form.get_solr_sort_field('author_asc') == \
+            form.solr_sort_fields['author_asc']
