@@ -11,6 +11,7 @@ from djiffy.models import Manifest
 import pytest
 from unidecode import unidecode
 
+from winthrop.annotation.models import Annotation
 from winthrop.books.models import OwningInstitution, Book, Publisher, Catalogue, \
     Creator, CreatorType, Subject, BookSubject, Language, BookLanguage, \
     PersonBook, PersonBookRelationshipType
@@ -249,6 +250,8 @@ class TestBook(TestCase):
 
         # associate digital edition from fixture (has no thumbnail)
         book.digital_edition = Manifest.objects.first()
+        # save so its real for other database lookups
+        book.save()
         # has digital edition but no thumbnail
         # book = Book.objects.filter(digital_edition__isnull=False).first()
         index_data = book.index_data()
@@ -264,6 +267,18 @@ class TestBook(TestCase):
         index_data = book.index_data()
         assert index_data['thumbnail'] == canvas.iiif_image_id
         assert index_data['thumbnail_label'] == canvas.label
+
+        # no annotators
+        index_data = book.index_data()
+        assert index_data['annotator_exact'] == []
+        # add annotator
+        ann = Annotation.objects.create(
+            author=Person.objects.first(),
+            canvas=canvas,
+            uri=canvas.uri,
+        )
+        index_data = book.index_data()
+        assert index_data['annotator_exact'] == [str(Person.objects.first())]
 
         # no authors
         book.creator_set.all().delete()

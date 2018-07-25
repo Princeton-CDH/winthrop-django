@@ -132,6 +132,15 @@ class Book(Notable, Indexable):
         return ', '.join([c.call_number for c in self.catalogue_set.all()])
     catalogue_call_numbers.short_description = 'Call Numbers'
 
+    def annotators(self):
+        '''Return a queryset of :class:`winthrop.people.models.Person` objects
+            who annotated the book.
+        '''
+        # could be a property but leaving a method to be parallel to authors,
+        # editors, etc. methods
+        return Person\
+            .objects.filter(annotation__canvas__manifest__book=self)
+
     def authors(self):
         '''Contributor queryset filtered by creator type Author'''
         return self.contributor_by_type('Author')
@@ -293,6 +302,7 @@ class Book(Notable, Indexable):
             'translator_exact': [str(translator) for translator in self.translators()],
             'language_exact': [str(language) for language in self.languages.all()],
             'subject_exact': [str(subject) for subject in self.subjects.all()],
+            'annotator_exact': [str(annotator) for annotator in self.annotators()],
             'pub_year': self.pub_year,
             # NOTE: this indicates whether the book is annotated, does not
             # necessarily mean there are annotations documented in our system

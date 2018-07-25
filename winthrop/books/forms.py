@@ -145,6 +145,7 @@ class SearchForm(forms.Form):
     translator = FacetChoiceField()
     language = FacetChoiceField()
     subject = FacetChoiceField()
+    annotator = FacetChoiceField()
     # range choice fields
     pub_year = RangeField(
         label='Publication Year',
@@ -161,6 +162,7 @@ class SearchForm(forms.Form):
         'translator_exact': 'translator',
         'language_exact': 'language',
         'subject_exact': 'subject',
+        'annotator_exact': 'annotator'
     }
 
     range_facets = ['pub_year']

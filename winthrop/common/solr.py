@@ -63,6 +63,8 @@ class SolrSchema(object):
         {'name': 'language_exact', 'type': 'string', 'required': False,
          'multiValued': True},
         {'name': 'subject_exact', 'type': 'string', 'required': False,
+         'multiValued': True},
+        {'name': 'annotator_exact', 'type': 'string', 'required': False,
          'multiValued': True}
 
     ]
