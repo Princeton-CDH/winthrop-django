@@ -69,6 +69,15 @@ COMPRESS_PRECOMPILERS = (
     ('module', 'compressor_toolkit.precompilers.ES6Compiler')
 )
 
+# Compressor-toolkit
+# https://github.com/kottenator/django-compressor-toolkit
+
+COMPRESS_ES6_COMPILER_CMD = '''
+    export NODE_PATH="{paths}" && \
+    {browserify_bin} "{infile}" -o "{outfile}" \
+    -t [ "{node_modules}/babelify" --presets [ "{node_modules}/@babel/preset-env" ] ]
+'''
+
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
