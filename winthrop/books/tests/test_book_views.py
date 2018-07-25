@@ -191,7 +191,7 @@ class TestBookViews(TestCase):
         # by author
         # NOTE: db lookups rely on the fixture not having someone who is a
         # contributor on multiple books
-        
+
         # should be two results
         response = self.client.get(url, {'author': ['Hesiod',
                                          'Abelin, Johann Philipp']})
@@ -346,18 +346,7 @@ class TestBookViews(TestCase):
         # so all the facets (except range, which uses defaults), should
         # be empty dicts
         for key, value in res_dict['facets'].items():
-            assert not value
             assert isinstance(value, dict)
-
-        books = Book.objects.all()
-        # index for subsequent searches
-        Indexable.index_items(books, params={'commitWithin': 500})
-        sleep(2)
-        response = self.client.get(url)
-        res_dict = response.json()
-        # now facets should be supplied with values
-        for key, value in res_dict['facets'].items():
-            assert value
 
         # simulate a solr error, both 500 and bad search
         with patch('winthrop.books.views.PagedSolrQuery') as mockpsq:
