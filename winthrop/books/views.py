@@ -162,7 +162,6 @@ class BookListView(ListView, LastModifiedListMixin):
             self.form.set_choices_from_facets(self.object_list.get_facets())
 
         except SolrError as solr_err:
-            print(solr_err)
             context = {'object_list': []}
             if 'Cannot parse' in str(solr_err):
                 error_msg = 'Unable to parse search query; please revise and try again.'

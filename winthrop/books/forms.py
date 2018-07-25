@@ -165,6 +165,8 @@ class SearchForm(forms.Form):
         'annotator_exact': 'annotator'
     }
 
+    # TODO: Should this be a dict? Right now it doesn't need a different name
+    # to map to the fields used in the form.
     range_facets = ['pub_year']
 
     def __init__(self, data=None, *args, **kwargs):

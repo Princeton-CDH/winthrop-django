@@ -292,7 +292,7 @@ class TestBook(TestCase):
         index_data = book.index_data()
         assert index_data['annotator_exact'] == []
         # add annotator
-        ann = Annotation.objects.create(
+        Annotation.objects.create(
             author=Person.objects.first(),
             canvas=canvas,
             uri=canvas.uri,

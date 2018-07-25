@@ -13,9 +13,12 @@ from django.urls import reverse
 import pytest
 from SolrClient.exceptions import SolrError
 
+from winthrop.annotation.models import Annotation
+from winthrop.books.forms import SearchForm
 from winthrop.books.models import Book
 from winthrop.common.solr import Indexable, PagedSolrQuery
 from winthrop.common.views import LastModifiedMixin
+from winthrop.people.models import Person
 
 
 class TestBookViews(TestCase):
@@ -188,11 +191,10 @@ class TestBookViews(TestCase):
         assert response.context['object_list'][0]['pub_year'] == books.first().pub_year
 
         ## filtering
+
         # by author
         # NOTE: db lookups rely on the fixture not having someone who is a
-        # contributor on multiple books
-
-        # should be two results
+        # contributor on multiple books should be two results
         response = self.client.get(url, {'author': ['Hesiod',
                                          'Abelin, Johann Philipp']})
         assert len(response.context['object_list']) == 2
@@ -204,17 +206,38 @@ class TestBookViews(TestCase):
         # both titles should be in the list
         assert response.context['object_list'][0]['title'] in matching_books
         assert response.context['object_list'][1]['title'] in matching_books
+
         # by editor
         response = self.client.get(url, {'editor': ['Heinsius, Daniel']})
         assert len(response.context['object_list']) == 1
         # should retrieve the same book as the parallel db query
         assert response.context['object_list'][0]['title'] == \
             books.get(creator__person__authorized_name='Heinsius, Daniel').title
+
         # by translator
         response = self.client.get(url, {'translator': ['Tellus, Sylvester']})
         assert len(response.context['object_list']) == 1
         assert response.context['object_list'][0]['title'] == \
             books.get(creator__person__authorized_name='Tellus, Sylvester').title
+
+        # by annotator
+        # create annotation on first book with a canvas
+        book = Book.objects.filter(digital_edition__isnull=False).first()
+        person = Person.objects.first()
+        canvas = book.digital_edition.canvases.first()
+        Annotation.objects.create(
+            canvas=canvas,
+            author=person,
+            uri=canvas.uri
+        )
+        book.index(params={'commitWithin': 500})
+        sleep(2)
+        response = self.client.get(url, {'annotator': [str(person)]})
+        # should filter the book that has an annotation added
+        assert len(response.context['object_list']) == 1
+        assert response.context['object_list'][0]['title'] == book.title
+
+
 
     @pytest.mark.usefixtures("solr")
     def test_book_detail(self):
@@ -320,7 +343,8 @@ class TestBookViews(TestCase):
     def test_book_facet_json(self):
 
         # since tests check filtering by query string on book list view, and
-        # this is a subclass, primarily checking structure and method logic
+        # this is a subclass, primarily checking facet structure here as it's
+        # more easily exposed
         url = reverse('books:facets')
 
         # unerrored run to view
@@ -342,11 +366,43 @@ class TestBookViews(TestCase):
             # at least check that they're digits
             assert re.search(r'\d+', key)
             assert isinstance(value, int)
+
         # no books in Solr,
         # so all the facets (except range, which uses defaults), should
         # be empty dicts
         for key, value in res_dict['facets'].items():
             assert isinstance(value, dict)
+        # all of the facet fields are present in facets
+        for value in SearchForm().solr_facet_fields.values():
+            assert value in res_dict['facets'].keys()
+        # all of the range facet fields are present in 'range facets'
+        for value in SearchForm().range_facets:
+            assert value in res_dict['range_facets'].keys()
+        # books in solr, facets should have values
+        book = Book.objects.filter(digital_edition__isnull=False).first()
+        person = Person.objects.first()
+        canvas = book.digital_edition.canvases.first()
+        Annotation.objects.create(
+            canvas=canvas,
+            author=person,
+            uri=canvas.uri
+        )
+        books = Book.objects.all()
+        # index books for subsequent searches
+        Indexable.index_items(books, params={'commitWithin': 500})
+        sleep(2)
+        response = self.client.get(url)
+        res_dict = response.json()
+        # check that all of the keys have values now
+        for key, value in res_dict['facets'].items():
+            assert isinstance(value, dict)
+            assert value
+        # filtering on an field should change the facets to reflect
+        # the new filtering
+        old_res_dict = res_dict
+        response = self.client.get(url, {'author': 'Abelin, Johann Philipp'})
+        res_dict = response.json()
+        assert res_dict != old_res_dict
 
         # simulate a solr error, both 500 and bad search
         with patch('winthrop.books.views.PagedSolrQuery') as mockpsq:
