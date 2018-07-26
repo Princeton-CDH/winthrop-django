@@ -19,14 +19,11 @@ export default Vue.component('SearchFacet', {
             </div>
             <div v-if="choices" class="facets">
                 <facet-choice
-                    v-for="choice in choices"
-                    v-show="availableChoices.includes(choice.label)"
-                    @input="$emit('input')"
-                    :key="choice.label"
+                    v-for="choice of choices"
+                    v-show="availableChoices.includes(choice.value)"
+                    v-bind="choice"
                     :name="name"
-                    :label="choice.label"
-                    :count="choice.count"
-                    :value="choice.label"
+                    :key="choice.value"
                 />
             </div>
         </template>
@@ -48,9 +45,9 @@ export default Vue.component('SearchFacet', {
     computed: {
         availableChoices() {
             return this.choices
-                .map(choice => choice.label)
-                .filter(label => this.normalize(label).startsWith(this.alphaFilter))
-                .filter(label => this.match(label, this.filter))
+                .map(choice => choice.value)
+                .filter(value => this.normalize(value).startsWith(this.alphaFilter))
+                .filter(value => this.match(value, this.filter))
         }
     },
     props: {

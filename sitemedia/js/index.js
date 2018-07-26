@@ -1,4 +1,4 @@
-$(document).ready(function(){
+$(() => {
     var $ribbon = $('.ribbon');
     if ($ribbon) {
         var faded = sessionStorage.getItem('fade-test-banner', true);

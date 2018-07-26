@@ -17,12 +17,7 @@
 
 {% block content %}
 <div class="ui container">
-	<div class="ui center aligned text container">
-		{% if paginator.count %}
-			<h4 class="results-count ui header">Displaying {{ paginator.count|intcomma }} book{{ paginator.count|pluralize }}</h4>
-		{% endif %}
-	</div>
-	<books-search />
+	<router-view></router-view>
 	{% if paginator.count %}
 	<div class="ui two column stackable grid">
 		{% for book in object_list %}
