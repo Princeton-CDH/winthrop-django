@@ -22,7 +22,6 @@ export default Vue.component('SearchFacet', {
                     v-for="choice of choices"
                     v-show="availableChoices.includes(choice.value)"
                     v-bind="choice"
-                    :name="name"
                     :key="choice.value"
                 />
             </div>

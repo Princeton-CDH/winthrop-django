@@ -7,7 +7,9 @@ export default Vue.component('BooksSearch', {
     template: `
     <div class="books-search">
         <sui-container textAlign="center" text>
-            <h4 is="sui-header" class="results-count">Displaying {{ totalResults }} {{ totalResults | pluralize('book') }}</h4>
+            <h4 is="sui-header" class="results-count">
+            Displaying {{ totalResults }} {{ totalResults | pluralize('book') }}
+            </h4>
         </sui-container>
         <form class="search-form ui form">
             <sui-menu tabular attached="top">
@@ -16,7 +18,7 @@ export default Vue.component('BooksSearch', {
                     v-for="(tab, index) in tabs"
                     :key="index"
                     :active="activeTab === index"
-                    :content="tab.map(facet => facetConfig[facet].label).join(' · ')"
+                    :content="tabLabel(tab)"
                     @click="activeTab = index"
                 />
             </sui-menu>
@@ -28,25 +30,16 @@ export default Vue.component('BooksSearch', {
             >
                 <div class="ui equal width stackable grid">
                     <search-facet
-                        v-for="facet in tab"
-                        v-bind="facetConfig[facet]"
-                        :name="facet"
-                        :choices="facets[facet]"
-                        :key="facet"
+                        v-for="facetName in tab"
+                        v-bind="facetConfig.find(facet => facet.name === facetName)"
+                        :choices="facetChoices.filter(choice => choice.facet === facetName)"
+                        :key="facetName"
                     >
                     </search-facet>
                 </div>
             </sui-segment>
             <sui-segment inverted>
                 <label>Selected</label>
-                <div v-for="(choices, facet) in activeFacets" :key="facet">
-                    <label>{{ facetConfig[facet].label }}:</label>
-                    <sui-label v-for="choice in choices" :key="choice.value">
-                        {{ choice.value }}
-                        <sui-icon name="delete" />
-                    </sui-label>
-                </div>
-                <a v-if="Object.keys(activeFacets).length > 0">Clear All</a>
             </sui-segment>
         </form>
     </div>`,
@@ -63,61 +56,81 @@ export default Vue.component('BooksSearch', {
                 ['annotator']
             ],
             activeTab: 0,
-            facetConfig: {
-                author: {
+            facetConfig: [
+                {
+                    name: 'author',
                     label: 'Author',
                     type: 'text',
                     search: true,
                     width: 6,
                 },
-                editor: {
+                {
+                    name: 'editor',
                     label: 'Editor',
                     type: 'text',
                 },
-                translator: {
+                {
+                    name: 'translator',
                     label: 'Translator',
                     type: 'text',
                 },
-                publisher: {
+                {
+                    name: 'publisher',
                     label: 'Publisher',
                     type: 'text',
                 },
-                pub_year: {
+                {
+                    name: 'pub_year',
                     label: 'Publication Year',
                     type: 'range',
                 },
-                language: {
+                {
+                    name: 'language',
                     label: 'Language',
                     type: 'text',
                 },
-                subject: {
+                {
+                    name: 'subject',
                     label: 'Subject',
                     type: 'text',
                 },
-                annotator: {
+                {
+                    name: 'annotator',
                     label: 'Annotator',
                     type: 'text',
                 },
-            },
+            ],
         }
     },
     computed: {
         ...mapState([
-            'facets',
             'filters',
             'totalResults',
+            'facetChoices',
         ]),
         ...mapGetters([
-            'activeFacets',
+            'activeFacetChoices',
         ]),
     },
     created() {
-        this.loadFacetData('/static/js/components/books/data.json')
+        this.loadSearchData('/static/js/components/books/data.json')
     },
     methods: {
         ...mapActions([
-            'loadFacetData',
+            'loadSearchData',
             'clearFacetChoices',
         ]),
+        /**
+         * Generate a string label for search widget tabs.
+         * Joins the matching label for each facet name in the tab with a separator.
+         *
+         * @param {Array} tab
+         * @returns {String}
+         */
+        tabLabel(tab) {
+            return tab
+                .map(facetName => this.facetConfig.find(facet => facet.name === facetName).label)
+                .join('  ·  ')
+        }
     },
 })

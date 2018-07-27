@@ -5,16 +5,15 @@ export default Vue.component('FacetChoice', {
     <div class="ui checkbox">
         <input
             type="checkbox"
-            @input="toggleFacetChoice({ facet: name, value: value })"
-            :name="name"
+            @input="toggleFacetChoice({ facet: facet, value: value, active: active, count: count })"
+            :name="facet"
             :value="value"
             :checked="active"
         >
         <label>{{ value }} <span class="count">{{ count }}</span></label>
-    </div>
-    `,
+    </div>`,
     props: {
-        name: String,
+        facet: String,
         value: String,
         count: Number,
         active: Boolean,

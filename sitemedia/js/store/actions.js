@@ -1,27 +1,24 @@
 export default {
-    loadFacetData ({ commit }, query) {
+    loadSearchData ({ commit }, query) {
         return fetch(query)
             .then(res => res.json())
             .then(data => {
                 commit('setTotalResults', data.total)
-                let newFacets = {}
-                for (let facet in data.facets) {
-                    let choices = []
-                    for (let value in data.facets[facet]) {
-                        choices.push({
-                            value: value,
-                            count: data.facets[facet][value],
-                            active: false
+                Object.entries(data.facets).map(facet => {
+                    Object.entries(facet[1]).map(choice => {
+                        commit('addFacetChoice', {
+                            facet: facet[0],
+                            value: choice[0],
+                            count: choice[1],
+                            active: false,
                         })
-                    }
-                    newFacets[facet] = choices
-                }
-                commit('setFacets', newFacets)
+                    })
+                })
             })
     },
 
-    toggleFacetChoice ({ commit }, facet, value) {
-        commit('toggleFacetChoice', facet, value)
+    toggleFacetChoice ({ commit }, choice) {
+        commit('editFacetChoice', { choice, active: !choice.active })
     },
 
     clearFacetChoices ({ commit }) {

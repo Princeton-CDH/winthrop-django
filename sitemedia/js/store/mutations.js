@@ -1,17 +1,27 @@
 export default {
-    setFacets (state, facets) {
-        state.facets = facets
+    addFacetChoice (state, choice) {
+        state.facetChoices.push(choice)
     },
 
-    toggleFacetChoice (state, choice) {
-        let target = state.facets[choice.facet].find(c => c.value == choice.value)
-        target.active = !target.active
+    removeFacetChoice (state, choice) {
+        state.facetChoices
+            .filter(c => c.facet === choice.facet && c.value === choice.value)
+            .forEach(c => {
+                state.facetChoices.splice(state.facetChoices.indexOf(c), 1)
+            })
     },
-    
+
+    editFacetChoice (state, { choice, active = choice.active, count = choice.count }) {
+        state.facetChoices
+            .filter(c => c.facet === choice.facet && c.value === choice.value)
+            .forEach(c => {
+                c.active = active
+                c.count = count
+            })
+    },
+
     clearFacetChoices (state) {
-        for (let facet in state.facets) {
-            state.facets[facet].forEach(choice => choice.active = false)
-        }
+        state.facetChoices.forEach(choice => choice.active = false)
     },
 
     setTotalResults (state, total) {

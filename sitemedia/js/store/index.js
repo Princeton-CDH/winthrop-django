@@ -6,9 +6,9 @@ import getters from './getters'
 Vue.use(Vuex)
 
 const state = {
-	facets: [],
 	filters: [],
 	totalResults: 0,
+	facetChoices: [],
 }
 
 export default new Vuex.Store({
