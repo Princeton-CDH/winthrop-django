@@ -135,6 +135,7 @@ class BookListView(ListView, LastModifiedListMixin):
             # turn on faceting and add any self.form facet_fields
             'facet': 'true',
             'facet.field': facet_fields,
+            'facet.limit': -1,
             # sort by alpha on facet label rather than count
             'facet.sort': 'index',
             'fq': filter_qs
