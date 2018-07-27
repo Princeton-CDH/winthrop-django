@@ -38,8 +38,15 @@ export default Vue.component('BooksSearch', {
                     </search-facet>
                 </div>
             </sui-segment>
-            <sui-segment inverted>
+            <sui-segment inverted class="active-items">
                 <label>Selected</label>
+                <div class="active-facet-choice" v-for="(choice, index) in activeFacetChoices" :key="index">
+                    <sui-label>
+                        <span class="facet-name">{{ facetConfig.find(facet => facet.name === choice.facet).label }}: </span>
+                        <span class="choice-name">{{ choice.value }}</span>
+                        <sui-icon name="delete" @click="toggleFacetChoice(choice)" />
+                    </sui-label>
+                </div>
             </sui-segment>
         </form>
     </div>`,
@@ -119,6 +126,7 @@ export default Vue.component('BooksSearch', {
         ...mapActions([
             'loadSearchData',
             'clearFacetChoices',
+            'toggleFacetChoice',
         ]),
         /**
          * Generate a string label for search widget tabs.

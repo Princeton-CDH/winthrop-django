@@ -103,8 +103,20 @@
 			"Eusebius of Caesarea et al": 1,
 			"Faulhaber, Johannes": 1
 		},
-		"editor": {},
-		"translator": {},
+		"editor": {
+			"Barlandus, Adrianus": 1,
+			"Figulus Benedictus": 1,
+			"Heinsius, Daniel": 1,
+			"Magirus, Johannes": 1
+		},
+		"translator": {
+			"Clerke, Bartholomew": 1,
+			"M. Emilio di Emilii Bresciano": 1,
+			"Pickering, Thomas": 1,
+			"Robert Norton": 1,
+			"Tellus, Sylvester": 1,
+			"Z.I. Gentleman": 1
+		},
 		"language": {},
 		"subject": {}
 	},

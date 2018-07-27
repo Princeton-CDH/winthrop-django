@@ -17,7 +17,8 @@ export default Vue.component('SearchFacet', {
                 {{ letter }}
                 </button>
             </div>
-            <div v-if="choices" class="facets">
+            <div class="facets">
+                <label v-if="availableChoices.length == 0">No results</label>
                 <facet-choice
                     v-for="choice of choices"
                     v-show="availableChoices.includes(choice.value)"

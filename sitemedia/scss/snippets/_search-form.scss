@@ -16,13 +16,13 @@
 
     .tab.segment {
         height: 330px;
+        overflow-y: scroll;
         
         .column.field {
             overflow-y: hidden;
             padding-left: 1rem;
             padding-right: 1rem;
             border-left: 2px solid $lightGrey;
-            height: 100%;
 
             &:first-child {
                 border-left: none;
@@ -31,6 +31,7 @@
     }
 
     .rolodex {
+        margin-top: .5rem;
         display: flex;
         flex-wrap: wrap;
 
@@ -77,6 +78,17 @@
         }
         .checkbox {
             width: 33%;
+        }
+    }
+
+    .active-items {
+        .active-facet-choice {
+            margin: 0 .5rem;
+            display: inline-block;
+
+            .choice-name {
+                font-weight: normal;
+            }
         }
     }
 }
