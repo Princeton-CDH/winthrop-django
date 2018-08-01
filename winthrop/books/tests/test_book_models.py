@@ -11,6 +11,7 @@ from djiffy.models import Manifest
 import pytest
 from unidecode import unidecode
 
+from winthrop.annotation.models import Annotation
 from winthrop.books.models import OwningInstitution, Book, Publisher, Catalogue, \
     Creator, CreatorType, Subject, BookSubject, Language, BookLanguage, \
     PersonBook, PersonBookRelationshipType
@@ -94,6 +95,26 @@ class TestBook(TestCase):
             book=de_christelicke, call_number='NY789', is_current=True)
 
         assert de_christelicke.catalogue_call_numbers() == 'Win 60, NY789'
+
+    def test_annotators(self):
+        de_christelicke = Book.objects.get(short_title__contains="De Christelicke")
+        # no annotators by default in fixture
+        de_christelicke.annotators().count() == 0
+        # create an annotation to check
+        # get the first manifest from the fixture
+        de_christelicke.digital_edition = Manifest.objects.first()
+        de_christelicke.save()
+        canvas = de_christelicke.digital_edition.canvases.first()
+        person = Person.objects.first()
+        # create annotation with first person in manifest
+        Annotation.objects.create(
+            canvas=canvas,
+            author=person
+        )
+        # should be one annotator, and that annotator should be person
+        de_christelicke.annotators().count() == 1
+        de_christelicke.annotators() == Person.objects\
+            .filter(annotation__canvas__manifest__book=de_christelicke)
 
     def test_authors(self):
         de_christelicke = Book.objects.get(short_title__contains="De Christelicke")
@@ -240,20 +261,24 @@ class TestBook(TestCase):
         assert index_data['title'] == book.title
         assert index_data['short_title'] == book.short_title
         for auth in book.authors():
-            assert auth.authorized_name in index_data['authors']
+            assert auth.authorized_name in index_data['author']
         assert index_data['pub_year'] == book.pub_year
         assert not index_data['thumbnail']
         assert not index_data['thumbnail_label']
-        assert index_data['author_exact'] == book.authors()[0].authorized_name
+        assert index_data['author_sort'] == book.authors()[0].authorized_name
+        assert index_data['author'] == [str(author) for author in book.authors()]
 
         # associate digital edition from fixture (has no thumbnail)
         book.digital_edition = Manifest.objects.first()
+        # save so its real for other database lookups
+        book.save()
         # has digital edition but no thumbnail
         # book = Book.objects.filter(digital_edition__isnull=False).first()
         index_data = book.index_data()
         assert not index_data['thumbnail']
         assert not index_data['thumbnail_label']
-        assert index_data['author_exact'] == book.authors()[0].authorized_name
+        assert index_data['author_sort'] == book.authors()[0].authorized_name
+        assert index_data['author'] == [str(author) for author in book.authors()]
 
         # mark canvas as thumbnail
         canvas = book.digital_edition.canvases.first()
@@ -263,11 +288,79 @@ class TestBook(TestCase):
         assert index_data['thumbnail'] == canvas.iiif_image_id
         assert index_data['thumbnail_label'] == canvas.label
 
+        # no annotators
+        index_data = book.index_data()
+        assert index_data['annotator'] == []
+        # add annotator
+        Annotation.objects.create(
+            author=Person.objects.first(),
+            canvas=canvas,
+            uri=canvas.uri,
+        )
+        index_data = book.index_data()
+        assert index_data['annotator'] == [str(Person.objects.first())]
+
         # no authors
         book.creator_set.all().delete()
         index_data = book.index_data()
-        assert index_data['authors'] == []
-        assert index_data['author_exact'] is None
+        assert index_data['author'] == []
+
+        # editors
+        # no editors in fixture
+        book = Book.objects.first()
+        index_data = book.index_data()
+        assert index_data['editor'] == []
+        # add editors
+        person = Person.objects.first()
+        person2 = Person.objects.last()
+        book.add_editor(person)
+        book.add_editor(person2)
+        index_data = book.index_data()
+        # using 'in' because it's order agnostic
+        assert str(person) in index_data['editor']
+        assert str(person2) in index_data['editor']
+
+        # translators
+        book = Book.objects.last()
+        index_data = book.index_data()
+        assert index_data['translator'] == []
+        # add editors
+        person = Person.objects.first()
+        person2 = Person.objects.last()
+        book.add_translator(person)
+        book.add_translator(person2)
+        index_data = book.index_data()
+        # using 'in' because it's order agnostic
+        assert str(person) in index_data['translator']
+        assert str(person2) in index_data['translator']
+
+        # no languages on books in fixture, so test that state first
+        index_data = book.index_data()
+        assert index_data['language'] == []
+        # now add languages and assert that they are in index_data
+        english = Language.objects.get(name='English')
+        french = Language.objects.get(name='French')
+        BookLanguage.objects.bulk_create([
+            BookLanguage(book=book, language=english, is_primary=True),
+            BookLanguage(book=book, language=french, is_primary=False),
+        ])
+        index_data = book.index_data()
+        assert str(english) in index_data['language']
+        assert str(french) in index_data['language']
+
+        # no subjects in book fixture
+        index_data = book.index_data()
+        assert index_data['subject'] == []
+        # add subjects and assert that they are in index_data
+        alchemy = Subject.objects.get(name='Alchemy')
+        historia = Subject.objects.get(name='Historia')
+        BookSubject.objects.bulk_create([
+            BookSubject(book=book, subject=alchemy, is_primary=True),
+            BookSubject(book=book, subject=historia, is_primary=True),
+        ])
+        index_data = book.index_data()
+        assert str(alchemy) in index_data['subject']
+        assert str(historia) in index_data['subject']
 
     def test_generate_slug(self):
         # model method

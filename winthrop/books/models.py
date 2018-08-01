@@ -132,6 +132,15 @@ class Book(Notable, Indexable):
         return ', '.join([c.call_number for c in self.catalogue_set.all()])
     catalogue_call_numbers.short_description = 'Call Numbers'
 
+    def annotators(self):
+        '''Return a queryset of :class:`winthrop.people.models.Person` objects
+            who annotated the book.
+        '''
+        # could be a property but leaving a method to be parallel to authors,
+        # editors, etc. methods
+        return Person\
+            .objects.filter(annotation__canvas__manifest__book=self)
+
     def authors(self):
         '''Contributor queryset filtered by creator type Author'''
         return self.contributor_by_type('Author')
@@ -222,7 +231,7 @@ class Book(Notable, Indexable):
         # get a list of ids for collected works before clearing them
         book_ids = instance.book_set.values_list('id', flat=True)
 
-        logger.debug('peson delete, reindexing %d book(s)', len(book_ids))
+        logger.debug('person delete, reindexing %d book(s)', len(book_ids))
         # find the items based on the list of ids to reindex
         books = Book.objects.filter(id__in=list(book_ids))
 
@@ -247,7 +256,7 @@ class Book(Notable, Indexable):
         'creator_set': {
             'post_save': handle_creator_change,
             'post_delete': handle_creator_change,
-        }
+        },
     }
 
     def index_id(self):
@@ -284,10 +293,14 @@ class Book(Notable, Indexable):
             'slug': self.slug,
             'title': self.title,
             'short_title': self.short_title,
-            'authors': [str(author) for author in self.authors()],
+            'author': [str(author) for author in self.authors()],
             # first author only, for sorting
-            # FIXME: sort on last name first? not an ordered relationship currently
-            'author_exact': str(self.authors().first()) if self.authors().exists() else None,
+            'author_sort': str(self.authors().first()) if self.authors().exists() else None,
+            'editor': [str(editor) for editor in self.editors()],
+            'translator': [str(translator) for translator in self.translators()],
+            'language': [str(language) for language in self.languages.all()],
+            'subject': [str(subject) for subject in self.subjects.all()],
+            'annotator': [str(annotator) for annotator in self.annotators()],
             'pub_year': self.pub_year,
             # NOTE: this indicates whether the book is annotated, does not
             # necessarily mean there are annotations documented in our system
@@ -323,14 +336,13 @@ class BookSubject(Notable):
     book = models.ForeignKey(Book)
     is_primary = models.BooleanField()
 
-
     class Meta:
         unique_together = ('subject', 'book')
 
-
     def __str__(self):
         return '%s %s%s' % (self.book, self.subject,
-            ' (primary)' if self.is_primary else '')
+                            ' (primary)' if self.is_primary else '')
+
 
 class BookLanguage(Notable):
     '''Through-model for book-language relationship, to allow designating
@@ -360,6 +372,7 @@ class Creator(Notable):
 
     def __str__(self):
         return '%s %s %s' % (self.person, self.creator_type, self.book)
+
 
 class PersonBookRelationshipType(Named, Notable):
     '''Type of non-annotation relationship assocating a person
