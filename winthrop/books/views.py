@@ -3,6 +3,7 @@ from django.core.validators import ValidationError
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views.generic import ListView, DetailView
+from django.shortcuts import get_object_or_404
 from djiffy.models import Canvas
 from SolrClient.exceptions import SolrError
 
@@ -252,6 +253,19 @@ class BookDetailView(DetailView, LastModifiedMixin):
                 return self.solr_timestamp_to_datetime(psq[0]['last_modified'])
         except SolrError:
             pass
+
+class BookPageView(ListView):
+    model = Canvas
+    template_name = 'books/book_page_thumbnails.html'
+    context_object_name = 'pages'
+
+    def get_queryset(self):
+        return super().get_queryset().filter(manifest__book__slug=self.kwargs['slug'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['book'] = get_object_or_404(Book, slug=self.kwargs['slug'])
+        return context
 
 
 class PublisherAutocomplete(autocomplete.Select2QuerySetView):

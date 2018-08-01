@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block page-subtitle %}Pages | {{ book.short_title }} | Books | {% endblock %}
+
+{% block page-context-id %}book-detail{% endblock %}
+
+{% block content %}
+<div class="ui container">
+ <a href="{{ book.get_absolute_url }}">&lt; {{ book.short_title }}</a>
+</div>
+<div class="ui container">
+    {% for page in pages %}
+        <img class="ui image left floated" src="{% iiif_image page.iiif_image_id height=218 %}"
+            srcset="{% iiif_image page.iiif_image_id height=436 %} 2x"
+            alt="{{ page.label }}" title="{{ page.label }}"/>
+    {% endfor %}
+</div>
+{% endblock %}
