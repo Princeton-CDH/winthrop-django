@@ -1,4 +1,4 @@
-import FacetChoice from './FacetChoice'
+import { mapActions } from 'vuex'
 
 export default Vue.component('SearchFacet', {
     template: `
@@ -19,12 +19,21 @@ export default Vue.component('SearchFacet', {
             </div>
             <div class="facets">
                 <label v-if="availableChoices.length == 0">No results</label>
-                <facet-choice
+                <div
+                    class="ui checkbox"
                     v-for="choice of choices"
                     v-show="availableChoices.includes(choice.value)"
-                    v-bind="choice"
                     :key="choice.value"
-                />
+                >
+                    <input
+                        type="checkbox"
+                        @input="toggleFacetChoice(choice)"
+                        :name="choice.facet"
+                        :value="choice.value"
+                        :checked="choice.active"
+                    >
+                    <label>{{ choice.value }} <span class="count">{{ choice.count }}</span></label>
+                </div>
             </div>
         </template>
         <template v-if="type === 'range'">
@@ -32,9 +41,6 @@ export default Vue.component('SearchFacet', {
         </template>
     </sui-grid-column>
     `,
-    components: {
-        FacetChoice
-    },
     data() {
         return {
             filter: '',
@@ -62,6 +68,9 @@ export default Vue.component('SearchFacet', {
         choices: Array
     },
     methods: {
+        ...mapActions([
+            'toggleFacetChoice',
+        ]),
         /**
          * Utility that normalizes strings for simple comparison.
          * Removes special characters, trims whitespace, and uppercases.

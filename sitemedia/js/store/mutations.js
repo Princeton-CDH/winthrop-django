@@ -1,3 +1,5 @@
+import { toArray } from '../utilities'
+
 export default {
     addFacetChoice (state, choice) {
         state.facetChoices.push(choice)
@@ -22,6 +24,15 @@ export default {
 
     clearFacetChoices (state) {
         state.facetChoices.forEach(choice => choice.active = false)
+    },
+
+    setFacetChoices (state, facets) {
+        state.facetChoices.forEach(choice => choice.active = false)
+        facets.forEach(facet => {
+            state.facetChoices
+                .filter(choice => choice.facet === facet[0] && toArray(facet[1]).includes(choice.value))
+                .forEach(choice => choice.active = true)
+        })
     },
 
     setTotalResults (state, total) {

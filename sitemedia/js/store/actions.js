@@ -1,3 +1,5 @@
+import router from '../router'
+
 export default {
     loadSearchData ({ commit }, query) {
         return fetch(query)
@@ -17,11 +19,25 @@ export default {
             })
     },
 
-    toggleFacetChoice ({ commit }, choice) {
+    toggleFacetChoice ({ commit, getters }, choice) {
         commit('editFacetChoice', { choice, active: !choice.active })
+        router.replace({
+            query: {
+                ...getters.activeFacets
+            }
+        })
     },
 
     clearFacetChoices ({ commit }) {
         commit('clearFacetChoices')
+        router.replace({
+            path: '/'
+        })
     },
+
+    setFormState ({ commit, getters }, query) {
+        if (JSON.stringify(query) != JSON.stringify(getters.activeFacets)) {
+            commit('setFacetChoices', Object.entries(query))
+        }
+    }
 }

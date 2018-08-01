@@ -116,6 +116,7 @@ export default Vue.component('BooksSearch', {
             'facetChoices',
         ]),
         ...mapGetters([
+            'activeFacets',
             'activeFacetChoices',
         ]),
     },
@@ -135,10 +136,10 @@ export default Vue.component('BooksSearch', {
          * @param {Array} tab
          * @returns {String}
          */
-        tabLabel(tab) {
+        tabLabel(tab, separator = '  ·  ') {
             return tab
                 .map(facetName => this.facetConfig.find(facet => facet.name === facetName).label)
-                .join('  ·  ')
-        }
+                .join(separator)
+        },
     },
 })
