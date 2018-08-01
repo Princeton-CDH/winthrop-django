@@ -1,8 +1,8 @@
 <div class="result">
+    <a href="{% url 'books:detail' book.slug %}">
     <div class="ui segment">
-        <a href="{% url 'books:detail' book.slug %}">
             <span class="title">{{ book.short_title }}</span><br>
-        </a>
+
         {% for author in book.authors %}
             <span class="author">{{ author }}</span><br>
         {% endfor %}
@@ -18,4 +18,5 @@
     {% else %}
     <img class="ui image placeholder"/>
     {% endif %}
+    </a>
 </div>
