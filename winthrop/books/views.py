@@ -19,6 +19,13 @@ class BookListView(ListView, LastModifiedListMixin):
     form_class = SearchForm
     form = None
 
+    def get_template_names(self):
+        # when queried via ajax, return partial html for just the results section
+        # (don't render the form or base template)
+        if self.request.is_ajax():
+            return 'books/snippets/book_list_results.html'
+        return self.template_name
+
     def solr_query_opts(self):
         # NOTE: solr query logic used by both the view and to generate
         # last-modified value for header/conditional display

@@ -24,19 +24,7 @@
 		<input type="submit"/>
 		</form>
 	</div>
-	{% if paginator.count %}
-	<div class="ui two column stackable grid">
-		{% for book in object_list %}
-		<div class="six wide column">
-			{% include 'books/snippets/book_result.html' %}
-		</div>
-		{% endfor %}
-	</div>
-	{% else %}
-	<div class="ui error message">
-			<p>{% firstof error "No results found" %}</p>
-	</div>
-	{% endif %}
+	{% include 'books/snippets/book_list_results.html' %}
 	{% include 'snippets/pagination.html' %}
 </div>
 {% endblock %}

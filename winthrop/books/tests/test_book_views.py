@@ -131,7 +131,6 @@ class TestBookViews(TestCase):
         modified = index_modified_dt.strftime('%a, %d %b %Y %H:%M:%S GMT')
         assert response['Last-Modified'] == modified
 
-
         # provisional text
         self.assertContains(response, 'Displaying %d books' % books.count())
 
@@ -237,7 +236,18 @@ class TestBookViews(TestCase):
         assert len(response.context['object_list']) == 1
         assert response.context['object_list'][0]['title'] == book.title
 
-
+        # ajax request should return partial template only
+        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        assert response.status_code == 200
+        # should render the results list partial and single result partial
+        self.assertTemplateUsed('books/snippets/book_list_results.html')
+        self.assertTemplateUsed('books/snippest/book_result.html')
+        # shouldn't render the search form or whole list
+        self.assertTemplateNotUsed('books/book_list.html')
+        self.assertTemplateNotUsed('archive/snippets/list_digitizedworks.html')
+        # should have all the results
+        books = Book.objects.all()
+        assert len(response.context['object_list']) == books.count()
 
     @pytest.mark.usefixtures("solr")
     def test_book_detail(self):
