@@ -293,16 +293,14 @@ class Book(Notable, Indexable):
             'slug': self.slug,
             'title': self.title,
             'short_title': self.short_title,
-            'authors': [str(author) for author in self.authors()],
+            'author': [str(author) for author in self.authors()],
             # first author only, for sorting
-            # FIXME: sort on last name first? not an ordered relationship currently
-            # NOTE: author_exact is a copy field.
             'author_sort': str(self.authors().first()) if self.authors().exists() else None,
-            'editor_exact': [str(editor) for editor in self.editors()],
-            'translator_exact': [str(translator) for translator in self.translators()],
-            'language_exact': [str(language) for language in self.languages.all()],
-            'subject_exact': [str(subject) for subject in self.subjects.all()],
-            'annotator_exact': [str(annotator) for annotator in self.annotators()],
+            'editor': [str(editor) for editor in self.editors()],
+            'translator': [str(translator) for translator in self.translators()],
+            'language': [str(language) for language in self.languages.all()],
+            'subject': [str(subject) for subject in self.subjects.all()],
+            'annotator': [str(annotator) for annotator in self.annotators()],
             'pub_year': self.pub_year,
             # NOTE: this indicates whether the book is annotated, does not
             # necessarily mean there are annotations documented in our system

@@ -261,12 +261,12 @@ class TestBook(TestCase):
         assert index_data['title'] == book.title
         assert index_data['short_title'] == book.short_title
         for auth in book.authors():
-            assert auth.authorized_name in index_data['authors']
+            assert auth.authorized_name in index_data['author']
         assert index_data['pub_year'] == book.pub_year
         assert not index_data['thumbnail']
         assert not index_data['thumbnail_label']
         assert index_data['author_sort'] == book.authors()[0].authorized_name
-        assert index_data['authors'] == [str(author) for author in book.authors()]
+        assert index_data['author'] == [str(author) for author in book.authors()]
 
         # associate digital edition from fixture (has no thumbnail)
         book.digital_edition = Manifest.objects.first()
@@ -278,7 +278,7 @@ class TestBook(TestCase):
         assert not index_data['thumbnail']
         assert not index_data['thumbnail_label']
         assert index_data['author_sort'] == book.authors()[0].authorized_name
-        assert index_data['authors'] == [str(author) for author in book.authors()]
+        assert index_data['author'] == [str(author) for author in book.authors()]
 
         # mark canvas as thumbnail
         canvas = book.digital_edition.canvases.first()
@@ -290,7 +290,7 @@ class TestBook(TestCase):
 
         # no annotators
         index_data = book.index_data()
-        assert index_data['annotator_exact'] == []
+        assert index_data['annotator'] == []
         # add annotator
         Annotation.objects.create(
             author=Person.objects.first(),
@@ -298,18 +298,18 @@ class TestBook(TestCase):
             uri=canvas.uri,
         )
         index_data = book.index_data()
-        assert index_data['annotator_exact'] == [str(Person.objects.first())]
+        assert index_data['annotator'] == [str(Person.objects.first())]
 
         # no authors
         book.creator_set.all().delete()
         index_data = book.index_data()
-        assert index_data['authors'] == []
+        assert index_data['author'] == []
 
         # editors
         # no editors in fixture
         book = Book.objects.first()
         index_data = book.index_data()
-        assert index_data['editor_exact'] == []
+        assert index_data['editor'] == []
         # add editors
         person = Person.objects.first()
         person2 = Person.objects.last()
@@ -317,13 +317,13 @@ class TestBook(TestCase):
         book.add_editor(person2)
         index_data = book.index_data()
         # using 'in' because it's order agnostic
-        assert str(person) in index_data['editor_exact']
-        assert str(person2) in index_data['editor_exact']
+        assert str(person) in index_data['editor']
+        assert str(person2) in index_data['editor']
 
         # translators
         book = Book.objects.last()
         index_data = book.index_data()
-        assert index_data['translator_exact'] == []
+        assert index_data['translator'] == []
         # add editors
         person = Person.objects.first()
         person2 = Person.objects.last()
@@ -331,12 +331,12 @@ class TestBook(TestCase):
         book.add_translator(person2)
         index_data = book.index_data()
         # using 'in' because it's order agnostic
-        assert str(person) in index_data['translator_exact']
-        assert str(person2) in index_data['translator_exact']
+        assert str(person) in index_data['translator']
+        assert str(person2) in index_data['translator']
 
         # no languages on books in fixture, so test that state first
         index_data = book.index_data()
-        assert index_data['language_exact'] == []
+        assert index_data['language'] == []
         # now add languages and assert that they are in index_data
         english = Language.objects.get(name='English')
         french = Language.objects.get(name='French')
@@ -345,12 +345,12 @@ class TestBook(TestCase):
             BookLanguage(book=book, language=french, is_primary=False),
         ])
         index_data = book.index_data()
-        assert str(english) in index_data['language_exact']
-        assert str(french) in index_data['language_exact']
+        assert str(english) in index_data['language']
+        assert str(french) in index_data['language']
 
         # no subjects in book fixture
         index_data = book.index_data()
-        assert index_data['subject_exact'] == []
+        assert index_data['subject'] == []
         # add subjects and assert that they are in index_data
         alchemy = Subject.objects.get(name='Alchemy')
         historia = Subject.objects.get(name='Historia')
@@ -359,8 +359,8 @@ class TestBook(TestCase):
             BookSubject(book=book, subject=historia, is_primary=True),
         ])
         index_data = book.index_data()
-        assert str(alchemy) in index_data['subject_exact']
-        assert str(historia) in index_data['subject_exact']
+        assert str(alchemy) in index_data['subject']
+        assert str(historia) in index_data['subject']
 
     def test_generate_slug(self):
         # model method
