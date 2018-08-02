@@ -17,5 +17,10 @@ export default {
                 else acc[cur.facet] = cur.value
                 return acc
             }, {})
+    },
+
+    dataPath (state) {
+        let querystring = state.route.fullPath.split('?')[1]
+        return querystring ? `${state.endpoint}?${querystring}` : state.endpoint
     }
 }

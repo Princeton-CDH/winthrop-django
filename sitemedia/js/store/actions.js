@@ -1,8 +1,8 @@
 import router from '../router'
 
 export default {
-    loadSearchData ({ commit }, query) {
-        return fetch(query)
+    loadSearchData ({ commit, getters }) {
+        return fetch(getters.dataPath)
             .then(res => res.json())
             .then(data => {
                 commit('setTotalResults', data.total)
@@ -33,13 +33,38 @@ export default {
             })
     },
 
-    toggleFacetChoice ({ commit, getters }, choice) {
+    updateFacetCounts ({ commit, getters }) {
+        return fetch(getters.dataPath)
+            .then(res => res.json())
+            .then(data => {
+                commit('setTotalResults', data.total)
+                commit('updateFacetChoiceCounts', Object.entries(data.facets))
+            })
+    },
+
+    toggleFacetChoice ({ commit, getters, dispatch }, choice) {
+        let activeBeforeToggle = Object.keys(getters.activeFacets)
         commit('editFacetChoice', { choice, active: !choice.active })
         router.replace({
             query: {
                 ...getters.activeFacets
             }
         })
+        if (Object.keys(getters.activeFacets) != activeBeforeToggle) { // a facet was added or removed
+            return dispatch('updateFacetCounts')
+        }
+    },
+
+    setRangeFacetMin ({ commit }, facet) {
+        commit('editRangeFacet', facet)
+    },
+
+    setRangeFacetMax ({ commit }, facet) {
+        commit('editRangeFacet', facet)
+    },
+
+    setEndpoint ({ commit }, endpoint) {
+        commit('setEndpoint', endpoint)
     },
 
     clearFacetChoices ({ commit }) {

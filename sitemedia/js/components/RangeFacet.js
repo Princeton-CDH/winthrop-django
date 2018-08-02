@@ -9,7 +9,6 @@ export default Vue.component('RangeFacet', {
             <sui-input :placeholder="maxVal" />
         </div>
         <div class="histogram">
-            {{ choices }}
         </div>
     </div>
     `,

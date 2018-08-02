@@ -123,13 +123,15 @@ export default Vue.component('BooksSearch', {
         ]),
     },
     created() {
-        this.loadSearchData('/static/js/components/books/data.json')
+        this.setEndpoint('/books/facets/')
+        this.loadSearchData()
     },
     methods: {
         ...mapActions([
             'loadSearchData',
             'clearFacetChoices',
             'toggleFacetChoice',
+            'setEndpoint',
         ]),
         /**
          * Generate a string label for search widget tabs.
