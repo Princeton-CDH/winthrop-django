@@ -1,58 +1,53 @@
+import isEqual from 'lodash/isEqual'
 import router from '../router'
 
+const fetchOpts = {
+    headers: { // this header is needed to signal ajax request to django
+        'X-Requested-With': 'XMLHttpRequest'
+    }
+}
+
 export default {
-    loadSearchData ({ commit, getters }) {
-        return fetch(getters.dataPath)
+    async loadSearchData ({ commit, getters, dispatch }) {
+        await fetch(getters.dataPath, fetchOpts)
             .then(res => res.json())
             .then(data => {
                 commit('setTotalResults', data.total)
-                Object.entries(data.facets).map(facet => {
-                    Object.entries(facet[1]).map(choice => {
-                        commit('addFacetChoice', {
-                            facet: facet[0],
-                            value: choice[0],
-                            count: choice[1],
-                            active: false,
-                        })
-                    })
-                })
-                Object.entries(data.range_facets).map(facet => {
-                    commit('addRangeFacet', {
-                        facet: facet[0],
-                        minVal: undefined,
-                        maxVal: undefined,
-                    })
-                    Object.entries(facet[1]).map(choice => {
-                        commit('addFacetChoice', {
-                            facet: facet[0],
-                            value: choice[0],
-                            count: choice[1],
-                        })
-                    })
-                })
+                commit('addFacets', data.facets)
+                commit('addRangeFacets', data.range_facets)
             })
+        await dispatch('loadResults')
     },
 
-    updateFacetCounts ({ commit, getters }) {
-        return fetch(getters.dataPath)
+    async updateFacetChoiceCounts ({ commit, getters }) {
+        await fetch(getters.dataPath, fetchOpts)
             .then(res => res.json())
-            .then(data => {
-                commit('setTotalResults', data.total)
-                commit('updateFacetChoiceCounts', Object.entries(data.facets))
-            })
+            .then(data => commit('updateFacetChoiceCounts', data.facets))
     },
 
-    toggleFacetChoice ({ commit, getters, dispatch }, choice) {
+    async toggleFacetChoice ({ commit, getters, dispatch }, choice) {
         let activeBeforeToggle = Object.keys(getters.activeFacets)
         commit('editFacetChoice', { choice, active: !choice.active })
+        dispatch('updateURL')
+        if (!isEqual(Object.keys(getters.activeFacets), activeBeforeToggle)) { // a facet was added or removed
+            await dispatch('updateFacetChoiceCounts')
+        }
+        await dispatch('loadResults')
+    },
+
+    async loadResults ({ commit, getters }) {
+        console.log(getters.queryString)
+        await fetch(getters.resultsPath, fetchOpts)
+            .then(res => res.text())
+            .then(results => commit('loadResults', results))
+    },
+
+    updateURL({ getters }) {
         router.replace({
             query: {
                 ...getters.activeFacets
             }
         })
-        if (Object.keys(getters.activeFacets) != activeBeforeToggle) { // a facet was added or removed
-            return dispatch('updateFacetCounts')
-        }
     },
 
     setRangeFacetMin ({ commit }, facet) {
@@ -67,16 +62,14 @@ export default {
         commit('setEndpoint', endpoint)
     },
 
-    clearFacetChoices ({ commit }) {
+    clearFacetChoices ({ commit, dispatch }) {
         commit('clearFacetChoices')
-        router.replace({
-            path: '/'
-        })
+        dispatch('updateURL')
     },
 
     setFormState ({ commit, getters }, query) {
-        if (JSON.stringify(query) != JSON.stringify(getters.activeFacets)) {
-            commit('setFacetChoices', Object.entries(query))
+        if (!isEqual(query, getters.activeFacets)) { // only change form state if it's out of sync with URL
+            commit('setFacetChoices', query)
         }
     }
 }

@@ -19,8 +19,21 @@ export default {
             }, {})
     },
 
-    dataPath (state) {
-        let querystring = state.route.fullPath.split('?')[1]
-        return querystring ? `${state.endpoint}?${querystring}` : state.endpoint
+    queryString (state) {
+        return state.route.fullPath.split('?')[1]
+    },
+
+    dataPath (state, getters) {
+        if (getters.queryString) {
+            return `${state.route.path}${state.endpoint}?${getters.queryString}`
+        }
+        return `${state.route.path}${state.endpoint}`
+    },
+
+    resultsPath (state, getters) {
+        if (getters.queryString) {
+            return `${state.route.path}?${getters.queryString}`
+        }
+        return `${state.route.path}`
     }
 }

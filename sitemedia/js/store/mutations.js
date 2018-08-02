@@ -13,6 +13,36 @@ export default {
             })
     },
 
+    addFacets (state, facets) {
+        Object.entries(facets).map(facet => {
+            Object.entries(facet[1]).map(choice => {
+                state.facetChoices.push({
+                    facet: facet[0],
+                    value: choice[0],
+                    count: choice[1],
+                    active: false,
+                })
+            })
+        })
+    },
+
+    addRangeFacets (state, facets) {
+        Object.entries(facets).map(facet => {
+            state.rangeFacets.push({
+                facet: facet[0],
+                minVal: undefined,
+                maxVal: undefined,
+            })
+            Object.entries(facet[1]).map(choice => {
+                state.facetChoices.push({
+                    facet: facet[0],
+                    value: choice[0],
+                    count: choice[1],
+                })
+            })
+        })
+    },
+
     editFacetChoice (state, { choice, active = choice.active, count = choice.count }) {
         state.facetChoices
             .filter(c => c.facet === choice.facet && c.value === choice.value)
@@ -28,7 +58,7 @@ export default {
 
     setFacetChoices (state, facets) {
         state.facetChoices.forEach(choice => choice.active = false)
-        facets.forEach(facet => {
+        Object.entries(facets).forEach(facet => {
             state.facetChoices
                 .filter(choice => choice.facet === facet[0] && toArray(facet[1]).includes(choice.value))
                 .forEach(choice => choice.active = true)
@@ -36,15 +66,11 @@ export default {
     },
 
     updateFacetChoiceCounts (state, facets) {
-        facets.forEach(facet => {
+        Object.entries(facets).forEach(facet => {
             Object.keys(facet[1]).forEach(value => {
                 state.facetChoices.find(c => c.facet === facet[0] && c.value === value).count = facet[1][value]
             })
         })
-    },
-
-    addRangeFacet (state, facet) {
-        state.rangeFacets.push(facet)
     },
 
     editRangeFacet (state, { facet, minVal = facet.minVal, maxVal = facet.maxVal }) {
@@ -59,4 +85,8 @@ export default {
     setTotalResults (state, total) {
         state.totalResults = total
     },
+
+    loadResults (state, results) {
+        state.results = results
+    }
 }

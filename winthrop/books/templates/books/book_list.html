@@ -18,19 +18,6 @@
 {% block content %}
 <div class="ui container">
 	<router-view></router-view>
-	{% if paginator.count %}
-	<div class="ui two column stackable grid">
-		{% for book in object_list %}
-		<div class="six wide column">
-			{% include 'books/snippets/book_result.html' %}
-		</div>
-		{% endfor %}
-	</div>
-	{% else %}
-	<div class="ui error message">
-		<p>{% firstof error "No results found" %}</p>
-	</div>
-	{% endif %}
-	{% include 'snippets/pagination.html' %}
+	<search-results></search-results>
 </div>
 {% endblock %}

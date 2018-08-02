@@ -1,3 +1,5 @@
+import 'babel-polyfill'
+
 $(() => {
     var $ribbon = $('.ribbon');
     if ($ribbon) {

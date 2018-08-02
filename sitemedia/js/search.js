@@ -7,6 +7,7 @@ import store from './store'
 import router from './router'
 
 import BooksSearch from './components/books/BooksSearch'
+import SearchResults from './components/SearchResults'
 
 const unsync = sync(store, router)
 
@@ -20,7 +21,8 @@ $(() => {
         router,
         store,
         components: {
-            BooksSearch
+            BooksSearch,
+            SearchResults
         },
         beforeDestroy() {
             unsync() // clean up vuex-router sync

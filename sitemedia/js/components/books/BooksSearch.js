@@ -123,7 +123,7 @@ export default Vue.component('BooksSearch', {
         ]),
     },
     created() {
-        this.setEndpoint('/books/facets/')
+        this.setEndpoint('facets/')
         this.loadSearchData()
     },
     methods: {
