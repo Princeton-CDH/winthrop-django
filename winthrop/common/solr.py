@@ -35,7 +35,7 @@ class SolrSchema(object):
     fields = [
         {'name': 'title', 'type': 'text_en', 'required': False},
         {'name': 'short_title', 'type': 'text_en', 'required': False},
-        {'name': 'authors', 'type': 'text_en', 'required': False,
+        {'name': 'author', 'type': 'text_en', 'required': False,
          'multiValued': True},
         {'name': 'pub_year', 'type': 'int', 'required': False},
         {'name': 'thumbnail', 'type': 'string', 'required': False},
@@ -43,6 +43,16 @@ class SolrSchema(object):
         {'name': 'content_type', 'type': 'string', 'required': True},
         {'name': 'is_annotated', 'type': 'boolean', 'required': False},
         {'name': 'slug', 'type': 'string', 'required': False},
+        {'name': 'editor', 'type': 'text_en', 'required': False,
+         'multiValued': True},
+        {'name': 'translator', 'type': 'text_en', 'required': False,
+         'multiValued': True},
+        {'name': 'language', 'type': 'text_en', 'required': False,
+         'multiValued': True},
+        {'name': 'subject', 'type': 'text_en', 'required': False,
+         'multiValued': True},
+        {'name': 'annotator', 'type': 'text_en', 'required': False,
+         'multiValued': True},
 
         {'name': 'text', 'type': 'text_en', 'required': False, 'stored': False,
          'multiValued': True},
@@ -53,14 +63,32 @@ class SolrSchema(object):
 
         # sort/facet copy fields
         # {'name': 'title_exact', 'type': 'string', 'required': False},
-        {'name': 'author_exact', 'type': 'string', 'required': False},
+        {'name': 'author_sort', 'type': 'string', 'required': False},
+        {'name': 'author_exact', 'type': 'string', 'required': False,
+         'multiValued': True},
+        {'name': 'editor_exact', 'type': 'string', 'required': False,
+         'multiValued': True},
+        {'name': 'translator_exact', 'type': 'string', 'required': False,
+         'multiValued': True},
+        {'name': 'language_exact', 'type': 'string', 'required': False,
+         'multiValued': True},
+        {'name': 'subject_exact', 'type': 'string', 'required': False,
+         'multiValued': True},
+        {'name': 'annotator_exact', 'type': 'string', 'required': False,
+         'multiValued': True}
+
     ]
     #: fields to be copied into general purpose text field for searching
-    text_fields = ['title', 'short_title', 'authors', 'pub_year']
+    text_fields = ['title', 'short_title', 'author', 'pub_year']
     #: copy fields, e.g. for facets
     copy_fields = [
         # ('title', 'title_exact'),
-        # ('authors', 'author_exact'),
+        ('author', 'author_exact'),
+        ('editor', 'editor_exact'),
+        ('translator', 'translator_exact'),
+        ('language', 'language_exact'),
+        ('subject', 'subject_exact'),
+        ('annotator', 'annotator_exact'),
     ]
 
     def __init__(self):
@@ -376,7 +404,5 @@ class Indexable(object):
                     # reverse relationship of a many to many
                     elif isinstance(attr, ReverseManyToOneDescriptor):
                         related[attr.rel.related_model] = opts
-
         cls.related = related
         cls.m2m = m2m
-

@@ -1,7 +1,8 @@
 from django import forms
 from django.test import TestCase
 
-from winthrop.books.forms import RadioSelectWithDisabled, SearchForm
+from winthrop.books.forms import RadioSelectWithDisabled, SearchForm, \
+    RangeWidget, RangeField
 
 
 class TestRadioWithDisabled(TestCase):
@@ -48,6 +49,25 @@ class TestSearchForm(TestCase):
         assert searchform.fields['sort'].widget.choices[-1][1] == 'Relevance'
 
     def test_get_solr_sort_field(self):
-        assert SearchForm().get_solr_sort_field('relevance') == 'score desc'
-        assert SearchForm().get_solr_sort_field('author_asc') == 'author_exact asc'
+        form = SearchForm()
+        assert form.get_solr_sort_field('relevance') == \
+            form.solr_sort_fields['relevance']
+        assert form.get_solr_sort_field('author_asc') == \
+            form.solr_sort_fields['author_asc']
 
+
+def test_range_widget():
+    # range widget decompress logic
+    assert RangeWidget().decompress('') == [None, None]
+    # not sure how it actually handles missing inputs...
+    # assert RangeWidget().decompress('100-') == [100, None]
+    # assert RangeWidget().decompress('-250') == [None, 250]
+    assert RangeWidget().decompress('100-250') == [100, 250]
+
+
+def test_range_field():
+    # range widget decompress logic
+    assert RangeField().compress([]) == ''
+    assert RangeField().compress([100, None]) == '100-'
+    assert RangeField().compress([None, 250]) == '-250'
+    assert RangeField().compress([100, 250]) == '100-250'
