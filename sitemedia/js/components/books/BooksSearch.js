@@ -85,6 +85,8 @@ export default Vue.component('BooksSearch', {
                     name: 'publisher',
                     label: 'Publisher',
                     type: 'text',
+                    search: true,
+                    width: 6
                 },
                 {
                     name: 'pub_year',

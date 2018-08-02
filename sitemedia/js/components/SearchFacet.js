@@ -1,4 +1,5 @@
 import { mapActions } from 'vuex'
+import RangeFacet from './RangeFacet'
 
 export default Vue.component('SearchFacet', {
     template: `
@@ -36,11 +37,13 @@ export default Vue.component('SearchFacet', {
                 </div>
             </div>
         </template>
-        <template v-if="type === 'range'">
-            <h1>range facet</h1>
-        </template>
+        <range-facet v-if="type === 'range'" :label="label" :name="name" :width="width" :choices="choices">
+        </range-facet>
     </sui-grid-column>
     `,
+    components: {
+        RangeFacet
+    },
     data() {
         return {
             filter: '',

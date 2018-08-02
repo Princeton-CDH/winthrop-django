@@ -16,6 +16,20 @@ export default {
                         })
                     })
                 })
+                Object.entries(data.range_facets).map(facet => {
+                    commit('addRangeFacet', {
+                        facet: facet[0],
+                        minVal: undefined,
+                        maxVal: undefined,
+                    })
+                    Object.entries(facet[1]).map(choice => {
+                        commit('addFacetChoice', {
+                            facet: facet[0],
+                            value: choice[0],
+                            count: choice[1],
+                        })
+                    })
+                })
             })
     },
 

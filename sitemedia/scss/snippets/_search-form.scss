@@ -45,6 +45,16 @@
         }
     }
 
+    .range-facet .inputs {
+        margin-top: 1rem;
+        display: flex;
+        align-items: center;
+
+        label { // "to"
+            padding: 0 2rem;
+        }
+    }
+
     .facets {
         display: flex;
         flex-direction: row;

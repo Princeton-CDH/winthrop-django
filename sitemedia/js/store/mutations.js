@@ -35,6 +35,15 @@ export default {
         })
     },
 
+    addRangeFacet (state, facet) {
+        state.rangeFacets.push(facet)
+    },
+
+    editRangeFacet (state, { facet, minVal = facet.minVal, maxVal = facet.maxVal }) {
+        state.rangeFacets[facet.facet].minVal = minVal
+        state.rangeFacets[facet.facet].maxVal = maxVal
+    },
+
     setTotalResults (state, total) {
         state.totalResults = total
     },

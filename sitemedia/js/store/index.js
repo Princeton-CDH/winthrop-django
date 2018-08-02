@@ -9,6 +9,7 @@ const state = {
 	filters: [],
 	totalResults: 0,
 	facetChoices: [],
+	rangeFacets: [],
 }
 
 export default new Vuex.Store({
