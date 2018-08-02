@@ -22,7 +22,10 @@ export default {
     async updateFacetChoiceCounts ({ commit, getters }) {
         await fetch(getters.dataPath, fetchOpts)
             .then(res => res.json())
-            .then(data => commit('updateFacetChoiceCounts', data.facets))
+            .then(data => {
+                commit('setTotalResults', data.total)
+                commit('updateFacetChoiceCounts', data.facets)
+            })
     },
 
     async toggleFacetChoice ({ commit, getters, dispatch }, choice) {
@@ -36,7 +39,9 @@ export default {
     },
 
     async loadResults ({ commit, getters }) {
-        console.log(getters.queryString)
+        await fetch(getters.dataPath, fetchOpts)
+            .then(res => res.json())
+            .then(data => commit('setTotalResults', data.total))
         await fetch(getters.resultsPath, fetchOpts)
             .then(res => res.text())
             .then(results => commit('loadResults', results))
