@@ -1,7 +1,7 @@
 from dal import autocomplete
 from django.core.validators import ValidationError
 from django.db.models import Q, Count
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.views.generic import ListView, DetailView
 from django.shortcuts import get_object_or_404
 from djiffy.models import Canvas
@@ -271,9 +271,12 @@ class BookPageView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # add book to context for title display and link to main book page
-        # should 404 if book does not exist
-        # TODO: 404 if book is not digitized
-        context['book'] = get_object_or_404(Book, slug=self.kwargs['slug'])
+        # 404 if book does not exist or does not have a digital editon
+        book = get_object_or_404(Book, slug=self.kwargs['slug'])
+        if not book.digital_edition:
+            raise Http404
+
+        context['book'] = book
         return context
 
 

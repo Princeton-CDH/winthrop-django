@@ -275,6 +275,9 @@ class TestBookViews(TestCase):
         self.assertNotContains(response, 'Person/Book interactions')
         # none should not be displayed for any missing/empty fields
         self.assertNotContains(response, "None")
+        # no link to page view for book without a digital edition
+        self.assertNotContains(response, "View Book",
+            msg_prefix='book without digital edition should not display view book link')
 
         # find a book with a digital edition
         book = Book.objects.filter(digital_edition__isnull=False).first()
@@ -285,6 +288,12 @@ class TestBookViews(TestCase):
         self.assertContains(response, str(canvas.image.size(height=436)))
         # should include image label
         self.assertContains(response, canvas.label)
+        self.assertContains(
+            response, "View Book",
+            msg_prefix='Book with digital edition should display view book link')
+        self.assertContains(
+            response, reverse('books:pages', args=[book.slug]),
+            msg_prefix='Book with digital edition should link to page view')
 
         # book without annotations
         book = Book.objects.filter(is_annotated=False).first()
@@ -431,3 +440,29 @@ class TestBookViews(TestCase):
             assert response.status_code == 400
             assert response.json()['error'] == ('Unable to parse search query; '
                                                 'please revise and try again.')
+
+    def test_book_pages(self):
+        # non-existent book slug should 404
+        response = self.client.get(reverse('books:pages', args=['bogus']))
+        assert response.status_code == 404
+
+        # book without a digital edition should 404
+        book = Book.objects.filter(digital_edition__isnull=True).first()
+        response = self.client.get(reverse('books:pages', args=[book.slug]))
+        assert response.status_code == 404
+
+        # book with a digital edition should resolve
+        book = Book.objects.filter(digital_edition__isnull=False).first()
+        response = self.client.get(reverse('books:pages', args=[book.slug]))
+        assert response.status_code == 200
+        self.assertContains(
+            response, book.short_title,
+            msg_prefix='thumbnail page should display book short title')
+        self.assertContains(
+            response, book.get_absolute_url(),
+            msg_prefix='thumbnail page should link to book detail page')
+        # canvases are present in the context and queryset is annotated with
+        # annotation counts
+        assert 'pages' in response.context
+        assert 'textual_annotation' in response.context['pages'][0]
+        assert 'graphical_annotation' in response.context['pages'][0]
