@@ -3,7 +3,7 @@
     <div class="ui segment">
             <span class="title">{{ book.short_title }}</span><br>
 
-        {% for author in book.authors %}
+        {% for author in book.author %}
             <span class="author">{{ author }}</span><br>
         {% endfor %}
         <span>{{ book.pub_year }}</span>
