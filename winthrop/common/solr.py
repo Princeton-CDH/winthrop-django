@@ -31,6 +31,58 @@ class SolrSchema(object):
     '''Solr Schema object.  Includes project schema configuration and
     methods to update configured Solr instance.'''
 
+    field_types = [
+        {
+            'name': 'text_en',
+            "class":"solr.TextField",
+            # for now, configuring index and query analyzers the same
+            # if we want synonyms, query must be separate
+            "analyzer" : {
+                # "charFilters": [
+                # ],
+                "tokenizer": {
+                   "class": "solr.StandardTokenizerFactory"
+                },
+                "filters": [
+                    {"class":"solr.StopFilterFactory"},
+                    {"class": "solr.LowerCaseFilterFactory"},
+                    {"class": "solr.EnglishPossessiveFilterFactory"},
+                    {"class": "solr.KeywordMarkerFilterFactory"},
+                    {"class": "solr.PorterStemFilterFactory"},
+                    {"class": "solr.ICUFoldingFilterFactory"},
+
+                    # strip e at end of word
+                    # (NOTE: does stemming already handle this?)
+                    {"class":"solr.PatternReplaceFilterFactory",
+                    "pattern": r'(\w+)e$', "replacement":"$1"},
+                    # convert vv to w
+                    {"class": "solr.PatternReplaceFilterFactory",
+                    "pattern": r'vv', "replacement":"w"},
+                    # treat all Js as Is
+                    {"class":"solr.PatternReplaceFilterFactory",
+                    "pattern": r'j', "replacement":"i"},
+                    # treat all Vs as Us
+                    {"class":"solr.PatternReplaceFilterFactory",
+                    "pattern": r'v', "replacement":"u"},
+                ]
+            }
+        },
+        {
+            'name': 'string',
+            "class":"solr.TextField",
+            "sortMissingLast": True,
+            "indexAnalyzer": {
+                "tokenizer": {
+                    # treat entire field as a single token
+                    "class": "solr.KeywordTokenizerFactory",
+                },
+                "filters": [
+                    {"class": "solr.ICUFoldingFilterFactory"},
+                ]
+            }
+        }
+    ]
+
     #: solr schema field definitions
     fields = [
         {'name': 'title', 'type': 'text_en', 'required': False},
@@ -58,7 +110,8 @@ class SolrSchema(object):
         {'name': 'original_pub_info', 'type': 'text_en', 'required': False},
         {'name': 'notes', 'type': 'text_en', 'required': False},
 
-        {'name': 'text', 'type': 'text_en', 'required': False, 'stored': False,
+        # stored = true while testing spelling variation support
+        {'name': 'text', 'type': 'text_en', 'required': False, 'stored': True,
          'multiValued': True},
 
         # have solr automatically track last modification time for
@@ -106,10 +159,29 @@ class SolrSchema(object):
         schema_info = self.solr.schema.get_schema_fields(self.solr_collection)
         return [field['name'] for field in schema_info['fields']]
 
+    def solr_schema_field_types(self):
+        '''Dictionary of currently configured Solr schema fields'''
+        response = self.solr.schema.get_schema_field_types(self.solr_collection)
+        return {field_type['name']: field_type for field_type in response['fieldTypes']}
+
     def update_solr_schema(self):
         '''Update the configured solr instance schema to match
         the configured fields.  Returns a tuple with the number of fields
         created and updated.'''
+
+        current_field_types = self.solr_schema_field_types()
+
+        for field_type in self.field_types:
+            if field_type['name'] in current_field_types:
+                # if field exists but definition has changed, replace it
+                if field_type != current_field_types[field_type['name']]:
+                    self.solr.schema.replace_field_type(self.solr_collection, field_type)
+            # otherwise, create as a new field
+            else:
+                self.solr.schema.create_field_type(self.solr_collection, field_type)
+
+            # TODO: deletion?
+
         current_fields = self.solr_schema_fields()
 
         created = updated = removed = 0
