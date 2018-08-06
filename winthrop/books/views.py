@@ -1,6 +1,6 @@
 from dal import autocomplete
 from django.core.validators import ValidationError
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.http import JsonResponse
 from django.views.generic import ListView, DetailView
 from django.shortcuts import get_object_or_404
@@ -260,10 +260,19 @@ class BookPageView(ListView):
     context_object_name = 'pages'
 
     def get_queryset(self):
-        return super().get_queryset().filter(manifest__book__slug=self.kwargs['slug'])
+        qs = super().get_queryset()
+        # filter canvas based on book slug, and annotate with annotation counts
+        # so template can display indicators for text and graphic annotations
+        return qs.filter(manifest__book__slug=self.kwargs['slug']) \
+                 .annotate(textual_annotation=Count('annotation', filter=Q(annotation__text='')),
+                           graphical_annotation=Count('annotation', filter=Q(annotation__text__ne=''))) \
+                 .values('iiif_image_id', 'label', 'textual_annotation', 'graphical_annotation')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # add book to context for title display and link to main book page
+        # should 404 if book does not exist
+        # TODO: 404 if book is not digitized
         context['book'] = get_object_or_404(Book, slug=self.kwargs['slug'])
         return context
 

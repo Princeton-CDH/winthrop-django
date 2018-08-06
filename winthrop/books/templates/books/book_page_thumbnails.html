@@ -7,12 +7,38 @@
 {% block content %}
 <div class="ui container">
  <a href="{{ book.get_absolute_url }}">&lt; {{ book.short_title }}</a>
-</div>
-<div class="ui container">
+
+ {# legend for annotation markers (icons preliminary only) #}
+ <div class="ui label">
+  <i class="font icon"></i> Textual annotation
+ </div>
+ <div class="ui label">
+  <i class="image icon"></i> Graphical annotation
+ </div>
+
+<div class="ui horizontal divider"></div>
+
+<div class="ui grid">
     {% for page in pages %}
-        <img class="ui image left floated" src="{% iiif_image page.iiif_image_id height=218 %}"
+     <div class="two wide column">
+        <img class="ui image" src="{% iiif_image page.iiif_image_id height=218 %}"
             srcset="{% iiif_image page.iiif_image_id height=436 %} 2x"
             alt="{{ page.label }}" title="{{ page.label }}"/>
+    {# TODO: this may be too slow... need to annotate the canvas queryset instead? #}
+        {% if page.textual_annotation or page.graphical_annotation %}
+        <div class="floating ui label">
+          {% if page.textual_annotation %}
+            <i class="font icon item"
+            title="{{ page.textual_annotation }} textual annotation{{ page.textual_annotation |pluralize}}"></i>
+          {% endif %}
+        {% if page.graphical_annotation %}
+           <i class="image icon item"
+            title="{{ page.graphical_annotation }} graphical annotation{{ page.graphical_annotation |pluralize}}"></i>
+        {% endif %}
+          </div>
+        {% endif %}
+    </div>
     {% endfor %}
+</div>
 </div>
 {% endblock %}
