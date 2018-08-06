@@ -1,7 +1,10 @@
-import { mapGetters, mapActions, mapState } from 'vuex'
+import { mapGetters, mapActions, mapState, mapMutations } from 'vuex'
+import isEqual from 'lodash/isEmpty'
 
 import SearchFacet from '../SearchFacet'
 import SearchFilter from '../SearchFilter'
+import SearchSort from '../SearchSort'
+import { isEmpty } from '../../../../node_modules/rxjs/operators';
 
 export default Vue.component('BooksSearch', {
     template: `
@@ -48,11 +51,15 @@ export default Vue.component('BooksSearch', {
                     </sui-label>
                 </div>
             </sui-segment>
+            <sui-segment inverted>
+                <search-sort></search-sort>
+            </sui-segment>
         </form>
     </div>`,
     components: {
         SearchFacet,
-        SearchFilter
+        SearchFilter,
+        SearchSort,
     },
     data() {
         return {
@@ -120,18 +127,28 @@ export default Vue.component('BooksSearch', {
         ...mapGetters([
             'activeFacets',
             'activeFacetChoices',
+            'formState',
         ]),
     },
     created() {
         this.setEndpoint('facets/')
+        if (isEmpty(this.formState)) { // if nothing was selected
+            this.changeSort('author_asc') // default to author a-z sort
+            this.updateURL()
+        }
         this.loadSearchData()
     },
     methods: {
         ...mapActions([
+            'loadResults',
             'loadSearchData',
             'clearFacetChoices',
             'toggleFacetChoice',
             'setEndpoint',
+            'updateURL'
+        ]),
+        ...mapMutations([
+            'changeSort'
         ]),
         /**
          * Generate a string label for search widget tabs.

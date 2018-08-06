@@ -101,4 +101,14 @@
             }
         }
     }
+
+    .search-sort,
+    .pagination {
+        display: flex;
+        align-items: center;
+
+        label { // "sort by", "display", "results"
+            margin-right: 1rem;
+        }
+    }
 }

@@ -88,5 +88,13 @@ export default {
 
     loadResults (state, results) {
         state.results = results
-    }
+    },
+    
+    changeSort (state, option) {
+        state.activeSort = option
+    },
+
+    setQuery (state, query) {
+        state.query = query
+    },
 }

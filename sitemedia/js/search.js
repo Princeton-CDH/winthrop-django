@@ -8,6 +8,7 @@ import router from './router'
 
 import BooksSearch from './components/books/BooksSearch'
 import SearchResults from './components/SearchResults'
+import { mapActions } from 'vuex'
 
 const unsync = sync(store, router)
 
@@ -16,7 +17,7 @@ $(() => {
     Vue.use(SemanticUIVue)
     Vue.use(Vue2Filters)
     
-    new Vue({
+    const searchInstance = new Vue({
         el: 'main',
         router,
         store,
@@ -26,6 +27,11 @@ $(() => {
         },
         beforeDestroy() {
             unsync() // clean up vuex-router sync
+        },
+        methods: {
+            ...mapActions(['setQuery'])
         }
     })
+
+    window.queryStream.subscribe(searchInstance.setQuery)
 })

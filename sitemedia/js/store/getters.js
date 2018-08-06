@@ -35,5 +35,13 @@ export default {
             return `${state.route.path}?${getters.queryString}`
         }
         return `${state.route.path}`
-    }
+    },
+
+    formState (state, getters) {
+        return {
+            ...getters.activeFacets,
+            'sort': state.activeSort,
+            'query': state.query,
+        }
+    },
 }

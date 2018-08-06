@@ -39,7 +39,7 @@ export default {
     },
 
     async loadResults ({ commit, getters }) {
-        await fetch(getters.dataPath, fetchOpts)
+        await fetch(getters.dataPath, fetchOpts) // this is inefficient :(
             .then(res => res.json())
             .then(data => commit('setTotalResults', data.total))
         await fetch(getters.resultsPath, fetchOpts)
@@ -50,7 +50,7 @@ export default {
     updateURL({ getters }) {
         router.replace({
             query: {
-                ...getters.activeFacets
+                ...getters.formState
             }
         })
     },
@@ -72,9 +72,27 @@ export default {
         dispatch('updateURL')
     },
 
-    setFormState ({ commit, getters }, query) {
-        if (!isEqual(query, getters.activeFacets)) { // only change form state if it's out of sync with URL
+    setFormState ({ commit, getters }, query) { // TODO optimize this
+        if (!isEqual(query, getters.formState)) { // only change form state if it's out of sync with URL
             commit('setFacetChoices', query)
+            commit('setQuery', query.query)
+            commit('changeSort', query.sort)
         }
-    }
+    },
+
+    async changeSort({ commit, dispatch }, option) {
+        commit('changeSort', option)
+        dispatch('updateURL')
+        await dispatch('loadResults')
+    },
+
+    async setQuery({ state, commit, dispatch }, query) {
+        commit('setQuery', query)
+        if (!query && state.activeSort == 'relevance') { // if the query was deleted and we were on relevance, switch to author a-z
+            commit('changeSort', 'author_asc')
+        }
+        dispatch('updateURL')
+        await dispatch('updateFacetChoiceCounts')
+        await dispatch('loadResults')
+    },
 }

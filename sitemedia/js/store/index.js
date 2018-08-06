@@ -12,6 +12,8 @@ const state = {
 	rangeFacets: [],
 	endpoint: '',
 	results: ``,
+	activeSort: '',
+	query: ''
 }
 
 export default new Vuex.Store({

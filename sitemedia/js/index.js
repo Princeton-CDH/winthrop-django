@@ -1,4 +1,8 @@
 import 'babel-polyfill'
+import { fromEvent } from 'rxjs'
+import 'rxjs/add/operator/pluck'
+import 'rxjs/add/operator/distinctUntilChanged'
+import 'rxjs/add/operator/debounceTime'
 
 $(() => {
     var $ribbon = $('.ribbon');
@@ -14,12 +18,18 @@ $(() => {
     }
 
     /* dom */
-    const $mainNav = $('#main-nav')
     const $mobileNav = $('#mobile-nav')
     const $siteSearch = $('#site-search')
     const $menuButton = $('.toc.item')
     const $searchButton = $('#main-nav .search.item')
     const $closeSearchButton = $('#site-search .close.item')
+    const $query = $('#id_query')
+
+    /* observables */
+    window.queryStream = fromEvent($query, 'input')
+        .pluck('target', 'value')
+        .debounceTime(500)
+        .distinctUntilChanged()
     
     /* bindings */
     $mobileNav

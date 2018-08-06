@@ -8,6 +8,8 @@
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "lodash": "^4.17.10",
+    "rxjs": "^6.2.2",
+    "rxjs-compat": "^6.2.2",
     "semantic-ui-vue": "^0.2.11",
     "vue-router": "^3.0.1",
     "vue2-filters": "^0.3.0",
