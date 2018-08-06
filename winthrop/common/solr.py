@@ -58,6 +58,10 @@ class SolrSchema(object):
                     # convert vv to w
                     {"class": "solr.PatternReplaceFilterFactory",
                     "pattern": r'vv', "replacement":"w"},
+
+                    # NOTE: these two could be character filters
+                    # if we're ok with replacing everywhere
+
                     # treat all Js as Is
                     {"class":"solr.PatternReplaceFilterFactory",
                     "pattern": r'j', "replacement":"i"},
