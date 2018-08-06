@@ -33,11 +33,13 @@ class SolrSchema(object):
 
     #: solr schema field definitions
     fields = [
-        {'name': 'title', 'type': 'text_en', 'required': False},
+        {'name': 'title', 'type': 'text_en', 'required': False,
+         'sortMissingLast': True},
         {'name': 'short_title', 'type': 'text_en', 'required': False},
         {'name': 'author', 'type': 'text_en', 'required': False,
          'multiValued': True},
-        {'name': 'pub_year', 'type': 'int', 'required': False},
+        {'name': 'pub_year', 'type': 'int', 'required': False,
+         'sortMissingLast': True},
         {'name': 'thumbnail', 'type': 'string', 'required': False},
         {'name': 'thumbnail_label', 'type': 'string', 'required': False},
         {'name': 'content_type', 'type': 'string', 'required': True},
@@ -63,7 +65,8 @@ class SolrSchema(object):
 
         # sort/facet copy fields
         # {'name': 'title_exact', 'type': 'string', 'required': False},
-        {'name': 'author_sort', 'type': 'string', 'required': False},
+        {'name': 'author_sort', 'type': 'string', 'required': False,
+         'sortMissingLast': True},
         {'name': 'author_exact', 'type': 'string', 'required': False,
          'multiValued': True},
         {'name': 'editor_exact', 'type': 'string', 'required': False,
