@@ -106,7 +106,7 @@ class TestBookViews(TestCase):
          # nothing indexed - should find nothing
         response = self.client.get(url)
         assert response.status_code == 200
-        self.assertContains(response, 'No results')
+        self.assertContains(response, '0 books')
 
         books = Book.objects.all()
 
