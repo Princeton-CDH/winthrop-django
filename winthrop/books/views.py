@@ -199,10 +199,11 @@ class BookListView(ListView, LastModifiedListMixin):
         # if a syntax or other solr error happens, no date to return
         try:
             psq = PagedSolrQuery(query_opts)
-            if psq.count():
-                # Solr stores date in isoformat; convert to datetime
-                return self.solr_timestamp_to_datetime(psq[0]['last_modified'])
-        except SolrError:
+            # Solr stores date in isoformat; convert to datetime
+            return self.solr_timestamp_to_datetime(psq[0]['last_modified'])
+            # skip extra call to Solr to check count and just grab the first
+            # item if it exists
+        except (IndexError, SolrError):
             pass
 
 
@@ -211,10 +212,15 @@ class BookFacetJSONView(BookListView):
 
     def get_context_data(self, **kwargs):
         # skip normal context handling and only return count and facets
-        # TODO: handle solr error, no results
+
+        # get paginator for including number of pages, but skip other
+        # context data logic needed for full result view
+        paginator = self.get_paginator(self.object_list, self.paginate_by)
         try:
             return {
                 'total': self.object_list.count(),
+                'resultsPerPage': self.paginate_by,
+                'pages': paginator.num_pages,
                 'facets': self.object_list.get_facets(),
                 'range_facets': self.object_list.get_facets_ranges()
             }

@@ -420,6 +420,7 @@ class TestBookViews(TestCase):
             mockpsq.return_value.__getitem__.return_value = \
                 {'last_modified': '2018-07-23T00:00:00Z'}
             mockpsq.return_value.get_facets.side_effect = SolrError
+            mockpsq.return_value.count.return_value = 0
             response = self.client.get(url)
             # no error message asserting parsing issues
             assert response.status_code == 500
