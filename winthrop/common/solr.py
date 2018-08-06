@@ -53,6 +53,10 @@ class SolrSchema(object):
          'multiValued': True},
         {'name': 'annotator', 'type': 'text_en', 'required': False,
          'multiValued': True},
+        {'name': 'publisher', 'type': 'text_en', 'required': False},
+        {'name': 'pub_place', 'type': 'text_en', 'required': False},
+        {'name': 'original_pub_info', 'type': 'text_en', 'required': False},
+        {'name': 'notes', 'type': 'text_en', 'required': False},
 
         {'name': 'text', 'type': 'text_en', 'required': False, 'stored': False,
          'multiValued': True},
@@ -79,7 +83,9 @@ class SolrSchema(object):
 
     ]
     #: fields to be copied into general purpose text field for searching
-    text_fields = ['title', 'short_title', 'author', 'pub_year']
+    text_fields = ['title', 'short_title', 'author', 'pub_year', 'editor',
+                   'translator', 'subject', 'publisher', 'pub_place',
+                   'original_pub_info', 'notes', 'annotator']
     #: copy fields, e.g. for facets
     copy_fields = [
         # ('title', 'title_exact'),
