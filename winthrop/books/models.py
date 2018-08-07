@@ -302,6 +302,10 @@ class Book(Notable, Indexable):
             'subject': [str(subject) for subject in self.subjects.all()],
             'annotator': [str(annotator) for annotator in self.annotators()],
             'pub_year': self.pub_year,
+            'publisher': self.publisher.name if self.publisher else '',
+            'pub_place': self.pub_place.name if self.pub_place else '',
+            'original_pub_info': self.original_pub_info,
+            'notes': self.notes,
             # NOTE: this indicates whether the book is annotated, does not
             # necessarily mean there are annotations documented in our system
             'is_annotated': self.is_annotated,

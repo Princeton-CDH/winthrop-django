@@ -8,6 +8,7 @@ urlpatterns = [
     url(r'^$', views.BookListView.as_view(), name='list'),
     url(r'^facets/$', views.BookFacetJSONView.as_view(), name='facets'),
     url(r'^(?P<slug>[-\w]+)/$', views.BookDetailView.as_view(), name='detail'),
+    url(r'^(?P<slug>[-\w]+)/pages/$', views.BookPageView.as_view(), name='pages'),
     url(r'^autocomplete/publisher/$', staff_member_required(views.PublisherAutocomplete.as_view()),
         name='publisher-autocomplete'),
     url(r'^autocomplete/canvas/$', staff_member_required(views.CanvasAutocomplete.as_view()),

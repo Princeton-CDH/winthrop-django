@@ -25,9 +25,9 @@
                 <img class="ui image" src="{% iiif_image book.thumbnail height=218 %}"
                     srcset="{% iiif_image book.thumbnail height=436 %} 2x"
                     alt="{{ book.thumbnail_label }}" title="{{ book.thumbnail_label }}"/>
-                <button class="ui large basic button">
+                <a class="ui large basic button" href="{% url 'books:pages' book.slug %}">
                     View Book
-                </button>
+                </a>
             {% endif %}
         </div>
         <div class="metadata">

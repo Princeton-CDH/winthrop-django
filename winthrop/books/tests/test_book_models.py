@@ -267,6 +267,18 @@ class TestBook(TestCase):
         assert not index_data['thumbnail_label']
         assert index_data['author_sort'] == book.authors()[0].authorized_name
         assert index_data['author'] == [str(author) for author in book.authors()]
+        assert index_data['publisher'] == book.publisher.name
+        assert index_data['pub_place'] == book.pub_place.name
+        assert index_data['original_pub_info'] == book.original_pub_info
+        assert index_data['notes'] == book.notes
+
+        # delete publisher, pub place to check error handling
+        book.publisher = None
+        book.pub_place = None
+        index_data = book.index_data()
+        assert index_data['publisher'] == ''
+        assert index_data['pub_place'] == ''
+
 
         # associate digital edition from fixture (has no thumbnail)
         book.digital_edition = Manifest.objects.first()
