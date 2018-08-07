@@ -1,8 +1,9 @@
 from dal import autocomplete
 from django.core.validators import ValidationError
-from django.db.models import Q
-from django.http import JsonResponse
+from django.db.models import Q, Count
+from django.http import JsonResponse, Http404
 from django.views.generic import ListView, DetailView
+from django.shortcuts import get_object_or_404
 from djiffy.models import Canvas
 from SolrClient.exceptions import SolrError
 
@@ -258,6 +259,31 @@ class BookDetailView(DetailView, LastModifiedMixin):
                 return self.solr_timestamp_to_datetime(psq[0]['last_modified'])
         except SolrError:
             pass
+
+class BookPageView(ListView):
+    model = Canvas
+    template_name = 'books/book_page_thumbnails.html'
+    context_object_name = 'pages'
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        # filter canvas based on book slug, and annotate with annotation counts
+        # so template can display indicators for text and graphic annotations
+        return qs.filter(manifest__book__slug=self.kwargs['slug']) \
+                 .annotate(textual_annotation=Count('annotation', filter=Q(annotation__text='')),
+                           graphical_annotation=Count('annotation', filter=Q(annotation__text__ne=''))) \
+                 .values('iiif_image_id', 'label', 'textual_annotation', 'graphical_annotation')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # add book to context for title display and link to main book page
+        # 404 if book does not exist or does not have a digital editon
+        book = get_object_or_404(Book, slug=self.kwargs['slug'])
+        if not book.digital_edition:
+            raise Http404
+
+        context['book'] = book
+        return context
 
 
 class PublisherAutocomplete(autocomplete.Select2QuerySetView):
