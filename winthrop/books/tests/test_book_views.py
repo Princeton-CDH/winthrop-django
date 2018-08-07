@@ -106,6 +106,9 @@ class TestBookViews(TestCase):
          # nothing indexed - should find nothing
         response = self.client.get(url)
         assert response.status_code == 200
+        # should include vary header
+        assert response.has_header('Vary')
+
         # self.assertContains(response, '0 books') NOTE putting this info in a <noscript> doesn't seem to work - investigate?
 
         books = Book.objects.all()
