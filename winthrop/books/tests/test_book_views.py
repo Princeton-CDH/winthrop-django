@@ -109,7 +109,7 @@ class TestBookViews(TestCase):
         # should include vary header
         assert response.has_header('Vary')
 
-        # self.assertContains(response, '0 books') NOTE putting this info in a <noscript> doesn't seem to work - investigate?
+        self.assertContains(response, '0 books')
 
         books = Book.objects.all()
 
@@ -134,8 +134,7 @@ class TestBookViews(TestCase):
         modified = index_modified_dt.strftime('%a, %d %b %Y %H:%M:%S GMT')
         assert response['Last-Modified'] == modified
 
-        # provisional text
-        # self.assertContains(response, 'Displaying %d books' % books.count()) NOTE rendered by js and thus not present
+        self.assertContains(response, 'Showing %d books' % books.count())
 
         # NOTE: total currently not displayed
         for book in books:
@@ -162,7 +161,7 @@ class TestBookViews(TestCase):
         ### keyword search
         # - one match
         response = self.client.get(url, {'query': 'mercurii'})
-        # self.assertContains(response, 'Displaying 1 book') NOTE rendered by js and thus not present
+        self.assertContains(response, 'Showing 1 book')
         mercurii_bk = Book.objects.get(title__contains='Mercurii')
         self.assertContains(response, mercurii_bk.short_title)
         self.assertContains(response, mercurii_bk.pub_year)
@@ -180,7 +179,7 @@ class TestBookViews(TestCase):
         # bad sort option (relevance / no keyword) ignored
         response = self.client.get(url, {'sort': 'relevance'})
         # all books displayed
-        # self.assertContains(response, 'Displaying %d books' % books.count()) NOTE rendered by js and thus not present
+        self.assertContains(response, 'Showing %d books' % books.count())
         # ordered by author by default
         # (books without author currently listed last)
         authored_books = Book.objects.filter(creator__isnull=False) \
