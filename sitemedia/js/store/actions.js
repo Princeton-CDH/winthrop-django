@@ -3,7 +3,7 @@ import router from '../router'
 
 const fetchOpts = {
     headers: { // this header is needed to signal ajax request to django
-        'X-Requested-With': 'XMLHttpRequest'
+        'X-Requested-With': 'XMLHttpRequest',
     }
 }
 
@@ -16,7 +16,6 @@ export default {
                 commit('addFacets', data.facets)
                 commit('addRangeFacets', data.range_facets)
             })
-        await dispatch('loadResults')
     },
 
     async updateFacetChoiceCounts ({ commit, getters }) {

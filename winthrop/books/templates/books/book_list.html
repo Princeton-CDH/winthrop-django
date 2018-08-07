@@ -17,7 +17,13 @@
 
 {% block content %}
 <div class="ui container">
-	<router-view></router-view>
-	<search-results></search-results>
+    <router-view></router-view>
+    <noscript>
+        {{ search_form }}
+    </noscript>
+    <search-results>
+        {# Renders the template once on page load, successive loads are ajax #}
+        {% include 'books/snippets/book_list_results.html' %}
+    </search-results>
 </div>
 {% endblock %}
