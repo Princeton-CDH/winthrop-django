@@ -32,7 +32,7 @@ export default Vue.component('SearchFacet', {
                         :name="choice.facet"
                         :value="choice.value"
                         :checked="choice.active"
-                    >
+                    />
                     <label>{{ choice.value }} <span class="count">{{ choice.count }}</span></label>
                 </div>
             </div>

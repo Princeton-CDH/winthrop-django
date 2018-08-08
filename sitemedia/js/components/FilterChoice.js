@@ -9,7 +9,7 @@ export default Vue.component ('FilterChoice', {
             :name="name"
             v-model="active"
             hidden
-        >
+        />
     </label>
     `,
     props: {
