@@ -20,6 +20,9 @@
     <router-view></router-view>
     <noscript>
         {{ search_form }}
+        <div class="ui center aligned text container">
+				<h4 class="results-count ui header">Showing {{ paginator.count|intcomma }} book{{ paginator.count|pluralize }}</h4>
+				</div>
     </noscript>
     <search-results>
         {# Renders the template once on page load, successive loads are ajax #}
