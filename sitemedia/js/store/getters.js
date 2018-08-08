@@ -37,11 +37,19 @@ export default {
         return `${state.route.path}`
     },
 
+    /**
+     * Generate a representation of the current form state.
+     * If no options are active, will return an empty object.
+     *
+     * @param {Object} state application state
+     * @param {Object} getters other getter functions
+     * @returns {Object} form state
+     */
     formState (state, getters) {
         return {
             ...getters.activeFacets,
-            'sort': state.activeSort,
-            'query': state.query,
+            ...(state.activeSort && {'sort': state.activeSort}), // we only add this property if it's defined
+            ...(state.query && {'query': state.query}), // same here
         }
     },
 }
