@@ -46,12 +46,21 @@ export default Vue.component('SearchFacet', {
     },
     data() {
         return {
-            filter: '',
-            alphaFilter: '',
-            alphabet: String.fromCharCode(...Array(91).keys()).slice(65)
+            filter: '', // content of the search-within-facet box
+            alphaFilter: '', // selected letter from the rolodex
+            alphabet: String.fromCharCode(...Array(91).keys()).slice(65) // A-Z array used to generate the rolodex
         }
     },
     computed: {
+        /**
+         * Filters the list of facet choices based on the rolodex and 
+         * search-within-facet box.
+         * 
+         * Returns an array of available choice *values* (not objects).
+         * Choices are then hidden if their value isn't in the list.
+         *
+         * @returns {Array} available choice values
+         */
         availableChoices() {
             return this.choices
                 .map(choice => choice.value)
@@ -60,15 +69,12 @@ export default Vue.component('SearchFacet', {
         }
     },
     props: {
-        type: String,
-        label: String,
-        name: String,
-        search: {
-            type: Boolean,
-            default: false
-        },
-        width: Number,
-        choices: Array
+        type: String, // one of ['range', 'text']
+        label: String, // user-friendly name, e.g. "Publication Date"
+        name: String, // form-friendly name, e.g. "pub_date"
+        search: Boolean, // whether to include the rolodex and search-within-facet box
+        width: Number, // number of semantic UI grid columns; CDH grid has 12
+        choices: Array // array of facet choice objects
     },
     methods: {
         ...mapActions([
@@ -78,8 +84,8 @@ export default Vue.component('SearchFacet', {
          * Utility that normalizes strings for simple comparison.
          * Removes special characters, trims whitespace, and uppercases.
          *
-         * @param {String} str
-         * @returns {String}
+         * @param {String} str input string
+         * @returns {String} normalized string
          */
         normalize(str) {
             return str.replace(/[^\w\s]/gi, '').trim().toUpperCase()
@@ -88,9 +94,9 @@ export default Vue.component('SearchFacet', {
          * Compares two strings using normalize().
          * Return true if str2 matches str1.
          *
-         * @param {String} str1
-         * @param {String} str2
-         * @returns {Boolean}
+         * @param {String} str1 input string
+         * @param {String} str2 compare string
+         * @returns {Boolean} match
          */
         match(str1, str2) {
             return this.normalize(str1).includes(this.normalize(str2))

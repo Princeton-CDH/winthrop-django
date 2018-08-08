@@ -1,10 +1,9 @@
 import { mapGetters, mapActions, mapState, mapMutations } from 'vuex'
-import isEqual from 'lodash/isEmpty'
+import { isEmpty } from 'lodash'
 
 import SearchFacet from '../SearchFacet'
 import SearchFilter from '../SearchFilter'
 import SearchSort from '../SearchSort'
-import { isEmpty } from '../../../../node_modules/rxjs/operators';
 
 export default Vue.component('BooksSearch', {
     template: `
@@ -63,14 +62,14 @@ export default Vue.component('BooksSearch', {
     },
     data() {
         return {
-            tabs: [
+            tabs: [ // array of arrays specifying how facets should be grouped into tabs
                 ['author', 'editor', 'translator'],
                 ['publisher', 'pub_year'],
                 ['language', 'subject'],
                 ['annotator']
             ],
-            activeTab: 0,
-            facetConfig: [
+            activeTab: 0, // index of currently active tab
+            facetConfig: [ // array of props for `SearchFacet`s
                 {
                     name: 'author',
                     label: 'Author',
@@ -131,12 +130,12 @@ export default Vue.component('BooksSearch', {
         ]),
     },
     created() {
-        this.setEndpoint('facets/')
-        if (isEmpty(this.formState)) { // if nothing was selected
+        this.setEndpoint('facets/') // facet data URL will become the current url (/books) + '/facets'
+        if (isEmpty(this.formState)) { // if nothing was active on the form (i.e. fresh page load)
             this.changeSort('author_asc') // default to author a-z sort
-            this.updateURL()
+            this.updateURL() // add the sort to the URL so it's used when fetching results & facets
         }
-        this.loadSearchData()
+        this.loadSearchData() // load initial facet data and results
     },
     methods: {
         ...mapActions([
@@ -154,8 +153,8 @@ export default Vue.component('BooksSearch', {
          * Generate a string label for search widget tabs.
          * Joins the matching label for each facet name in the tab with a separator.
          *
-         * @param {Array} tab
-         * @returns {String}
+         * @param {Array} tab array of string names of the facets in the tab, from data.tabs
+         * @returns {String} label for the tab
          */
         tabLabel(tab, separator = '  ·  ') {
             return tab

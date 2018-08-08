@@ -17,7 +17,7 @@ export default Vue.component('SearchSort', {
             'activeSort',
             'query'
         ]),
-        options() {
+        options() { // array of props for `sui-dropdown-item`s inside dropdown
             return [
                 {
                     text: 'Author A-Z',
