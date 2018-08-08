@@ -2,7 +2,6 @@ import { mapGetters, mapActions, mapState, mapMutations } from 'vuex'
 import { isEmpty } from 'lodash'
 
 import SearchFacet from '../SearchFacet'
-import SearchFilter from '../SearchFilter'
 import SearchSort from '../SearchSort'
 
 export default Vue.component('BooksSearch', {
@@ -57,14 +56,13 @@ export default Vue.component('BooksSearch', {
     </div>`,
     components: {
         SearchFacet,
-        SearchFilter,
         SearchSort,
     },
     data() {
         return {
             tabs: [ // array of arrays specifying how facets should be grouped into tabs
-                ['author', 'editor', 'translator'],
-                ['publisher', 'pub_year'],
+                ['author', 'editor'],
+                ['pub_year'],
                 ['language', 'subject'],
                 ['annotator']
             ],
@@ -81,18 +79,6 @@ export default Vue.component('BooksSearch', {
                     name: 'editor',
                     label: 'Editor',
                     type: 'text',
-                },
-                {
-                    name: 'translator',
-                    label: 'Translator',
-                    type: 'text',
-                },
-                {
-                    name: 'publisher',
-                    label: 'Publisher',
-                    type: 'text',
-                    search: true,
-                    width: 6
                 },
                 {
                     name: 'pub_year',
@@ -119,7 +105,6 @@ export default Vue.component('BooksSearch', {
     },
     computed: {
         ...mapState([
-            'filters',
             'totalResults',
             'facetChoices',
         ]),

@@ -215,11 +215,11 @@ class TestBookViews(TestCase):
         assert response.context['object_list'][0]['title'] == \
             books.get(creator__person__authorized_name='Heinsius, Daniel').title
 
-        # by translator
-        response = self.client.get(url, {'translator': ['Tellus, Sylvester']})
-        assert len(response.context['object_list']) == 1
-        assert response.context['object_list'][0]['title'] == \
-            books.get(creator__person__authorized_name='Tellus, Sylvester').title
+        # by translator NOTE disabled as not lv1 feature
+        # response = self.client.get(url, {'translator': ['Tellus, Sylvester']})
+        # assert len(response.context['object_list']) == 1
+        # assert response.context['object_list'][0]['title'] == \
+        #     books.get(creator__person__authorized_name='Tellus, Sylvester').title
 
         # by annotator
         # create annotation on first book with a canvas

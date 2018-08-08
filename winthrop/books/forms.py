@@ -142,7 +142,7 @@ class SearchForm(forms.Form):
     # Solr facet choice fields
     author = FacetChoiceField()
     editor = FacetChoiceField()
-    translator = FacetChoiceField()
+    # translator = FacetChoiceField() NOTE temp disabled as not lv1 feature
     language = FacetChoiceField()
     subject = FacetChoiceField()
     annotator = FacetChoiceField()
