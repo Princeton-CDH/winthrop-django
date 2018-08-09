@@ -17,16 +17,14 @@
 
 {% block content %}
 <div class="ui container">
-    <router-view></router-view>
     <noscript>
         {{ search_form }}
         <div class="ui center aligned text container">
-				<h4 class="results-count ui header">Showing {{ paginator.count|intcomma }} book{{ paginator.count|pluralize }}</h4>
-				</div>
-    </noscript>
-    <search-results>
-        {# Renders the template once on page load, successive loads are ajax #}
+            <h4 class="results-count ui header">Showing {{ paginator.count|intcomma }} book{{ paginator.count|pluralize }}</h4>
+        </div>
         {% include 'books/snippets/book_list_results.html' %}
-    </search-results>
+    </noscript>
+    <router-view></router-view>
+    <search-results></search-results>
 </div>
 {% endblock %}

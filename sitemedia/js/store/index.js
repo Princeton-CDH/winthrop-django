@@ -6,14 +6,13 @@ import getters from './getters'
 Vue.use(Vuex)
 
 const state = {
-	filters: [],
-	totalResults: 0,
+	facets: [],
 	facetChoices: [],
-	rangeFacets: [],
+	totalResults: 0,
 	endpoint: '',
-	results: ``,
+	results: '',
 	activeSort: '',
-	query: ''
+	keywordQuery: ''
 }
 
 export default new Vuex.Store({

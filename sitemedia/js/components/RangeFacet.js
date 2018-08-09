@@ -4,7 +4,7 @@ export default Vue.component('RangeFacet', {
     template: `
     <div class="range-facet">
         <div class="inputs">
-            <sui-input :placeholder="minVal" />
+            <sui-input :placeholder="minVal" @input="setMin"/>
             <label>to</label>
             <sui-input :placeholder="maxVal" />
         </div>
@@ -31,8 +31,8 @@ export default Vue.component('RangeFacet', {
         }
     },
     methods: {
-        ...mapActions([
-            'setRangeFacet',
-        ]),
+        setMin(e) {
+            console.log(this, e)
+        },
     },
 })

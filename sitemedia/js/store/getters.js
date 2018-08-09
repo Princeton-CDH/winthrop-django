@@ -45,11 +45,14 @@ export default {
      * @param {Object} getters other getter functions
      * @returns {Object} form state
      */
-    formState (state, getters) {
+    formState: (state, getters) => {
         return {
             ...getters.activeFacets,
             ...(state.activeSort && {'sort': state.activeSort}), // we only add this property if it's defined
-            ...(state.query && {'query': state.query}), // same here
+            ...(state.keywordQuery && {'query': state.keywordQuery}), // same here
         }
     },
+
+    rangeFacetMin: getters => name => getters.activeFacetChoices.filter(choice => choice.name === name).minVal
+    
 }

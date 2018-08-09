@@ -120,19 +120,20 @@ export default Vue.component('BooksSearch', {
             this.changeSort('author_asc') // default to author a-z sort
             this.updateURL() // add the sort to the URL so it's used when fetching results & facets
         }
-        this.loadSearchData() // load initial facet data and results
+        this.addFacets() // load initial facet data
+        this.updateResults() // load results
     },
     methods: {
         ...mapActions([
-            'loadResults',
-            'loadSearchData',
+            'addFacets',
+            'updateResults',
             'clearFacetChoices',
             'toggleFacetChoice',
-            'setEndpoint',
-            'updateURL'
+            'updateURL',
         ]),
         ...mapMutations([
-            'changeSort'
+            'changeSort',
+            'setEndpoint',
         ]),
         /**
          * Generate a string label for search widget tabs.

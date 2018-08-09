@@ -29,9 +29,9 @@ $(() => {
             unsync() // clean up vuex-router sync
         },
         methods: {
-            ...mapActions(['setQuery'])
+            ...mapActions(['setKeywordQuery'])
         }
     })
 
-    window.queryStream.subscribe(searchInstance.setQuery)
+    window.queryStream.subscribe(searchInstance.setKeywordQuery)
 })
