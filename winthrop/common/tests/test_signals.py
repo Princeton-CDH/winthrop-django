@@ -6,7 +6,7 @@ from django.db import models
 from django.test import TestCase, override_settings
 import pytest
 
-from winthrop.books.models import Book, Creator, CreatorType
+from winthrop.books.models import Book, Creator, CreatorType, Subject, BookSubject
 from winthrop.people.models import Person
 from winthrop.common.signals import IndexableSignalHandler
 
@@ -103,6 +103,13 @@ class TestIndexableSignalHandler(TestCase):
             mockindex.reset_mock()
             IndexableSignalHandler.handle_relation_change(Mock(), book, 'pre_remove')
             mockindex.assert_not_called()
+
+            # test with another of the change related sets, to ensure that
+            # different types follow same logic
+            mockindex.reset_mock()
+            subj = Subject.objects.first()
+            BookSubject.objects.create(book=book, subject=subj, is_primary=True)
+            mockindex.assert_called_with(params=IndexableSignalHandler.index_params)
 
         # non-indexable object should be ignored
         nonindexable = Mock()

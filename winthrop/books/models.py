@@ -240,7 +240,6 @@ class Book(Notable, Indexable):
         :class:`winthrop.books.models.Book` that are subclasses of
         :class:`winthrop.common.models.Named`.'''
         if instance.name_changed:
-            logger.debug('foo')
             logger.debug(
                 '%s (%s) name changed, reindexing %d books',
                 instance,

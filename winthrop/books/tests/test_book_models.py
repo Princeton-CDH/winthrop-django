@@ -247,6 +247,22 @@ class TestBook(TestCase):
         assert book in args[0]
         assert kwargs['params'] == {'commitWithin': 3000}
 
+        # - create a book with a subject attached - this time to test delete
+        # on a different related type
+        subject = Subject.objects.all().first()
+        book = Book.objects.first()
+        BookSubject.objects.create(
+            subject=subject,
+            book=book,
+            is_primary=True,
+        )
+        Book.handle_related_delete(Mock(), subject)
+        assert subject.book_set.count() == 0
+        args, kwargs = mock_index_items.call_args
+        assert isinstance(args[0], QuerySet)
+        assert book in args[0]
+        assert kwargs['params'] == {'commitWithin': 3000}
+
     @patch.object(Indexable, 'index_items')
     def test_handle_named_save(self, mock_index_items):
         # - create a book with a subject attached
@@ -260,9 +276,31 @@ class TestBook(TestCase):
         # no change in name, not called
         Book.handle_named_save(Mock(), subject)
         assert not mock_index_items.called
-        subject.name = 'Test'
 
+        # change in name, should be called
+        subject.name = 'Test'
         Book.handle_named_save(Mock(), subject)
+        args, kwargs = mock_index_items.call_args
+        assert isinstance(args[0], QuerySet)
+        assert book in args[0]
+        assert kwargs['params'] == {'commitWithin': 3000}
+
+        # test once more with another named subclass
+        mock_index_items.reset_mock()
+        language = Language.objects.all().first()
+        book = Book.objects.first()
+        BookLanguage.objects.create(
+            language=language,
+            book=book,
+            is_primary=True,
+        )
+        # no change in name, not called
+        Book.handle_named_save(Mock(), language)
+        assert not mock_index_items.called
+
+        # change in name, should be called
+        language.name = 'Test'
+        Book.handle_named_save(Mock(), language)
         args, kwargs = mock_index_items.call_args
         assert isinstance(args[0], QuerySet)
         assert book in args[0]
