@@ -44,19 +44,10 @@ class TestIndexableSignalHandler(TestCase):
         # - post save
         assert ref(Book.handle_person_save) in post_save_handlers
         assert ref(Book.handle_named_save) in post_save_handlers
-        assert ref(Book.handle_creator_change) in post_save_handlers
+        assert ref(Book.handle_related_change) in post_save_handlers
 
         # - post delete
-        assert ref(Book.handle_creator_change) in post_del_handlers
-
-
-
-        # testing related handlers based on model config
-        # in PPA, NOT YET USED here
-        # pre_save_handlers = [item[1] for item in models.signals.pre_save.receivers]
-        # assert ref(DigitizedWork.handle_collection_save) in pre_save_handlers
-        # pre_del_handlers = [item[1] for item in models.signals.pre_delete.receivers]
-        # assert ref(DigitizedWork.handle_collection_delete) in pre_del_handlers
+        assert ref(Book.handle_related_change) in post_del_handlers
 
     @pytest.mark.django_db
     def test_handle_save(self):

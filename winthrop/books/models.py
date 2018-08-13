@@ -225,10 +225,14 @@ class Book(Notable, Indexable):
             logger.debug('person save, reindexing %d book(s)', instance.book_set.count())
             Indexable.index_items(instance.book_set.all(), params={'commitWithin': 3000})
 
-    def handle_creator_change(sender, instance, **kwargs):
-        '''signal handler for creator save or delete; reindex to get any creator changes'''
+    def handle_related_change(sender, instance, **kwargs):
+        '''Signal handler for any m2m relateds that have an explicit through
+        model and therefore do not consistently fire the expected m2m
+        signals.'''
         # same behavior for save or delete
-        logger.debug('creator change, reindexing %s', instance.book)
+        logger.debug('%s change, reindexing %s',
+                     instance.__class__.__name__,
+                     instance.book)
         instance.book.index(params={'commitWithin': 3000})
 
     def handle_named_save(sender, instance, **kwargs):
@@ -249,7 +253,8 @@ class Book(Notable, Indexable):
     def handle_related_delete(sender, instance, **kwargs):
         '''Signal handler for deletions on m2m models on
         :class:`winthrop.books.models.Book`'''
-
+        # Unlike handle_named_save, these will work for any m2m model
+        # deletion.
         # get a list of ids for collected works before clearing them
         book_ids = instance.book_set.values_list('id', flat=True)
 
@@ -274,18 +279,25 @@ class Book(Notable, Indexable):
             'pre_delete': handle_related_delete,
         },
         'creator_set': {
-            'post_save': handle_creator_change,
-            'post_delete': handle_creator_change,
+            'post_save': handle_related_change,
+            'post_delete': handle_related_change,
         },
         'subjects': {
             'post_save': handle_named_save,
             'pre_delete': handle_related_delete,
         },
+        'booksubject_set': {
+            'post_save': handle_related_change,
+            'post_delete': handle_related_change,
+        },
         'languages': {
             'post_save': handle_named_save,
             'pre_delete': handle_related_delete,
         },
-        
+        'booklanguage_set': {
+            'post_save': handle_related_change,
+            'post_delete': handle_related_change,
+        },
     }
 
     def index_id(self):

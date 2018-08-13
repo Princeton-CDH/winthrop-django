@@ -179,7 +179,6 @@ class TestBook(TestCase):
         book = Book()
         assert not book.translators()
 
-
     def test_add_author(self):
         de_christelicke = Book.objects.get(short_title__contains="De Christelicke")
         abelin = Person.objects.get(authorized_name="Abelin, Johann Philipp")
