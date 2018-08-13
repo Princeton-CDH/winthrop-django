@@ -236,11 +236,11 @@ class TestBook(TestCase):
         assert kwargs['params'] == {'commitWithin': 3000}
 
     @patch.object(Indexable, 'index_items')
-    def test_handle_person_delete(self, mock_index_items):
+    def test_handle_related_delete(self, mock_index_items):
         author = Person.objects.all().first()
         book = Book.objects.filter(contributors=author).first()
 
-        Book.handle_person_delete(Mock(), author)
+        Book.handle_related_delete(Mock(), author)
 
         assert author.book_set.count() == 0
         args, kwargs = mock_index_items.call_args
@@ -249,7 +249,7 @@ class TestBook(TestCase):
         assert kwargs['params'] == {'commitWithin': 3000}
 
     @patch.object(Indexable, 'index_items')
-    def test_handle_subject_save(self, mock_index_items):
+    def test_handle_named_save(self, mock_index_items):
         # - create a book with a subject attached
         subject = Subject.objects.all().first()
         book = Book.objects.first()
@@ -259,11 +259,11 @@ class TestBook(TestCase):
             is_primary=True,
         )
         # no change in name, not called
-        Book.handle_subject_save(Mock(), subject)
+        Book.handle_named_save(Mock(), subject)
         assert not mock_index_items.called
         subject.name = 'Test'
 
-        Book.handle_subject_save(Mock(), subject)
+        Book.handle_named_save(Mock(), subject)
         args, kwargs = mock_index_items.call_args
         assert isinstance(args[0], QuerySet)
         assert book in args[0]

@@ -39,11 +39,11 @@ class TestIndexableSignalHandler(TestCase):
 
         # - pre delete
         pre_del_handlers = [item[1] for item in models.signals.pre_delete.receivers]
-        assert ref(Book.handle_person_delete) in pre_del_handlers
+        assert ref(Book.handle_related_delete) in pre_del_handlers
 
         # - post save
         assert ref(Book.handle_person_save) in post_save_handlers
-        assert ref(Book.handle_subject_save) in post_save_handlers
+        assert ref(Book.handle_named_save) in post_save_handlers
         assert ref(Book.handle_creator_change) in post_save_handlers
 
         # - post delete
