@@ -38,10 +38,9 @@ class SolrSchema(object):
             # for now, configuring index and query analyzers the same
             # if we want synonyms, query must be separate
             "analyzer" : {
-                # "charFilters": [
-                # ],
+                # "charFilters": [],
                 "tokenizer": {
-                   "class": "solr.StandardTokenizerFactory"
+                    "class": "solr.StandardTokenizerFactory",
                 },
                 "filters": [
                     {"class":"solr.StopFilterFactory"},
@@ -52,22 +51,26 @@ class SolrSchema(object):
                     {"class": "solr.ICUFoldingFilterFactory"},
 
                     # strip e at end of word
-                    # (NOTE: does stemming already handle this?)
+                    # NOTE: possibly some redundancy with stemming,
+                    # but we want to make sure it happens everywhere
                     {"class":"solr.PatternReplaceFilterFactory",
-                    "pattern": r'(\w+)e$', "replacement":"$1"},
+                     "pattern": r'(\w+)e$', "replacement": "$1"},
                     # convert vv to w
                     {"class": "solr.PatternReplaceFilterFactory",
-                    "pattern": r'vv', "replacement":"w"},
+                     "pattern": r'vv', "replacement": "w"},
+                    # convert double l to single
+                    {"class": "solr.PatternReplaceFilterFactory",
+                     "pattern": r'll', "replacement": "l"},
 
-                    # NOTE: these two could be character filters
-                    # if we're ok with replacing everywhere
+                    # NOTE: these two could possibly be character filters,
+                    # but probably better to replace after folding and lower case
 
                     # treat all Js as Is
                     {"class":"solr.PatternReplaceFilterFactory",
-                    "pattern": r'j', "replacement":"i"},
+                     "pattern": r'j', "replacement":"i"},
                     # treat all Vs as Us
                     {"class":"solr.PatternReplaceFilterFactory",
-                    "pattern": r'v', "replacement":"u"},
+                     "pattern": r'v', "replacement":"u"},
                 ]
             }
         },
@@ -81,7 +84,12 @@ class SolrSchema(object):
                     "class": "solr.KeywordTokenizerFactory",
                 },
                 "filters": [
-                    {"class": "solr.ICUFoldingFilterFactory"},
+                    # enable normalization without case folding
+                    # (preserve case for facets)
+                    {"class": "solr.ASCIIFoldingFilterFactory",
+                     "preserveOriginal": False},
+                    {"class": "solr.ICUNormalizer2FilterFactory",
+                     "name": "nfkc", "mode": "compose"}
                 ]
             }
         }
