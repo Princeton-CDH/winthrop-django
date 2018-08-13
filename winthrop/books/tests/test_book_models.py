@@ -248,6 +248,27 @@ class TestBook(TestCase):
         assert book in args[0]
         assert kwargs['params'] == {'commitWithin': 3000}
 
+    @patch.object(Indexable, 'index_items')
+    def test_handle_subject_save(self, mock_index_items):
+        # - create a book with a subject attached
+        subject = Subject.objects.all().first()
+        book = Book.objects.first()
+        BookSubject.objects.create(
+            subject=subject,
+            book=book,
+            is_primary=True,
+        )
+        # no change in name, not called
+        Book.handle_subject_save(Mock(), subject)
+        assert not mock_index_items.called
+        subject.name = 'Test'
+
+        Book.handle_subject_save(Mock(), subject)
+        args, kwargs = mock_index_items.call_args
+        assert isinstance(args[0], QuerySet)
+        assert book in args[0]
+        assert kwargs['params'] == {'commitWithin': 3000}
+
     def test_index_id(self):
         book = Book.objects.all().first()
         assert book.index_id() == 'book:%d' % book.pk

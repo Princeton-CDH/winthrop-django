@@ -1,12 +1,16 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 
+
 # abstract models with common fields to be
 # used as mix-ins
-
 class Named(models.Model):
     '''Abstract model with a 'name' field; by default, name is used as
     the string display.'''
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__initial = self.__dict__.copy()
 
     #: unique name (required)
     name = models.CharField(max_length=255, unique=True)
@@ -17,6 +21,12 @@ class Named(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def name_changed(self):
+        '''Determine if the name of an object has changed on
+        current instance'''
+        return self.name != self.__initial['name']
 
 
 class Notable(models.Model):
@@ -73,4 +83,3 @@ class DateRange(models.Model):
         if self.start_year and self.end_year and \
                 not self.end_year >= self.start_year:
             raise ValidationError('End year must be after start year')
-

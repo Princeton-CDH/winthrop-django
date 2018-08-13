@@ -246,6 +246,14 @@ class Book(Notable, Indexable):
         logger.debug('creator change, reindexing %s', instance.book)
         instance.book.index(params={'commitWithin': 3000})
 
+    def handle_subject_save(sender, instance, **kwargs):
+        '''signal handler for change to subject name'''
+        if instance.name_changed:
+            logger.debug('subject named changed, reindexing %d books',
+                         instance.book_set.count())
+            Indexable.index_items(instance.book_set.all(),
+                                  params={'commitWithin': 3000})
+
     #: index dependencies, to update when related items are changed
     index_depends_on = {
         # author name
@@ -257,6 +265,9 @@ class Book(Notable, Indexable):
             'post_save': handle_creator_change,
             'post_delete': handle_creator_change,
         },
+        'subjects': {
+            'post_save': handle_subject_save,
+        }
     }
 
     def index_id(self):

@@ -11,6 +11,18 @@ class TestNamed(TestCase):
         named_obj = Named(name='foo')
         assert str(named_obj) == 'foo'
 
+    def test_name_changed(self):
+        named_obj = Named(name='foo')
+        # should be the same
+        assert not named_obj.name_changed
+        named_obj.name = 'bar'
+        # should now register that the two attributes are different
+        assert named_obj.name_changed
+        # simulate a reload of initial, since abstract models can't be saved
+        named_obj.__init__()
+        assert not named_obj.name_changed
+
+
 
 class TestNotable(TestCase):
 

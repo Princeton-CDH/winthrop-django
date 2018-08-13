@@ -31,9 +31,25 @@ class TestIndexableSignalHandler(TestCase):
         post_del_handlers = [item[1] for item in models.signals.post_delete.receivers]
         assert ref(IndexableSignalHandler.handle_delete) in post_del_handlers
         # many to many
-        # NOT YET IN USE here
-        # m2m_handlers = [item[1] for item in models.signals.m2m_changed.receivers]
-        # assert ref(IndexableSignalHandler.handle_relation_change) in m2m_handlers
+        m2m_handlers = [item[1] for item in models.signals.m2m_changed.receivers]
+        assert ref(IndexableSignalHandler.handle_relation_change) in m2m_handlers
+
+        # check Wintrhop specific handlers, some reused definitions from
+        # above
+
+        # - pre delete
+        pre_del_handlers = [item[1] for item in models.signals.pre_delete.receivers]
+        assert ref(Book.handle_person_delete) in pre_del_handlers
+
+        # - post save
+        assert ref(Book.handle_person_save) in post_save_handlers
+        assert ref(Book.handle_subject_save) in post_save_handlers
+        assert ref(Book.handle_creator_change) in post_save_handlers
+
+        # - post delete
+        assert ref(Book.handle_creator_change) in post_del_handlers
+
+
 
         # testing related handlers based on model config
         # in PPA, NOT YET USED here
