@@ -225,13 +225,43 @@ class Book(Notable, Indexable):
             logger.debug('person save, reindexing %d book(s)', instance.book_set.count())
             Indexable.index_items(instance.book_set.all(), params={'commitWithin': 3000})
 
-    def handle_person_delete(sender, instance, **kwargs):
-        '''signal handler for person delete; reindex books'''
+    def handle_related_change(sender, instance, **kwargs):
+        '''Signal handler for any m2m relateds that have an explicit through
+        model and therefore do not consistently fire the expected m2m
+        signals.'''
+        # same behavior for save or delete
+        logger.debug('%s change, reindexing %s',
+                     instance.__class__.__name__,
+                     instance.book)
+        instance.book.index(params={'commitWithin': 3000})
 
+    def handle_named_save(sender, instance, **kwargs):
+        '''Signal handler for name changes to m2ms on
+        :class:`winthrop.books.models.Book` that are subclasses of
+        :class:`winthrop.common.models.Named`.'''
+        if instance.name_changed:
+            logger.debug(
+                '%s (%s) name changed, reindexing %d books',
+                instance,
+                instance.__class__.__name__,
+                instance.book_set.count()
+            )
+            Indexable.index_items(instance.book_set.all(),
+                                  params={'commitWithin': 3000})
+
+    def handle_related_delete(sender, instance, **kwargs):
+        '''Signal handler for deletions on m2m models on
+        :class:`winthrop.books.models.Book`'''
+        # Unlike handle_named_save, these will work for any m2m model
+        # deletion.
         # get a list of ids for collected works before clearing them
         book_ids = instance.book_set.values_list('id', flat=True)
 
-        logger.debug('person delete, reindexing %d book(s)', len(book_ids))
+        logger.debug(
+            '%s delete, reindexing %d book(s)',
+            instance.__class__.__name__,
+            len(book_ids),
+        )
         # find the items based on the list of ids to reindex
         books = Book.objects.filter(id__in=list(book_ids))
 
@@ -240,22 +270,32 @@ class Book(Notable, Indexable):
         instance.book_set.clear()
         Indexable.index_items(books, params={'commitWithin': 3000})
 
-    def handle_creator_change(sender, instance, **kwargs):
-        '''signal handler for creator save or delete; reindex to get any creator changes'''
-        # same behavior for save or delete
-        logger.debug('creator change, reindexing %s', instance.book)
-        instance.book.index(params={'commitWithin': 3000})
-
     #: index dependencies, to update when related items are changed
     index_depends_on = {
         # author name
         'contributors': {
             'post_save': handle_person_save,
-            'pre_delete': handle_person_delete,
+            'pre_delete': handle_related_delete,
         },
         'creator_set': {
-            'post_save': handle_creator_change,
-            'post_delete': handle_creator_change,
+            'post_save': handle_related_change,
+            'post_delete': handle_related_change,
+        },
+        'subjects': {
+            'post_save': handle_named_save,
+            'pre_delete': handle_related_delete,
+        },
+        'booksubject_set': {
+            'post_save': handle_related_change,
+            'post_delete': handle_related_change,
+        },
+        'languages': {
+            'post_save': handle_named_save,
+            'pre_delete': handle_related_delete,
+        },
+        'booklanguage_set': {
+            'post_save': handle_related_change,
+            'post_delete': handle_related_change,
         },
     }
 

@@ -6,7 +6,7 @@ from django.db import models
 from django.test import TestCase, override_settings
 import pytest
 
-from winthrop.books.models import Book, Creator, CreatorType
+from winthrop.books.models import Book, Creator, CreatorType, Subject, BookSubject
 from winthrop.people.models import Person
 from winthrop.common.signals import IndexableSignalHandler
 
@@ -31,16 +31,23 @@ class TestIndexableSignalHandler(TestCase):
         post_del_handlers = [item[1] for item in models.signals.post_delete.receivers]
         assert ref(IndexableSignalHandler.handle_delete) in post_del_handlers
         # many to many
-        # NOT YET IN USE here
-        # m2m_handlers = [item[1] for item in models.signals.m2m_changed.receivers]
-        # assert ref(IndexableSignalHandler.handle_relation_change) in m2m_handlers
+        m2m_handlers = [item[1] for item in models.signals.m2m_changed.receivers]
+        assert ref(IndexableSignalHandler.handle_relation_change) in m2m_handlers
 
-        # testing related handlers based on model config
-        # in PPA, NOT YET USED here
-        # pre_save_handlers = [item[1] for item in models.signals.pre_save.receivers]
-        # assert ref(DigitizedWork.handle_collection_save) in pre_save_handlers
-        # pre_del_handlers = [item[1] for item in models.signals.pre_delete.receivers]
-        # assert ref(DigitizedWork.handle_collection_delete) in pre_del_handlers
+        # check Wintrhop specific handlers, some reused definitions from
+        # above
+
+        # - pre delete
+        pre_del_handlers = [item[1] for item in models.signals.pre_delete.receivers]
+        assert ref(Book.handle_related_delete) in pre_del_handlers
+
+        # - post save
+        assert ref(Book.handle_person_save) in post_save_handlers
+        assert ref(Book.handle_named_save) in post_save_handlers
+        assert ref(Book.handle_related_change) in post_save_handlers
+
+        # - post delete
+        assert ref(Book.handle_related_change) in post_del_handlers
 
     @pytest.mark.django_db
     def test_handle_save(self):
@@ -96,6 +103,13 @@ class TestIndexableSignalHandler(TestCase):
             mockindex.reset_mock()
             IndexableSignalHandler.handle_relation_change(Mock(), book, 'pre_remove')
             mockindex.assert_not_called()
+
+            # test with another of the change related sets, to ensure that
+            # different types follow same logic
+            mockindex.reset_mock()
+            subj = Subject.objects.first()
+            BookSubject.objects.create(book=book, subject=subj, is_primary=True)
+            mockindex.assert_called_with(params=IndexableSignalHandler.index_params)
 
         # non-indexable object should be ignored
         nonindexable = Mock()
