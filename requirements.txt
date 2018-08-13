@@ -1,7 +1,7 @@
 django<2
 mysqlclient
 django-grappelli
-django-autocomplete-light
+django-autocomplete-light<3.3
 django-compressor
 django-compressor-toolkit
 requests
@@ -12,7 +12,9 @@ djiffy
 annotator_store
 cached_property
 # unreleased version of SolrClient with ordered facets and facet ranges
-git+https://github.com/moonlitesolutions/SolrClient.git@19c5280c9f8e97#egg=SolrClient
+#git+https://github.com/moonlitesolutions/SolrClient.git@19c5280c9f8e97#egg=SolrClient
+# unreleased version of SolrClient with schema field-type management
+git+https://github.com/rlskoeser/SolrClient.git@schema-field-type-support#egg=SolrClient
 #solrclient
 progressbar2
 unidecode

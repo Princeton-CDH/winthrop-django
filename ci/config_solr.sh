@@ -29,8 +29,8 @@ else
 fi
 
 # Try to make a core
-echo "Creating solr core with managed schema"
-$bin create -c $SOLR_CORE -n basic_configs
+echo "Creating solr core with managed schema and local solr config in ${TRAVIS_BUILD_DIR}/solr_config"
+$bin create -c $SOLR_CORE -d $TRAVIS_BUILD_DIR/solr_config
 
 if [ $? -ne 0 ];
 then

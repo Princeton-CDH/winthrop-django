@@ -19,4 +19,14 @@
     <img class="ui image placeholder"/>
     {% endif %}
     </a>
+    {% for id, highlight in highlights.items %}
+        {% if id == book.id %}
+        <div class="ui brown message attached highlighting">
+            <h3>search terms in context</h3>
+            {% for snippet in highlight.text %}
+            <p>{{ snippet|safe }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endfor %}
 </div>

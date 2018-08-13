@@ -300,7 +300,8 @@ class Book(Notable, Indexable):
             'translator': [str(translator) for translator in self.translators()],
             'language': [str(language) for language in self.languages.all()],
             'subject': [str(subject) for subject in self.subjects.all()],
-            'annotator': [str(annotator) for annotator in self.annotators()],
+            # use set() to get unique list of annotators, since we don't need repeats
+            'annotator': list(set(str(annotator) for annotator in self.annotators())),
             'pub_year': self.pub_year,
             'publisher': self.publisher.name if self.publisher else '',
             'pub_place': self.pub_place.name if self.pub_place else '',

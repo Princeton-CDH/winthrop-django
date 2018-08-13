@@ -146,7 +146,12 @@ class BookListView(ListView, LastModifiedListMixin):
             'facet.limit': -1,
             # sort by alpha on facet label rather than count
             'facet.sort': 'index',
-            'fq': filter_qs
+            'fq': filter_qs,
+            # enabling highlighting for debugging search customization
+            'hl': True,
+            'hl.fl': 'text',
+            'hl.snippets': 3,
+            'hl.method': 'unified'
         }
         solr_opts.update(range_opts)
         return solr_opts
@@ -161,6 +166,7 @@ class BookListView(ListView, LastModifiedListMixin):
             return Book.objects.none()
 
     def get_context_data(self, **kwargs):
+        highlights = None
         try:
             # catch an error querying solr when the search terms cannot be parsed
             # (e.g., incomplete exact phrase)
@@ -169,6 +175,10 @@ class BookListView(ListView, LastModifiedListMixin):
             # populate form field choices based on facets
             # (may not actually be displayed except as a fallback and for testing)
             self.form.set_choices_from_facets(self.object_list.get_facets())
+
+            # temporarily include highlights to test search index customization
+            # retrieve inside try/except in case of syntax errro
+            highlights = self.object_list.get_highlighting()
 
         except SolrError as solr_err:
             context = {'object_list': []}
@@ -180,6 +190,8 @@ class BookListView(ListView, LastModifiedListMixin):
             context['error'] = error_msg
         context.update({
             'search_form': self.form,
+            # temporarily include highlights to test search index customization
+            'highlights': highlights
         })
         return context
 

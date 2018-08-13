@@ -64,6 +64,11 @@ class TestSolrSchema(TestCase):
             test_copy_field
         ]
 
+        # skip field types for now
+        mocksolr.schema.get_schema_field_types.return_value = {
+            'fieldTypes': []
+        }
+
         schema = SolrSchema()
         schema.fields = [
             {'name': 'author', 'type': 'text_en', 'required': False},
