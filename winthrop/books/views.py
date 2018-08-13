@@ -165,6 +165,7 @@ class BookListView(ListView, LastModifiedListMixin):
             return Book.objects.none()
 
     def get_context_data(self, **kwargs):
+        highlights = None
         try:
             # catch an error querying solr when the search terms cannot be parsed
             # (e.g., incomplete exact phrase)
@@ -173,6 +174,10 @@ class BookListView(ListView, LastModifiedListMixin):
             # populate form field choices based on facets
             # (may not actually be displayed except as a fallback and for testing)
             self.form.set_choices_from_facets(self.object_list.get_facets())
+
+            # temporarily include highlights to test search index customization
+            # retrieve inside try/except in case of syntax errro
+            highlights = self.object_list.get_highlighting()
 
         except SolrError as solr_err:
             context = {'object_list': []}
@@ -185,7 +190,7 @@ class BookListView(ListView, LastModifiedListMixin):
         context.update({
             'search_form': self.form,
             # temporarily include highlights to test search index customization
-            'highlights': self.object_list.get_highlighting()
+            'highlights': highlights
         })
         return context
 

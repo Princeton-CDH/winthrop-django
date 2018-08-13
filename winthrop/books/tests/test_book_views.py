@@ -126,7 +126,9 @@ class TestBookViews(TestCase):
             'sort': 'last_modified desc',
             'fq': 'content_type:(%s)' % str(Book._meta)
             })[0]['last_modified']
-        index_modified_dt = datetime.strptime(index_modified, '%Y-%m-%dT%H:%M:%S.%fZ')
+        # NOTE: need to use method to handle variable Solr representation of
+        # microseconds (not included if zero)
+        index_modified_dt = LastModifiedMixin.solr_timestamp_to_datetime(index_modified)
 
         modified = index_modified_dt.strftime('%a, %d %b %Y %H:%M:%S GMT')
         assert response['Last-Modified'] == modified
@@ -195,7 +197,7 @@ class TestBookViews(TestCase):
         # NOTE: db lookups rely on the fixture not having someone who is a
         # contributor on multiple books should be two results
         response = self.client.get(url, {'author': ['Hesiod',
-                                         'Abelin, Johann Philipp']})
+                                                    'Abelin, Johann Philipp']})
         assert len(response.context['object_list']) == 2
         # get matching book titles from database object
         matching_books = books.filter(
