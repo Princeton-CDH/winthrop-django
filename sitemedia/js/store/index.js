@@ -9,10 +9,11 @@ const state = {
 	facets: [],
 	facetChoices: [],
 	totalResults: 0,
-	endpoint: '',
 	results: '',
 	activeSort: '',
-	keywordQuery: ''
+    keywordQuery: '',
+    facetsEndpoint: '',
+    resultsEndpoint: '',
 }
 
 export default new Vuex.Store({

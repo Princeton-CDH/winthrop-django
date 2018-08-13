@@ -78,10 +78,11 @@ export default {
     setFacetChoices (state, facets) {
         state.facetChoices.forEach(choice => choice.active = false) // reset all facets first
         for (const facet in facets) {
-            for (const value in facets[facet]) {
+            for (const value of toArray(facets[facet])) { // values from query could be arrays or not
+                console.log(facet, value)
                 state.facetChoices
                     .filter(choice => choice.facet === facet)
-                    .find(choice => toArray(value).includes(choice.value)) // values from query could be arrays
+                    .find(choice => choice.value === value)
                     .active = true
             }
         }
@@ -115,17 +116,6 @@ export default {
     editRangeFacet (state, { facet, minVal, maxVal }) {
         if (minVal) state.rangeFacets[facet.facet].minVal = minVal
         if (maxVal) state.rangeFacets[facet.facet].maxVal = maxVal
-    },
-
-    /**
-     * Stores the endpoint at which the form should look to receive JSON
-     * data from solr.
-     *
-     * @param {Object} state current application state
-     * @param {String} endpoint path to use, e.g. '/facets'
-     */
-    setEndpoint (state, endpoint) {
-        state.endpoint = endpoint
     },
 
     /**
@@ -168,5 +158,27 @@ export default {
      */
     setKeywordQuery (state, query) {
         state.keywordQuery = query
+    },
+
+    /**
+     * Stores the endpoint at which the form should look to receive JSON
+     * facet data from Solr.
+     *
+     * @param {Object} state current application state
+     * @param {String} endpoint path to use, e.g. '/books/facets'
+     */
+    setFacetsEndpoint (state, endpoint) {
+        state.facetsEndpoint = endpoint
+    },
+
+    /**
+     * Stores the endpoint at which the form should look to receive HTML
+     * result data from Django.
+     *
+     * @param {Object} state current application state
+     * @param {String} endpoint path to use, e.g. '/books'
+     */
+    setResultsEndpoint (state, endpoint) {
+        state.resultsEndpoint = endpoint
     },
 }

@@ -1,11 +1,25 @@
+import querystring from 'query-string'
+
 import { toArray } from '../utilities'
 
 export default {
-    activeFacetChoices (state) {
-        return state.facetChoices.filter(choice => choice.active)
-    },
+    /**
+     * Returns only the currently active facet choices.
+     *
+     * @param {Object} state application state
+     * @returns {Array} active facet choices
+     */
+    activeFacetChoices: state => state.facetChoices.filter(choice => choice.active),
 
-    activeFacets (state, getters) {
+    /**
+     * Reduces an array of active facet choices to an object
+     * suitable for conversion into a URL querystring.
+     *
+     * @param {Object} state application state
+     * @param {Object} getters other getter functions
+     * @returns {Object} facet state
+     */
+    activeFacets: (state, getters) => {
         return getters.activeFacetChoices
             .reduce((acc, cur) => {
                 if (acc[cur.facet]) {
@@ -19,26 +33,8 @@ export default {
             }, {})
     },
 
-    queryString (state) {
-        return state.route.fullPath.split('?')[1]
-    },
-
-    dataPath (state, getters) {
-        if (getters.queryString) {
-            return `${state.route.path}${state.endpoint}?${getters.queryString}`
-        }
-        return `${state.route.path}${state.endpoint}`
-    },
-
-    resultsPath (state, getters) {
-        if (getters.queryString) {
-            return `${state.route.path}?${getters.queryString}`
-        }
-        return `${state.route.path}`
-    },
-
     /**
-     * Generate a representation of the current form state.
+     * Returns a representation of the current form state.
      * If no options are active, will return an empty object.
      *
      * @param {Object} state application state
@@ -48,11 +44,40 @@ export default {
     formState: (state, getters) => {
         return {
             ...getters.activeFacets,
-            ...(state.activeSort && {'sort': state.activeSort}), // we only add this property if it's defined
-            ...(state.keywordQuery && {'query': state.keywordQuery}), // same here
+            ...(state.activeSort && { 'sort': state.activeSort }), // we only add this property if it's defined
+            ...(state.keywordQuery && { 'query': state.keywordQuery }), // same here
         }
     },
 
-    rangeFacetMin: getters => name => getters.activeFacetChoices.filter(choice => choice.name === name).minVal
-    
+    /**
+     * Returns a function that will create a URL to pass to fetch()
+     * that will return JSON facet data from Solr.
+     * 
+     * Resulting function takes an optional argument that allows it to
+     * generate a URL for any form state; default is the current state.
+     *
+     * @param {Object} state application state
+     * @param {Object} getters other getter functions
+     * @returns {Function} URL function
+     */
+    facetsPath: (state, getters) => formState => {
+        if (formState) return `${state.facetsEndpoint}?${querystring.stringify(formState)}`
+        else return `${state.facetsEndpoint}?${querystring.stringify(getters.formState)}`
+    },
+
+    /**
+     * Returns a function that will create a URL to pass to fetch()
+     * that will return HTML result data from Django.
+     * 
+     * Resulting function takes an optional argument that allows it to
+     * generate a URL for any form state; default is the current state.
+     *
+     * @param {Object} state application state
+     * @param {Object} getters other getter functions
+     * @returns {Function} URL function
+     */
+    resultsPath: (state, getters) => formState => {
+        if (formState) return `${state.resultsEndpoint}?${querystring.stringify(formState)}`
+        else return `${state.resultsEndpoint}?${querystring.stringify(getters.formState)}`
+    },
 }

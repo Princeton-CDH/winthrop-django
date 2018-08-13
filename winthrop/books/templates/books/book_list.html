@@ -24,7 +24,7 @@
         </div>
         {% include 'books/snippets/book_list_results.html' %}
     </noscript>
-    <router-view></router-view>
+    <books-search resource="books" results-endpoint="/books" facets-endpoint="/books/facets"></books-search>
     <search-results></search-results>
 </div>
 {% endblock %}

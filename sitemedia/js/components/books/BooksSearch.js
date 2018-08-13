@@ -1,5 +1,6 @@
+import isEmpty from 'lodash/isEmpty'
+import isEqual from 'lodash/isEqual'
 import { mapGetters, mapActions, mapState, mapMutations } from 'vuex'
-import { isEmpty } from 'lodash'
 
 import SearchFacet from '../SearchFacet'
 import SearchSort from '../SearchSort'
@@ -58,6 +59,11 @@ export default Vue.component('BooksSearch', {
         SearchFacet,
         SearchSort,
     },
+    props: {
+        resource: String,
+        resultsEndpoint: String,
+        facetsEndpoint: String,
+    },
     data() {
         return {
             tabs: [ // array of arrays specifying how facets should be grouped into tabs
@@ -105,23 +111,13 @@ export default Vue.component('BooksSearch', {
     },
     computed: {
         ...mapState([
+            'route',
             'totalResults',
             'facetChoices',
         ]),
         ...mapGetters([
-            'activeFacets',
             'activeFacetChoices',
-            'formState',
         ]),
-    },
-    created() {
-        this.setEndpoint('facets/') // facet data URL will become the current url (/books) + '/facets'
-        if (isEmpty(this.formState)) { // if nothing was active on the form (i.e. fresh page load)
-            this.changeSort('author_asc') // default to author a-z sort
-            this.updateURL() // add the sort to the URL so it's used when fetching results & facets
-        }
-        this.addFacets() // load initial facet data
-        this.updateResults() // load results
     },
     methods: {
         ...mapActions([
@@ -129,11 +125,13 @@ export default Vue.component('BooksSearch', {
             'updateResults',
             'clearFacetChoices',
             'toggleFacetChoice',
+            'setFormState',
             'updateURL',
         ]),
         ...mapMutations([
             'changeSort',
-            'setEndpoint',
+            'setFacetsEndpoint',
+            'setResultsEndpoint',
         ]),
         /**
          * Generate a string label for search widget tabs.
@@ -148,4 +146,10 @@ export default Vue.component('BooksSearch', {
                 .join(separator)
         },
     },
+    created() {
+        this.setFacetsEndpoint(this.facetsEndpoint) // set endpoints
+        this.setResultsEndpoint(this.resultsEndpoint)
+        if (isEmpty(this.route.query)) this.changeSort('author_asc') // set default sort
+        this.addFacets(this.route.query).then(() => this.setFormState(this.route.query)) // initialize form
+    }
 })
