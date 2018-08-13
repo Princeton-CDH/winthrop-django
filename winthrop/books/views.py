@@ -145,7 +145,12 @@ class BookListView(ListView, LastModifiedListMixin):
             'facet.limit': -1,
             # sort by alpha on facet label rather than count
             'facet.sort': 'index',
-            'fq': filter_qs
+            'fq': filter_qs,
+            # enabling highlighting for debugging search customization
+            'hl': True,
+            'hl.fl': 'text',
+            'hl.snippets': 3,
+            'hl.method': 'unified'
         }
         solr_opts.update(range_opts)
         return solr_opts
@@ -179,6 +184,8 @@ class BookListView(ListView, LastModifiedListMixin):
             context['error'] = error_msg
         context.update({
             'search_form': self.form,
+            # temporarily include highlights to test search index customization
+            'highlights': self.object_list.get_highlighting()
         })
         return context
 
