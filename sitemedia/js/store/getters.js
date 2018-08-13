@@ -12,6 +12,23 @@ export default {
     activeFacetChoices: state => state.facetChoices.filter(choice => choice.active),
 
     /**
+     * Reduces an array of range facets to an object
+     * suitable for conversion into a URL querystring.
+     *
+     * @param {Object} state application state
+     * @returns {Object} range facet state
+     */
+    activeRangeFacets: state => {
+        return state.facets
+            .filter(facet => facet.type === 'range')
+            .reduce((acc, cur) => {
+                if (cur.minVal) acc[cur.minName] = cur.minVal
+                if (cur.maxVal) acc[cur.maxName] = cur.maxVal
+                return acc
+            }, {})
+    },
+
+    /**
      * Reduces an array of active facet choices to an object
      * suitable for conversion into a URL querystring.
      *
@@ -44,6 +61,7 @@ export default {
     formState: (state, getters) => {
         return {
             ...getters.activeFacets,
+            ...getters.activeRangeFacets,
             ...(state.activeSort && { 'sort': state.activeSort }), // we only add this property if it's defined
             ...(state.keywordQuery && { 'query': state.keywordQuery }), // same here
         }

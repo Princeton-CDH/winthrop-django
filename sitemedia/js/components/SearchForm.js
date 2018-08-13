@@ -58,7 +58,10 @@ export default Vue.component('SearchForm', {
     created() {
         this.setFacetsEndpoint(this.facetsEndpoint) // set endpoints
         this.setResultsEndpoint(this.resultsEndpoint)
-        if (isEmpty(this.route.query)) this.changeSort('author_asc') // set default sort
-        this.addFacets(this.route.query).then(() => this.setFormState(this.route.query)) // initialize form
+        let initialState = {
+            ...this.route.query,
+            sort: this.route.query.sort || 'author_asc', // default if none selected
+        }
+        this.addFacets(initialState).then(() => this.setFormState(initialState)) // initialize form
     }
 })

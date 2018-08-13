@@ -61,6 +61,19 @@ export default {
     },
     
     /**
+     * Changes the minimum and/or maximum values for a range facet.
+     *
+     * @param {Object} context vuex store
+     * @param {Object} facet facet to edit
+     */
+    async editRangeFacet ({ commit, dispatch }, facet) {
+        commit('editRangeFacet', facet)
+        await dispatch('updateFacets')
+        await dispatch('updateResults')
+        dispatch('updateURL')
+    },
+    
+    /**
      * Clears all active facet choices.
      *
      * @param {Object} context vuex store

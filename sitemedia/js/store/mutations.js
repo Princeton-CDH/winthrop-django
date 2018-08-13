@@ -30,6 +30,8 @@ export default {
             state.facets.push({
                 name: facet, // str, the name of the range facet, e.g. "pub_date"
                 type: 'range', // str, one of ['text', 'range']
+                minName: `${facet}_0`, // solr uses _0 to indicate minimum
+                maxName: `${facet}_1`, // solr uses _1 to indicate maximum
                 minVal: undefined, // int, the lower bound of the range the user has currently chosen
                 maxVal: undefined, // int, the upper bound of the range the user has currently chosen
             })
@@ -77,13 +79,27 @@ export default {
      */
     setFacetChoices (state, facets) {
         state.facetChoices.forEach(choice => choice.active = false) // reset all facets first
+        let rangeFacetNames = state.facets // define the set of available range facets
+            .filter(facet => facet.type === 'range')
+            .reduce((acc, cur) => {
+                acc.push(cur.minName, cur.maxName)
+                return acc
+            }, [])
         for (const facet in facets) {
-            for (const value of toArray(facets[facet])) { // values from query could be arrays or not
-                console.log(facet, value)
+            if (rangeFacetNames.includes(facet)) { // it's a range facet
+                let target = state.facets
+                    .filter(f => f.type === 'range')
+                    .find(f => facet.includes(f.name)) // 'pub_date_0' includes 'pub_date'
+                if (facet.includes('_0')) target.minVal = facets[facet] // set a min
+                if (facet.includes('_1')) target.maxVal = facets[facet] // set a max
+            }
+            else { // it's a text facet
+                for (const value of toArray(facets[facet])) { // text facet values might not be an array yet
                 state.facetChoices
                     .filter(choice => choice.facet === facet)
                     .find(choice => choice.value === value)
                     .active = true
+                }
             }
         }
     },
@@ -113,9 +129,12 @@ export default {
      * @param {Object} state current application state
      * @param {Object} facet facet to edit
      */
-    editRangeFacet (state, { facet, minVal, maxVal }) {
-        if (minVal) state.rangeFacets[facet.facet].minVal = minVal
-        if (maxVal) state.rangeFacets[facet.facet].maxVal = maxVal
+    editRangeFacet (state, { name, minVal, maxVal }) {
+        let target = state.facets
+            .filter(facet => facet.type === 'range') // in case there's a different type facet with same name
+            .find(facet => facet.name === name)
+        if (minVal) target.minVal = minVal
+        if (maxVal) target.maxVal = maxVal
     },
 
     /**

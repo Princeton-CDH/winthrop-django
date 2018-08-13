@@ -8,7 +8,8 @@ import store from './store'
 import router from './router'
 
 import SearchForm from './components/SearchForm'
-import SearchFacet from './components/SearchFacet'
+import TextFacet from './components/TextFacet'
+import RangeFacet from './components/RangeFacet'
 import SearchSort from './components/SearchSort'
 import SearchResults from './components/SearchResults'
 
@@ -25,7 +26,8 @@ $(() => {
         store,
         components: {
             SearchForm,
-            SearchFacet,
+            TextFacet,
+            RangeFacet,
             SearchSort,
             SearchResults,
         },
