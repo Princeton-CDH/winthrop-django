@@ -15,7 +15,7 @@ export default Vue.component('SearchSort', {
     computed: {
         ...mapState([
             'activeSort',
-            'query'
+            'keywordQuery'
         ]),
         options() { // array of props for `sui-dropdown-item`s inside dropdown
             return [
@@ -38,7 +38,7 @@ export default Vue.component('SearchSort', {
                 {
                     text: 'Relevance',
                     value: 'relevance',
-                    disabled: this.query ? false : true
+                    disabled: this.keywordQuery ? false : true
                 }
             ]
         },

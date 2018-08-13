@@ -24,7 +24,33 @@
         </div>
         {% include 'books/snippets/book_list_results.html' %}
     </noscript>
-    <books-search resource="books" results-endpoint="/books" facets-endpoint="/books/facets"></books-search>
+    <search-form resource="book" results-endpoint="/books" facets-endpoint="/books/facets">
+        <sui-tab slot="tabs">
+            <sui-tab-pane title="Author  ·  Editor">
+                <sui-grid class="equal width" stackable>
+                    <search-facet name="author" label="Author" type="text" :width="6" search></search-facet>
+                    <search-facet name="editor" label="Editor" type="text"></search-facet>
+                </sui-grid>
+            </sui-tab-pane>
+            <sui-tab-pane title="Publication Year">
+                <sui-grid class="equal width" stackable>
+                    <search-facet name="pub_date" label="Publication Year" type="range"></search-facet>
+                </sui-grid> 
+            </sui-tab-pane>
+            <sui-tab-pane title="Language  ·  Subject">
+                <sui-grid class="equal width" stackable>
+                    <search-facet name="language" label="Language" type="text"></search-facet>
+                    <search-facet name="subject" label="Subject" type="text"></search-facet>
+                </sui-grid>    
+            </sui-tab-pane>
+            <sui-tab-pane title="Annotator">
+                <sui-grid class="equal width" stackable>
+                    <search-facet name="annotator" label="Annotator" type="text"></search-facet>
+                </sui-grid>
+            </sui-tab-pane>
+        </sui-tab>
+        <search-sort slot="sort" default="author_asc"/>
+    </search-form>
     <search-results></search-results>
 </div>
 {% endblock %}

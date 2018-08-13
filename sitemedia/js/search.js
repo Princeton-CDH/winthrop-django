@@ -2,28 +2,32 @@ import SemanticUIVue from 'semantic-ui-vue'
 import VueRouter from 'vue-router'
 import Vue2Filters from 'vue2-filters'
 import { sync } from 'vuex-router-sync'
+import { mapActions } from 'vuex'
 
 import store from './store'
 import router from './router'
 
-import BooksSearch from './components/books/BooksSearch'
+import SearchForm from './components/SearchForm'
+import SearchFacet from './components/SearchFacet'
+import SearchSort from './components/SearchSort'
 import SearchResults from './components/SearchResults'
-import { mapActions } from 'vuex'
 
 const unsync = sync(store, router)
 
 $(() => {
-    Vue.use(VueRouter)
-    Vue.use(SemanticUIVue)
-    Vue.use(Vue2Filters)
+    Vue.use(VueRouter) // for altering querystring programmatically
+    Vue.use(SemanticUIVue) // for tabs and dropdown behavior
+    Vue.use(Vue2Filters) // for "pluralize" filter for total results
     
     const searchInstance = new Vue({
         el: 'main',
         router,
         store,
         components: {
-            BooksSearch,
-            SearchResults
+            SearchForm,
+            SearchFacet,
+            SearchSort,
+            SearchResults,
         },
         beforeDestroy() {
             unsync() // clean up vuex-router sync

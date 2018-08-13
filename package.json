@@ -11,7 +11,7 @@
     "query-string": "^6.1.0",
     "rxjs": "^6.2.2",
     "rxjs-compat": "^6.2.2",
-    "semantic-ui-vue": "^0.2.11",
+    "semantic-ui-vue": "^0.3.3",
     "vue-router": "^3.0.1",
     "vue2-filters": "^0.3.0",
     "vuex": "^3.0.1",

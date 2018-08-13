@@ -1,4 +1,4 @@
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import RangeFacet from './RangeFacet'
 
 export default Vue.component('SearchFacet', {
@@ -52,6 +52,18 @@ export default Vue.component('SearchFacet', {
         }
     },
     computed: {
+        ...mapState([
+            'facetChoices', // note these are from all facets together
+        ]),
+        /**
+         * Filters all available facet choices to find the ones belonging
+         * to this facet.
+         *
+         * @returns {Array} facet choices
+         */
+        choices() {
+            return this.facetChoices.filter(choice => choice.facet === this.name)
+        },
         /**
          * Filters the list of facet choices based on the rolodex and 
          * search-within-facet box.
@@ -74,7 +86,6 @@ export default Vue.component('SearchFacet', {
         name: String, // form-friendly name, e.g. "pub_date"
         search: Boolean, // whether to include the rolodex and search-within-facet box
         width: Number, // number of semantic UI grid columns; CDH grid has 12
-        choices: Array // array of facet choice objects
     },
     methods: {
         ...mapActions([
