@@ -11,7 +11,7 @@ export default {
      * @param {Object} state current application state
      * @param {Object} data parsed solr response
      */
-    addFacets (state, { facets, range_facets }) { // we assume the solr response has these keys
+    addFacets: (state, { facets, range_facets }) => { // we assume the solr response has these keys
         for (const facet in facets) {
             state.facets.push({
                 name: facet, // str, the name of the facet, e.g. "author"
@@ -51,7 +51,7 @@ export default {
      * @param {Object} state current application state
      * @param {Object} choice choice to toggle
      */
-    toggleFacetChoice (state, { facet, value }) {
+    toggleFacetChoice: (state, { facet, value }) => {
         let target = state.facetChoices
             .filter(choice => choice.facet === facet) // filter by facet first
             .find(choice => choice.value === value) // then find by value
@@ -63,9 +63,7 @@ export default {
      *
      * @param {Object} state current application state
      */
-    clearFacetChoices (state) {
-        state.facetChoices.forEach(choice => choice.active = false)
-    },
+    clearFacetChoices: state => state.facetChoices.forEach(choice => choice.active = false),
 
     /**
      * Sets the facets to an exact state by deactivating all facets,
@@ -77,7 +75,7 @@ export default {
      * @param {Object} state current application state
      * @param {Object} facets facet state as parsed from the URL query params
      */
-    setFacetChoices (state, facets) {
+    setFacetChoices: (state, facets) => {
         state.facetChoices.forEach(choice => choice.active = false) // reset all facets first
         let rangeFacetNames = state.facets // define the set of available range facets
             .filter(facet => facet.type === 'range')
@@ -111,7 +109,7 @@ export default {
      * @param {Object} state current application state
      * @param {Object} data parsed solr response
      */
-    updateFacetChoiceCounts (state, { facets, range_facets }) {
+    updateFacetChoiceCounts: (state, { facets, range_facets }) => {
         for (const facet in { ...facets, ...range_facets }) { // join the facets and range facets together
             for (const value in facets[facet]) {
                 state.facetChoices
@@ -129,7 +127,7 @@ export default {
      * @param {Object} state current application state
      * @param {Object} facet facet to edit
      */
-    editRangeFacet (state, { name, minVal, maxVal }) {
+    editRangeFacet: (state, { name, minVal, maxVal }) => {
         let target = state.facets
             .filter(facet => facet.type === 'range') // in case there's a different type facet with same name
             .find(facet => facet.name === name)
@@ -144,7 +142,7 @@ export default {
      * @param {Object} state current application state
      * @param {Object} data parsed solr response
      */
-    updateTotalResults (state, { total }) {
+    updateTotalResults: (state, { total }) => {
         state.totalResults = total
     },
 
@@ -155,7 +153,7 @@ export default {
      * @param {Object} state current application state
      * @param {String} results HTML response parsed into string
      */
-    updateResults (state, results) {
+    updateResults: (state, results) => {
         state.results = results
     },
     
@@ -165,7 +163,7 @@ export default {
      * @param {Object} state current application state
      * @param {String} option sorting option to switch to
      */
-    changeSort (state, option) {
+    changeSort: (state, option) => {
         state.activeSort = option
     },
 
@@ -175,7 +173,7 @@ export default {
      * @param {*} state
      * @param {*} query
      */
-    setKeywordQuery (state, query) {
+    setKeywordQuery: (state, query) => {
         state.keywordQuery = query
     },
 
@@ -186,7 +184,7 @@ export default {
      * @param {Object} state current application state
      * @param {String} endpoint path to use, e.g. '/books/facets'
      */
-    setFacetsEndpoint (state, endpoint) {
+    setFacetsEndpoint: (state, endpoint) => {
         state.facetsEndpoint = endpoint
     },
 
@@ -197,7 +195,7 @@ export default {
      * @param {Object} state current application state
      * @param {String} endpoint path to use, e.g. '/books'
      */
-    setResultsEndpoint (state, endpoint) {
+    setResultsEndpoint: (state, endpoint) => {
         state.resultsEndpoint = endpoint
     },
 }
