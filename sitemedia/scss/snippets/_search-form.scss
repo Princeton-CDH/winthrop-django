@@ -104,6 +104,11 @@
                 font-weight: normal;
             }
         }
+
+        .clear-all { // "clear all"
+            text-decoration: underline;
+            cursor: pointer;
+        }
     }
 
     .search-sort,

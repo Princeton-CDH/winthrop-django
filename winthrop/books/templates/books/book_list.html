@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static humanize %}
+{% load static humanize winthrop_tags %}
 
 {% block page-subtitle %}Books | {% endblock %}
 
@@ -42,7 +42,7 @@
                 </sui-grid>
             </sui-tab-pane>
         </sui-tab>
-        <search-sort slot="sort" default="{{ search_form.defaults.sort }}"/>
+        <search-sort slot="sort"/>
     </search-form>
     <search-results></search-results>
     <noscript>

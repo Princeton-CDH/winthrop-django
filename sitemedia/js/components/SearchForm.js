@@ -20,6 +20,11 @@ export default Vue.component('SearchForm', {
                         <sui-icon name="delete" @click="toggleFacetChoice(choice)" />
                     </sui-label>
                 </div>
+                <label
+                    class="clear-all"
+                    v-if="activeFacetChoices.length > 0"
+                    @click="clearFacetChoices">
+                    Clear All</label>
             </sui-segment>
             <sui-segment inverted>
                 <slot name="sort"></slot>
