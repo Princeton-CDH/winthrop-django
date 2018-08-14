@@ -12,6 +12,10 @@
         .item {
             margin-right: 1rem;
         }
+
+        .item.disabled {
+            background: $toupe !important; // override sui important
+        }
     }
 
     .tab.segment {
