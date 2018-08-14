@@ -21,28 +21,28 @@
         <sui-tab slot="tabs">
             <sui-tab-pane title="Author  ·  Editor">
                 <sui-grid class="equal width" stackable>
-                    <text-facet name="author" label="Author" :width="6" search></text-facet>
-                    <text-facet name="editor" label="Editor"></text-facet>
+                    <text-facet name="author" label="{{ search_form.author.label }}" :width="6" search></text-facet>
+                    <text-facet name="editor" label="{{ search_form.editor.label }}"></text-facet>
                 </sui-grid>
             </sui-tab-pane>
             <sui-tab-pane title="Publication Year">
                 <sui-grid class="equal width" stackable>
-                    <range-facet name="pub_year" label="Publication Year"></range-facet>
+                    <range-facet name="pub_year" label="{{ search_form.pub_year.label }}"></range-facet>
                 </sui-grid> 
             </sui-tab-pane>
-            <sui-tab-pane title="Language  ·  Subject">
+            <sui-tab-pane title="Language  ·  Subject" disabled>
                 <sui-grid class="equal width" stackable>
-                    <text-facet name="language" label="Language"></text-facet>
-                    <text-facet name="subject" label="Subject"></text-facet>
+                    <text-facet name="language" label="{{ search_form.language.label }}"></text-facet>
+                    <text-facet name="subject" label="{{ search_form.subject.label }}"></text-facet>
                 </sui-grid>    
             </sui-tab-pane>
             <sui-tab-pane title="Annotator">
                 <sui-grid class="equal width" stackable>
-                    <text-facet name="annotator" label="Annotator"></text-facet>
+                    <text-facet name="annotator" label="{{ search_form.annotator.label }}"></text-facet>
                 </sui-grid>
             </sui-tab-pane>
         </sui-tab>
-        <search-sort slot="sort" default="author_asc"/>
+        <search-sort slot="sort" default="{{ search_form.defaults.sort }}"/>
     </search-form>
     <search-results></search-results>
     <noscript>
