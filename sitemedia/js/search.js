@@ -39,5 +39,6 @@ $(() => {
         }
     })
 
-    window.queryStream.subscribe(searchInstance.setKeywordQuery)
+    $('#site-search').sidebar('show') // open site search if it's not already
+    window.queryStream.subscribe(searchInstance.setKeywordQuery) // update form with site search contents
 })
