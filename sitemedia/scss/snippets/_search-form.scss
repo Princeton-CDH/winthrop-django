@@ -71,6 +71,10 @@
         margin: .5rem 0;
         padding-right: 1rem;
         padding-left: .5rem;
+
+        label {
+            cursor: pointer;
+        }
     }
 
     .count {

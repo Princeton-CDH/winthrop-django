@@ -21,18 +21,21 @@ export default Vue.component('TextFacet', {
             <label v-if="availableChoices.length == 0">No results</label>
             <div
                 class="ui checkbox"
-                v-for="choice of choices"
+                v-for="(choice, index) of choices"
                 v-show="availableChoices.includes(choice.value)"
                 :key="choice.value"
             >
                 <input
+                    :id="inputID(name, index)"
                     type="checkbox"
                     @input="toggleFacetChoice(choice)"
-                    :name="choice.facet"
+                    :name="name"
                     :value="choice.value"
                     :checked="choice.active"
                 />
-                <label>{{ choice.value }} <span class="count">{{ choice.count }}</span></label>
+                <label :for="inputID(name, index)">
+                    {{ choice.value }} <span class="count">{{ choice.count }}</span>
+                </label>
             </div>
         </div>
     </sui-grid-column>
@@ -85,6 +88,9 @@ export default Vue.component('TextFacet', {
          */
         match(str1, str2) {
             return this.normalize(str1).includes(this.normalize(str2))
+        },
+        inputID(name, index) {
+            return `${name}-choice-${index}`
         },
     },
 })
