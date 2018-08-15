@@ -456,6 +456,12 @@ class TestBookViews(TestCase):
             assert response.json()['error'] == ('Unable to parse search query; '
                                                 'please revise and try again.')
 
+        # invalid form submission should not 500
+        response = self.client.get(url, {'pub_year_0': '1500', 'pub_year_1': '1400'})
+        assert response.status_code == 500
+        assert response.json()['error'] == 'Something went wrong.'
+
+
     def test_book_pages(self):
         # non-existent book slug should 404
         response = self.client.get(reverse('books:pages', args=['bogus']))

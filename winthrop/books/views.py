@@ -235,10 +235,14 @@ class BookFacetJSONView(BookListView):
                 'facets': self.object_list.get_facets(),
                 'range_facets': self.object_list.get_facets_ranges()
             }
-        except SolrError as solr_err:
+        except (SolrError, AttributeError) as err:
+            # NOTE: AttributeError will occur if form is not valid,
+            # because an empty Book django queryset is returned instead of a
+            # a PagedSolrQuery, so get_facets method etc is not available
+
             error_msg = 'Something went wrong.'
             self.error_code = 500
-            if 'Cannot parse' in str(solr_err):
+            if 'Cannot parse' in str(err):
                 error_msg = ('Unable to parse search query; '
                              'please revise and try again.')
                 self.error_code = 400
