@@ -41,4 +41,6 @@ $(() => {
 
     $('#site-search').sidebar('show') // open site search if it's not already
     window.queryStream.subscribe(searchInstance.setKeywordQuery) // update form with site search contents
+    // don't allow enter key to submit the site search
+    $('#site-search').keydown(e => { if (e.which === 13) e.preventDefault() })
 })

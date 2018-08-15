@@ -63,9 +63,6 @@ $(() => {
             onShow: () => setTimeout(() => $('#site-search #id_query')[0].focus(), 1),
             onHide: () => setTimeout(() => $('#site-search #id_query')[0].blur(), 1)
         })
-
-    // don't allow enter key to submit the site search
-    $siteSearch.keydown(e => { if (e.which === 13) e.preventDefault() })
     
     $('.ui.dropdown').dropdown()
 });
