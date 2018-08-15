@@ -1,5 +1,8 @@
+import json
+
 from django import template
 from django.template.defaulttags import register
+from django.utils.safestring import mark_safe
 from piffle.iiif import IIIFImageClient
 
 
@@ -47,3 +50,7 @@ def iiif_image(image_id, *args, **kwargs):
         img = img.size(height=kwargs['height'])
 
     return img
+
+@register.filter(name='json')
+def json_dumps(data):
+    return mark_safe(json.dumps(data))

@@ -106,7 +106,10 @@ class TestBookViews(TestCase):
          # nothing indexed - should find nothing
         response = self.client.get(url)
         assert response.status_code == 200
-        self.assertContains(response, 'No results')
+        # should include vary header
+        assert response.has_header('Vary')
+
+        self.assertContains(response, '0 books')
 
         books = Book.objects.all()
 
@@ -133,8 +136,7 @@ class TestBookViews(TestCase):
         modified = index_modified_dt.strftime('%a, %d %b %Y %H:%M:%S GMT')
         assert response['Last-Modified'] == modified
 
-        # provisional text
-        self.assertContains(response, 'Displaying %d books' % books.count())
+        self.assertContains(response, 'Showing %d books' % books.count())
 
         # NOTE: total currently not displayed
         for book in books:
@@ -161,7 +163,7 @@ class TestBookViews(TestCase):
         ### keyword search
         # - one match
         response = self.client.get(url, {'query': 'mercurii'})
-        self.assertContains(response, 'Displaying 1 book')
+        self.assertContains(response, 'Showing 1 book')
         mercurii_bk = Book.objects.get(title__contains='Mercurii')
         self.assertContains(response, mercurii_bk.short_title)
         self.assertContains(response, mercurii_bk.pub_year)
@@ -179,7 +181,7 @@ class TestBookViews(TestCase):
         # bad sort option (relevance / no keyword) ignored
         response = self.client.get(url, {'sort': 'relevance'})
         # all books displayed
-        self.assertContains(response, 'Displaying %d books' % books.count())
+        self.assertContains(response, 'Showing %d books' % books.count())
         # ordered by author by default
         # (books without author currently listed last)
         authored_books = Book.objects.filter(creator__isnull=False) \
@@ -215,11 +217,11 @@ class TestBookViews(TestCase):
         assert response.context['object_list'][0]['title'] == \
             books.get(creator__person__authorized_name='Heinsius, Daniel').title
 
-        # by translator
-        response = self.client.get(url, {'translator': ['Tellus, Sylvester']})
-        assert len(response.context['object_list']) == 1
-        assert response.context['object_list'][0]['title'] == \
-            books.get(creator__person__authorized_name='Tellus, Sylvester').title
+        # by translator NOTE disabled as not lv1 feature
+        # response = self.client.get(url, {'translator': ['Tellus, Sylvester']})
+        # assert len(response.context['object_list']) == 1
+        # assert response.context['object_list'][0]['title'] == \
+        #     books.get(creator__person__authorized_name='Tellus, Sylvester').title
 
         # by annotator
         # create annotation on first book with a canvas

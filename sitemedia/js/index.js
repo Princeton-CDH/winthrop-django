@@ -1,4 +1,10 @@
-$(document).ready(function(){
+import 'babel-polyfill'
+import { fromEvent } from 'rxjs'
+import 'rxjs/add/operator/pluck'
+import 'rxjs/add/operator/distinctUntilChanged'
+import 'rxjs/add/operator/debounceTime'
+
+$(() => {
     var $ribbon = $('.ribbon');
     if ($ribbon) {
         var faded = sessionStorage.getItem('fade-test-banner', true);
@@ -12,12 +18,18 @@ $(document).ready(function(){
     }
 
     /* dom */
-    const $mainNav = $('#main-nav')
     const $mobileNav = $('#mobile-nav')
     const $siteSearch = $('#site-search')
     const $menuButton = $('.toc.item')
     const $searchButton = $('#main-nav .search.item')
     const $closeSearchButton = $('#site-search .close.item')
+    const $query = $('#id_query')
+
+    /* observables */
+    window.queryStream = fromEvent($query, 'input')
+        .pluck('target', 'value')
+        .debounceTime(500)
+        .distinctUntilChanged()
     
     /* bindings */
     $mobileNav
@@ -51,8 +63,9 @@ $(document).ready(function(){
             onShow: () => setTimeout(() => $('#site-search #id_query')[0].focus(), 1),
             onHide: () => setTimeout(() => $('#site-search #id_query')[0].blur(), 1)
         })
+
+    // don't allow enter key to submit the site search
+    $siteSearch.keydown(e => { if (e.which === 13) e.preventDefault() })
     
     $('.ui.dropdown').dropdown()
-    $('.tabular.menu .item').tab()
-    // $('.ui.checkbox').checkbox()
 });

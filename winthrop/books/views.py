@@ -10,15 +10,18 @@ from SolrClient.exceptions import SolrError
 from winthrop.books.models import Book, Publisher, Language, Subject
 from winthrop.books.forms import SearchForm
 from winthrop.common.solr import PagedSolrQuery
-from winthrop.common.views import LastModifiedListMixin, LastModifiedMixin
+from winthrop.common.views import LastModifiedListMixin, LastModifiedMixin, \
+    VaryOnHeadersMixin
 
 
-class BookListView(ListView, LastModifiedListMixin):
+
+class BookListView(ListView, LastModifiedListMixin, VaryOnHeadersMixin):
     model = Book
     template_name = 'books/book_list.html'
     paginate_by = 50
     form_class = SearchForm
     form = None
+    vary_headers = ['X-Requested-With']
 
     def get_template_names(self):
         # when queried via ajax, return partial html for just the results section

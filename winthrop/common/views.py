@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.utils.cache import get_conditional_response
+from django.utils.cache import get_conditional_response, patch_vary_headers
 from django.views.generic.base import View
 
 
@@ -34,6 +34,22 @@ class LastModifiedMixin(View):
         if '.' in solr_time:
             solr_time = '%sZ' % solr_time.split('.')[0]
         return datetime.strptime(solr_time, '%Y-%m-%dT%H:%M:%SZ')
+
+
+class VaryOnHeadersMixin(View):
+    '''View mixin to set Vary header - class-based view equivalent to
+    :meth:`django.views.decorators.vary.vary_on_headers` .
+
+    Define :attr:`vary_headers` with the list of headers.
+    '''
+
+    vary_headers = []
+
+    def dispatch(self, request, *args, **kwargs):
+        '''wrap default dispatch method to patch haeders on the response'''
+        response = super(VaryOnHeadersMixin, self).dispatch(request, *args, **kwargs)
+        patch_vary_headers(response, self.vary_headers)
+        return response
 
 
 class LastModifiedListMixin(LastModifiedMixin):

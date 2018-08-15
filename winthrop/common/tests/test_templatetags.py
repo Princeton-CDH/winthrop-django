@@ -1,10 +1,12 @@
+import json
 from unittest.mock import Mock
 
 from django.http import QueryDict
+from django.utils.safestring import mark_safe
 from piffle.iiif import IIIFImageClient
 
-from winthrop.common.templatetags.winthrop_tags import querystring_replace, \
-    iiif_image
+from winthrop.common.templatetags.winthrop_tags import (iiif_image, json_dumps,
+                                                        querystring_replace)
 
 
 def test_querystring_replace():
@@ -47,4 +49,14 @@ def test_iiif_image():
     assert str(iiif_image(test_img_uri, width=200, height=100)) == \
         str(iiif_img.size(width=200, height=100))
 
-    assert iiif_image('') == None
+    assert iiif_image('') is None
+
+def test_json():
+    # should be the same as json_dumps()
+    val = {
+        'a': 'b',
+        'c': 'd',
+        'e': 3,
+        'f': ['g', 6, 'h']
+    }
+    assert json_dumps(val) == mark_safe(json.dumps(val))
