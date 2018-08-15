@@ -21,7 +21,7 @@
     .tab.segment {
         height: 330px;
         overflow-y: scroll;
-        
+
         .column.field {
             overflow-y: hidden;
             padding-left: 1rem;
@@ -65,7 +65,7 @@
         overflow-y: hidden;
         flex-wrap: wrap;
     }
-    
+
     .checkbox {
         width: 100%;
         margin: .5rem 0;
@@ -123,5 +123,30 @@
         label { // "sort by", "display", "results"
             margin-right: 1rem;
         }
+    }
+}
+
+/* minimal styles for noscript fall-back search form */
+
+noscript form {
+    input[name=query] {
+        width: 80%;
+    }
+    /* TODO: if there's an easy way to float or stack in columns, add that */
+
+    ul {
+        max-height: 330px;
+
+        padding-right: 10px;
+        overflow-y: auto;
+        list-style-type: none;
+
+        @media (min-width: $computer) {
+            width: 250px;
+        }
+    }
+
+    label span {
+        float: right;
     }
 }

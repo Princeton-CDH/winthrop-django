@@ -51,7 +51,6 @@ class FacetChoiceField(forms.MultipleChoiceField):
     # - default to not required
     # - use checkbox select multiple as default widget
 
-    # TODO: maybe disable this and go back to multiselect box
     widget = forms.CheckboxSelectMultiple
 
     def __init__(self, *args, **kwargs):

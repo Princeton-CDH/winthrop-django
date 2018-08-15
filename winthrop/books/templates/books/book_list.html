@@ -28,13 +28,13 @@
             <sui-tab-pane title="Publication Year">
                 <sui-grid class="equal width" stackable>
                     <range-facet name="pub_year" label="{{ search_form.pub_year.label }}"></range-facet>
-                </sui-grid> 
+                </sui-grid>
             </sui-tab-pane>
             <sui-tab-pane title="Language  ·  Subject" disabled>
                 <sui-grid class="equal width" stackable>
                     <text-facet name="language" label="{{ search_form.language.label }}"></text-facet>
                     <text-facet name="subject" label="{{ search_form.subject.label }}"></text-facet>
-                </sui-grid>    
+                </sui-grid>
             </sui-tab-pane>
             <sui-tab-pane title="Annotator">
                 <sui-grid class="equal width" stackable>
@@ -46,7 +46,10 @@
     </search-form>
     <search-results></search-results>
     <noscript>
-        {{ search_form }}
+    	<form class="ui segment">
+        {{ search_form.as_p }}
+        <input class="ui primary button" type="submit"/>
+      </form>
         <div class="ui center aligned text container">
             <h4 class="results-count ui header">Showing {{ paginator.count|intcomma }} book{{ paginator.count|pluralize }}</h4>
         </div>
