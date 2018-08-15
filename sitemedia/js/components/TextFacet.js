@@ -89,6 +89,14 @@ export default Vue.component('TextFacet', {
         match(str1, str2) {
             return this.normalize(str1).includes(this.normalize(str2))
         },
+        /**
+         * Generates an ID for each checkbox input so that
+         * its label can be matched to it.
+         *
+         * @param {String} name name of the facet
+         * @param {Number} index number of the option
+         * @returns {String} ID
+         */
         inputID(name, index) {
             return `${name}-choice-${index}`
         },

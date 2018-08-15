@@ -13,6 +13,21 @@ export default Vue.component('SearchForm', {
             <slot name="tabs"></slot>
             <sui-segment inverted class="active-items">
                 <label>Selected</label>
+                <div class="active-facet-choice" v-for="facet in activeRangeFacets" :key="facet.name">
+                    <sui-label>
+                        <span class="facet-name">{{ facet.name }}: </span>
+                        <span class="choice-name">
+                            <span v-if="rangeFacetMinMax(facet.name).minVal">
+                                {{ rangeFacetMinMax(facet.name).minVal }}
+                            </span>
+                            <span> - </span>
+                            <span v-if="rangeFacetMinMax(facet.name).maxVal">
+                                {{ rangeFacetMinMax(facet.name).maxVal }}
+                            </span>
+                        </span>
+                        <sui-icon name="delete" @click="clearRangeFacet(facet.name)" />
+                    </sui-label>
+                </div>
                 <div class="active-facet-choice" v-for="(choice, index) in activeFacetChoices" :key="index">
                     <sui-label>
                         <span class="facet-name">{{ choice.facet }}: </span>
@@ -22,8 +37,8 @@ export default Vue.component('SearchForm', {
                 </div>
                 <label
                     class="clear-all"
-                    v-if="activeFacetChoices.length > 0"
-                    @click="clearFacetChoices">
+                    v-if="activeFacetChoices.length > 0 || activeRangeFacets.length > 0"
+                    @click="clearFacets">
                     Clear All</label>
             </sui-segment>
             <sui-segment inverted>
@@ -43,14 +58,17 @@ export default Vue.component('SearchForm', {
         ]),
         ...mapGetters([
             'activeFacetChoices',
+            'activeRangeFacets',
+            'rangeFacetMinMax',
         ]),
     },
     methods: {
         ...mapActions([
             'addFacets',
             'updateResults',
-            'clearFacetChoices',
+            'clearFacets',
             'toggleFacetChoice',
+            'clearRangeFacet',
             'setFormState',
             'updateURL',
         ]),

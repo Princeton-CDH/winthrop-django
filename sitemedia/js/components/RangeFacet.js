@@ -1,5 +1,5 @@
 import debounce from 'lodash/debounce'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import SearchFacet from './SearchFacet'
 
@@ -10,9 +10,9 @@ export default Vue.component('RangeFacet', {
         <label :for="label">{{ label }}</label>
         <div class="range-facet">
             <div class="inputs">
-                <sui-input :placeholder="minVal" @input="setMin" type="number" :min="minVal" :max="maxVal"/>
+                <sui-input :placeholder="minVal" @input="setMin" type="number" :min="minVal" :max="maxVal" :value="rangeFacetMinMax(name).minVal"/>
                 <label>to</label>
-                <sui-input :placeholder="maxVal" @input="setMax" type="number" :min="minVal" :max="maxVal"/>
+                <sui-input :placeholder="maxVal" @input="setMax" type="number" :min="minVal" :max="maxVal" :value="rangeFacetMinMax(name).maxVal"/>
             </div>
             <div class="histogram">
             </div>
@@ -20,6 +20,9 @@ export default Vue.component('RangeFacet', {
     </sui-grid-column>
     `,
     computed: {
+        ...mapGetters([
+           'rangeFacetMinMax', 
+        ]),
         /**
          * Calculate the lowest valid value for the facet.
          *
@@ -43,13 +46,14 @@ export default Vue.component('RangeFacet', {
     },
     methods: {
         ...mapActions([
-            'editRangeFacet'
+            'editRangeFacetMin',
+            'editRangeFacetMax',
         ]),
         setMin: debounce(function (val) {
-            this.editRangeFacet({ name: this.name, minVal: val })
-        }, 500),
+            this.editRangeFacetMin({ name: this.name, minVal: val })
+        }, 1000),
         setMax: debounce(function (val) {
-            this.editRangeFacet({ name: this.name, maxVal: val })
-        }, 500),
+            this.editRangeFacetMax({ name: this.name, maxVal: val })
+        }, 1000),
     },
 })

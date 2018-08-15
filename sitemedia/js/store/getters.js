@@ -12,13 +12,25 @@ export default {
     activeFacetChoices: state => state.facetChoices.filter(choice => choice.active),
 
     /**
+     * Returns only the currently active range facets.
+     *
+     * @param {Object} state application state
+     * @returns {Array} active range facets
+     */    
+    activeRangeFacets: state => {
+        return state.facets
+            .filter(facet => facet.type === 'range')
+            .filter(facet => facet.minVal || facet.maxVal)
+    },
+
+    /**
      * Reduces an array of range facets to an object
      * suitable for conversion into a URL querystring.
      *
      * @param {Object} state application state
      * @returns {Object} range facet state
      */
-    activeRangeFacets: state => {
+    activeRangeFacetValues: state => {
         return state.facets
             .filter(facet => facet.type === 'range')
             .reduce((acc, cur) => {
@@ -61,7 +73,7 @@ export default {
     formState: (state, getters) => {
         return {
             ...getters.activeFacets,
-            ...getters.activeRangeFacets,
+            ...getters.activeRangeFacetValues,
             ...(state.activeSort && { 'sort': state.activeSort }), // we only add this property if it's defined
             ...(state.keywordQuery && { 'query': state.keywordQuery }), // same here
         }
@@ -98,4 +110,19 @@ export default {
         if (formState) return `${state.resultsEndpoint}?${querystring.stringify(formState)}`
         else return `${state.resultsEndpoint}?${querystring.stringify(getters.formState)}`
     },
+
+    /**
+     * Returns a function that will retrieve the current minimum and
+     * maximum values from a range facet by name.
+     *
+     * @param {Object} state application state
+     * @returns {Function} getter function
+     */
+    rangeFacetMinMax: state => name => {
+        let target = state.facets.find(facet => facet.name === name)
+        return {
+            minVal: target.minVal,
+            maxVal: target.maxVal,
+        }
+    }
 }

@@ -121,18 +121,49 @@ export default {
     },
 
     /**
-     * Makes changes to a range facet's current minimum and maximum values.
-     * Either or both values can be passed.
+     * Changes the minimum value for a range facet.
      *
      * @param {Object} state current application state
-     * @param {Object} facet facet to edit
+     * @param {Object} payload facet name & value to use
      */
-    editRangeFacet: (state, { name, minVal, maxVal }) => {
-        let target = state.facets
-            .filter(facet => facet.type === 'range') // in case there's a different type facet with same name
-            .find(facet => facet.name === name)
-        if (minVal) target.minVal = minVal
-        if (maxVal) target.maxVal = maxVal
+    editRangeFacetMin: (state, { name, minVal }) => {
+        state.facets.find(facet => facet.name === name).minVal = minVal
+    },
+
+    /**
+     * Changes the maximum value for a range facet.
+     *
+     * @param {Object} state current application state
+     * @param {Object} payload facet name & value to use
+     */
+    editRangeFacetMax: (state, { name, maxVal }) => {
+        state.facets.find(facet => facet.name === name).maxVal = maxVal
+    },
+
+    /**
+     * Unsets both the minumum and maximum values for a range facet.
+     *
+     * @param {Object} state current application state
+     * @param {String} name range facet name
+     */
+    clearRangeFacet: (state, name) => {
+        let target = state.facets.find(facet => facet.name === name)
+        target.minVal = undefined
+        target.maxVal = undefined
+    },
+
+    /**
+     * Unsets values of all range facets.
+     *
+     * @param {Object} state current application state
+     */
+    clearRangeFacets: state => {
+        state.facets
+            .filter(facet => facet.type === 'range')
+            .forEach(facet => {
+                facet.minVal = undefined
+                facet.maxVal = undefined
+        })
     },
 
     /**
