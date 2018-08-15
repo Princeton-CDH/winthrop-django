@@ -253,6 +253,16 @@ class TestBookViews(TestCase):
         books = Book.objects.all()
         assert len(response.context['object_list']) == books.count()
 
+        # should include pagination data for vue.js search form to consume
+        self.assertContains(response, '<pre class="results-data')
+        self.assertContains(response, 'total: %d' % books.count())
+        self.assertContains(response, 'resultsPerPage: %d' % \
+            response.context['page_obj'].paginator.per_page)
+        self.assertContains(response, 'pages: %d' % \
+            response.context['page_obj'].paginator.num_pages)
+        self.assertContains(response, 'current: %d' % \
+            response.context['page_obj'].number)
+
     @pytest.mark.usefixtures("solr")
     def test_book_detail(self):
         # find an annotated book with an author

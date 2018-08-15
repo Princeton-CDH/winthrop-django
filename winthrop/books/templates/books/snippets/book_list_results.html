@@ -1,6 +1,16 @@
 {% comment %} partial template for book list results; can be rendered
 as part of book_list.html or requested separately via ajax to update results.
 {% endcomment %}
+
+{# pagination information for consumption in vue.js search form #}
+<pre class="results-data" style="display: none;">
+{
+    total: {{ page_obj.paginator.count }},
+    resultsPerPage: {{ page_obj.paginator.per_page }},
+    pages: {{ page_obj.paginator.num_pages }},
+    current: {{ page_obj.number }}
+}
+</pre>
 {% if paginator.count %}
     <div class="ui two column stackable grid">
         {% for book in object_list %}
