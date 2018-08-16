@@ -115,7 +115,7 @@ export default {
         commit('setFacetChoices', facets)
         commit('setKeywordQuery', query)
         commit('results/sort', sort)
-        commit('pages/go', page)
+        commit('pages/go', parseInt(page))
         await dispatch('updateFacets')
         await dispatch('results/update')
     },

@@ -167,38 +167,6 @@ export default {
     },
 
     /**
-     * Takes an object parsed from the solr JSON response
-     * and updates the number of total results.
-     *
-     * @param {Object} state current application state
-     * @param {Object} data parsed solr response
-     */
-    updateTotalResults: (state, { total }) => {
-        state.totalResults = total
-    },
-
-    /**
-     * Takes a string parsed from the Django HTML response
-     * and updates the results.
-     *
-     * @param {Object} state current application state
-     * @param {String} results HTML response parsed into string
-     */
-    updateResults: (state, results) => {
-        state.results = results
-    },
-    
-    /**
-     * Changes the active sorting option for search results.
-     *
-     * @param {Object} state current application state
-     * @param {String} option sorting option to switch to
-     */
-    changeSort: (state, option) => {
-        state.activeSort = option
-    },
-
-    /**
      * Sets the active keyword query.
      *
      * @param {*} state
@@ -217,16 +185,5 @@ export default {
      */
     setFacetsEndpoint: (state, endpoint) => {
         state.facetsEndpoint = endpoint
-    },
-
-    /**
-     * Stores the endpoint at which the form should look to receive HTML
-     * result data from Django.
-     *
-     * @param {Object} state current application state
-     * @param {String} endpoint path to use, e.g. '/books'
-     */
-    setResultsEndpoint: (state, endpoint) => {
-        state.resultsEndpoint = endpoint
     },
 }

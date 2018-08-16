@@ -97,22 +97,6 @@ export default {
     },
 
     /**
-     * Returns a function that will create a URL to pass to fetch()
-     * that will return HTML result data from Django.
-     * 
-     * Resulting function takes an optional argument that allows it to
-     * generate a URL for any form state; default is the current state.
-     *
-     * @param {Object} state application state
-     * @param {Object} getters other getter functions
-     * @returns {Function} URL function
-     */
-    resultsPath: (state, getters) => formState => {
-        if (formState) return `${state.resultsEndpoint}?${querystring.stringify(formState)}`
-        else return `${state.resultsEndpoint}?${querystring.stringify(getters.formState)}`
-    },
-
-    /**
      * Returns a function that will retrieve the current minimum and
      * maximum values from a range facet by name.
      *
