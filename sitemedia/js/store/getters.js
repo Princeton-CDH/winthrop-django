@@ -74,8 +74,9 @@ export default {
         return {
             ...getters.activeFacets,
             ...getters.activeRangeFacetValues,
-            ...(state.activeSort && { 'sort': state.activeSort }), // we only add this property if it's defined
-            ...(state.keywordQuery && { 'query': state.keywordQuery }), // same here
+            ...(state.keywordQuery && { 'query': state.keywordQuery }), // only add this if it's defined
+            sort: state.results.activeSort,
+            page: state.pages.current,
         }
     },
 

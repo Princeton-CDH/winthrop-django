@@ -1,4 +1,3 @@
-import isEmpty from 'lodash/isEmpty'
 import { mapGetters, mapActions, mapState, mapMutations } from 'vuex'
 
 export default Vue.component('SearchForm', {
@@ -41,8 +40,9 @@ export default Vue.component('SearchForm', {
                     @click="clearFacets">
                     Clear All</label>
             </sui-segment>
-            <sui-segment inverted>
+            <sui-segment inverted class="result-controls">
                 <slot name="sort"></slot>
+                <slot name="pagination"></slot>
             </sui-segment>
         </form>
     </div>`,
@@ -73,17 +73,18 @@ export default Vue.component('SearchForm', {
             'updateURL',
         ]),
         ...mapMutations([
-            'changeSort',
+            'results/sort',
+            'results/setEndpoint',
             'setFacetsEndpoint',
-            'setResultsEndpoint',
         ]),
     },
     created() {
         this.setFacetsEndpoint(this.facetsEndpoint) // set endpoints
-        this.setResultsEndpoint(this.resultsEndpoint)
+        this['results/setEndpoint'](this.resultsEndpoint)
         let initialState = {
             ...this.route.query,
             sort: this.route.query.sort || 'author_asc', // default if none selected
+            page: this.route.query.page || 1 // default if none selected
         }
         this.addFacets(initialState).then(() => this.setFormState(initialState)) // initialize form
     }

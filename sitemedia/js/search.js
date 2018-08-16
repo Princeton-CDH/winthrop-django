@@ -11,6 +11,7 @@ import SearchForm from './components/SearchForm'
 import TextFacet from './components/TextFacet'
 import RangeFacet from './components/RangeFacet'
 import SearchSort from './components/SearchSort'
+import Pagination from './components/Pagination'
 import SearchResults from './components/SearchResults'
 
 const unsync = sync(store, router)
@@ -29,6 +30,7 @@ $(() => {
             TextFacet,
             RangeFacet,
             SearchSort,
+            Pagination,
             SearchResults,
         },
         beforeDestroy() {

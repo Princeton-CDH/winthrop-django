@@ -3,12 +3,12 @@ as part of book_list.html or requested separately via ajax to update results.
 {% endcomment %}
 
 {# pagination information for consumption in vue.js search form #}
-<pre class="results-data" style="display: none;">
+<pre id="results-data" style="display: none;">
 {
-    total: {{ page_obj.paginator.count }},
-    resultsPerPage: {{ page_obj.paginator.per_page }},
-    pages: {{ page_obj.paginator.num_pages }},
-    current: {{ page_obj.number }}
+    "total": {{ page_obj.paginator.count }},
+    "resultsPerPage": {{ page_obj.paginator.per_page }},
+    "pages": {{ page_obj.paginator.num_pages }},
+    "current": {{ page_obj.number }}
 }
 </pre>
 {% if paginator.count %}

@@ -7,16 +7,14 @@ export default Vue.component('SearchSort', {
         <sui-dropdown
             :value="activeSort"
             :options="options"
-            @input="changeSort($event)"
+            @input="sort($event)"
             selection
         />
     </div>
     `,
     computed: {
-        ...mapState([
-            'activeSort',
-            'keywordQuery'
-        ]),
+        ...mapState(['keywordQuery']),
+        ...mapState('results', ['activeSort']),
         options() { // array of props for `sui-dropdown-item`s inside dropdown
             return [
                 {
@@ -44,8 +42,6 @@ export default Vue.component('SearchSort', {
         },
     },
     methods: {
-        ...mapActions([
-            'changeSort'
-        ]),
+        ...mapActions('results', ['sort']),
     },
 })

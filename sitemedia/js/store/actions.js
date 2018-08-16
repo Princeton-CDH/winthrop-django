@@ -1,10 +1,6 @@
 import router from '../router'
+import { ajax } from '../utilities'
 
-const fetchOpts = {
-    headers: { // this header is needed to signal an ajax request to Django
-        'X-Requested-With': 'XMLHttpRequest',
-    }
-}
 
 export default {
     /**
@@ -15,7 +11,7 @@ export default {
      * @param {Object} formState optional state to use 
      */
     async addFacets ({ commit, getters }, formState) {
-        await fetch(getters.facetsPath(formState), fetchOpts)
+        await fetch(getters.facetsPath(formState), ajax)
             .then(res => res.json())
             .then(data => commit('addFacets', data))
     },
@@ -26,25 +22,9 @@ export default {
      * @param {Object} context vuex store
      */
     async updateFacets ({ commit, getters }) {
-        await fetch(getters.facetsPath(), fetchOpts)
+        await fetch(getters.facetsPath(), ajax)
             .then(res => res.json())
             .then(data => commit('updateFacetChoiceCounts', data))
-    },
-    
-    /**
-     * Loads HTML result data and updates the results.
-     * Will optionally pass a given form state to resultsPath().
-     * 
-     * @param {Object} context vuex store
-     * @param {Object} formState optional state to use 
-     */
-    async updateResults ({ commit, getters }, formState) {
-        await fetch(getters.facetsPath(), fetchOpts) // this is inefficient :(
-            .then(res => res.json())
-            .then(data => commit('updateTotalResults', data))
-        await fetch(getters.resultsPath(formState), fetchOpts) // ideally we get total & pagination data with this request
-            .then(res => res.text())
-            .then(results => commit('updateResults', results))
     },
     
     /**
@@ -56,7 +36,7 @@ export default {
     async toggleFacetChoice ({ commit, dispatch }, choice) {
         commit('toggleFacetChoice', choice)
         await dispatch('updateFacets')
-        await dispatch('updateResults')
+        await dispatch('results/update')
         dispatch('updateURL')
     },
     
@@ -69,7 +49,7 @@ export default {
     async editRangeFacetMin ({ commit, dispatch }, facet) {
         commit('editRangeFacetMin', facet)
         await dispatch('updateFacets')
-        await dispatch('updateResults')
+        await dispatch('results/update')
         dispatch('updateURL')
     },
 
@@ -82,7 +62,7 @@ export default {
     async editRangeFacetMax ({ commit, dispatch }, facet) {
         commit('editRangeFacetMax', facet)
         await dispatch('updateFacets')
-        await dispatch('updateResults')
+        await dispatch('results/update')
         dispatch('updateURL')
     },
     
@@ -95,19 +75,7 @@ export default {
         commit('clearFacetChoices')
         commit('clearRangeFacets')
         await dispatch('updateFacets')
-        await dispatch('updateResults')
-        dispatch('updateURL')
-    },
-
-    /**
-     * Changes the active sort option.
-     *
-     * @param {Object} context vuex store
-     * @param {String} option option to choose
-     */
-    async changeSort({ commit, dispatch }, option) {
-        commit('changeSort', option)
-        await dispatch('updateResults') // only need results, don't need to update facets
+        await dispatch('results/update')
         dispatch('updateURL')
     },
 
@@ -120,10 +88,10 @@ export default {
     async setKeywordQuery({ state, commit, dispatch }, query) {
         commit('setKeywordQuery', query)
         if (!query && state.activeSort === 'relevance') { // if the query was deleted and we were on relevance...
-            commit('changeSort', 'author_asc') // ...switch to author a-z
+            commit('results/sort', 'author_asc') // ...switch to author a-z
         }
         await dispatch('updateFacets')
-        await dispatch('updateResults')
+        await dispatch('results/update')
         dispatch('updateURL')
     },
     
@@ -143,11 +111,12 @@ export default {
      * @param {String} state state object
      */
     async setFormState ({ commit, dispatch }, state) { // TODO optimize this
-        let { query, sort, ...facets } = state // destructure into text query, sort, and facets
+        let { query, sort, page, ...facets } = state // destructure into text query, sort, facets, page
         commit('setFacetChoices', facets)
         commit('setKeywordQuery', query)
-        commit('changeSort', sort)
+        commit('results/sort', sort)
+        commit('pages/go', page)
         await dispatch('updateFacets')
-        await dispatch('updateResults')
+        await dispatch('results/update')
     },
 }
