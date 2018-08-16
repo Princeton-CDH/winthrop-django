@@ -1,32 +1,33 @@
 <div class="result">
-    <a href="{% url 'books:detail' book.slug %}">
-    <div class="ui segment">
-            <span class="title">{{ book.short_title }}</span><br>
-
-        {% for author in book.author %}
-            <span class="author">{{ author }}</span><br>
-        {% endfor %}
-        <span>{{ book.pub_year }}</span>
-        {% if book.is_annotated %}
-            <div class="ui basic circular label">annotated</div>
-        {% endif %}
-    </div>
-    {% if book.thumbnail %}
-    <img class="ui image" src="{% iiif_image book.thumbnail height=218 %}"
-            srcset="{% iiif_image book.thumbnail height=436 %} 2x"
-            alt="{{ book.thumbnail_label }}" title="{{ book.thumbnail_label }}"/>
-    {% else %}
-    <img class="ui image placeholder"/>
-    {% endif %}
+    <a href="{% url 'books:detail' book.slug %}" title="{{ book.short_title }}">
+        <div class="ui segment">
+            <div class="attributes">
+                <p class="title">{{ book.short_title | truncatechars:50 }}</p>
+                {% for author in book.author %}
+                <p class="author">{{ author }}</p>
+                {% endfor %}
+                <p>{{ book.pub_year }}</p>
+                {% if book.is_annotated %}
+                <div class="ui basic circular label">annotated</div>
+                {% endif %}
+            </div>
+            {% if book.thumbnail %}
+                <img class="ui image" src="{% iiif_image book.thumbnail height=218 %}"
+                        srcset="{% iiif_image book.thumbnail height=436 %} 2x"
+                        alt="{{ book.thumbnail_label }}" title="{{ book.thumbnail_label }}"/>
+            {% else %}
+                <img class="ui image placeholder"/>
+            {% endif %}
+        </div>
     </a>
     {% for id, highlight in highlights.items %}
-        {% if id == book.id and highlight.text %}
-        <div class="ui brown message attached highlighting">
-            <h3>search terms in context</h3>
-            {% for snippet in highlight.text %}
-            <p>{{ snippet|safe }}</p>
-            {% endfor %}
-        </div>
-        {% endif %}
+    {% if id == book.id and highlight.text %}
+    <div class="ui brown message attached highlighting">
+        <h3>search terms in context</h3>
+        {% for snippet in highlight.text %}
+        <p>{{ snippet|safe }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
     {% endfor %}
 </div>

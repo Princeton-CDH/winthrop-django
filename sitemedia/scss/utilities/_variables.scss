@@ -20,11 +20,11 @@ $banner-height-m: 400px;
 $banner-height-l: 810px;
 
 // search result
-$result-card-height: pxToRem(160px);
-$result-image-height: pxToRem(218px);
-$result-card-width: pxToRem(290px);
-$result-card-width-m: pxToRem(300px);
-$result-card-width-l: pxToRem(400px);
+$result-width: 290px;
+$result-card-height: 160px;
+$result-image-height: 218px;
+$result-card-width-m: 200px;
+$result-card-width-l: 310px;
 
 // breakpoints
 $mobile: 320px;

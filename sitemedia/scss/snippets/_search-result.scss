@@ -8,10 +8,14 @@
     }
 
     .segment {
+        border: 0;
+        padding: 0;
         margin: 0 auto;
-        padding: .5rem 10rem .5rem 1rem;
         height: $result-card-height;
-        width: $result-card-width;
+        width: $result-width;
+        display: flex;
+        justify-content: end;
+        background-color: $parchment;
 
         @media (min-width: $tablet) {
             margin: 0;
@@ -24,35 +28,53 @@
         }
     }
 
-    .title {
-        font-weight: bold;
+    .attributes {
+        min-width: 0;
+        padding: 1rem;
+        flex: auto;
+
+        > p {
+            font-size: 1rem;
+            line-height: 1.14;
+            margin-bottom: .5rem;
+        }
+
+        .title {
+            font-weight: bold;
+        }
+    
+        .label {
+            position: absolute;
+            bottom: .5rem;
+            left: 1rem;
+            padding: .25em !important; // have to override sui important
+            min-height: 1em;
+            font-weight: normal;
+            text-transform: uppercase;
+            font-size: 10px;
+        }
     }
 
-    .label {
-        position: absolute;
-        bottom: .5rem;
-        left: 1rem;
-    }
 
     .image {
-        z-index: 1;
-        position: absolute;
+        flex: none;
         height: $result-card-height;
-        bottom: 2rem;
-        right: calc(50% - #{$result-card-width} / 2);
+        z-index: 1;
 
         @media (min-width: $tablet) {
+            position: absolute;
+            left: 100%;
             height: $result-image-height;
-            top: calc((#{$result-card-height} / 2) - (#{$result-image-height} / 2) + 3rem);
-            right: 1rem;
+            top: calc((#{$result-card-height} / 2) - (#{$result-image-height} / 2));
         }
 
         &.placeholder {
-            width: pxToRem(100px);
+            width: 100px;
             background-color: grey;
+            background-image: url("/static/img/winthrop_default_book.svg");
 
             @media (min-width: $tablet) {
-                width: pxToRem(140px);
+                width: 140px;
             }
         }
     }
