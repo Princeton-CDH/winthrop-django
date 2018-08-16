@@ -51,6 +51,7 @@
         <div class="ui center aligned text container">
             <h4 class="results-count ui header">Showing {{ paginator.count|intcomma }} book{{ paginator.count|pluralize }}</h4>
         </div>
+        {% include 'snippets/pagination.html' %}
         {% include 'books/snippets/book_list_results.html' %}
     </noscript>
 </div>
