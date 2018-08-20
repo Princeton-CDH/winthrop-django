@@ -7,7 +7,7 @@
 {% block content %}
 <div class="ui container">
     <div class="ui inverted text menu">
-        <a class="back-button item" href="javascript:history.back()" title="back to Books">
+        <a class="back-button item" href="{% url 'books:list' %}" title="back to Books">
             <i class="ui chevron left icon"></i>
             Books
         </a>
