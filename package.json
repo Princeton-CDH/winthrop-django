@@ -5,6 +5,7 @@
   "author": "The Center for Digital Humanities at Princeton <cdhdevteam@princeton.edu>",
   "license": "Apache-2.0",
   "main": "sitemedia/js/index.js",
+  "private": true,
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "lodash": "^4.17.10",
