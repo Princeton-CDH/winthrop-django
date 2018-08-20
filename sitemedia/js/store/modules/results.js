@@ -16,7 +16,7 @@ export default {
         setEndpoint: (state, endpoint) => state.endpoint = endpoint, // update the endpoint at which to fetch results
     },
     actions: {
-        update: async ({ commit, getters, rootGetters }) => {
+        update: async ({ commit, dispatch, getters, rootGetters }) => {
             await fetch(getters.path(rootGetters.formState), ajax) // get result data from the server
                 .then(res => res.text())
                 .then(html => {
@@ -25,13 +25,18 @@ export default {
                     commit('setTotal', data.total) // set the total results
                     commit('pages/setTotal', data.pages, { root: true }) // root:true necessary to use other module
                     commit('update', html) // update the actual result HTML
+                    dispatch('updateURL', null, { root: true }) // update the URL
                 })
         },
-        sort: async ({ commit, getters, rootGetters }, sort) => {
+        sort: async ({ commit, dispatch, getters, rootGetters }, sort) => {
             commit('sort', sort) // change the sort type
+            commit('pages/go', 1) // go back to the first page
             await fetch(getters.path(rootGetters.formState), ajax) // get result data from the server
                 .then(res => res.text()) // we don't need the pagination data because it stays the same
-                .then(html => commit('update', html)) // just update result HTML
+                .then(html => {
+                    commit('update', html) // just update result HTML
+                    dispatch('updateURL', null, { root: true }) // and the URL
+                })
         },
     },
     getters: {

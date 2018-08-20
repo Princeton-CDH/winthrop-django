@@ -35,6 +35,7 @@ export default {
      */
     async toggleFacetChoice ({ commit, dispatch }, choice) {
         commit('toggleFacetChoice', choice)
+        commit('pages/go', 1)
         await dispatch('updateFacets')
         await dispatch('results/update')
         dispatch('updateURL')
@@ -48,6 +49,7 @@ export default {
      */
     async editRangeFacetMin ({ commit, dispatch }, facet) {
         commit('editRangeFacetMin', facet)
+        commit('pages/go', 1)
         await dispatch('updateFacets')
         await dispatch('results/update')
         dispatch('updateURL')
@@ -61,6 +63,7 @@ export default {
      */
     async editRangeFacetMax ({ commit, dispatch }, facet) {
         commit('editRangeFacetMax', facet)
+        commit('pages/go', 1)
         await dispatch('updateFacets')
         await dispatch('results/update')
         dispatch('updateURL')
@@ -74,6 +77,7 @@ export default {
     async clearFacets ({ commit, dispatch }) {
         commit('clearFacetChoices')
         commit('clearRangeFacets')
+        commit('pages/go', 1)
         await dispatch('updateFacets')
         await dispatch('results/update')
         dispatch('updateURL')
@@ -87,6 +91,7 @@ export default {
      */
     async setKeywordQuery({ state, commit, dispatch }, query) {
         commit('setKeywordQuery', query)
+        commit('pages/go', 1)
         if (!query && state.activeSort === 'relevance') { // if the query was deleted and we were on relevance...
             commit('results/sort', 'author_asc') // ...switch to author a-z
         }
