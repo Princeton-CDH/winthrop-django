@@ -5,7 +5,7 @@ export default Vue.component('SearchForm', {
     <div class="books-search">
         <sui-container textAlign="center" text>
             <h4 is="sui-header" class="results-count">
-            Displaying {{ totalResults }} {{ totalResults | pluralize(resource) }}
+            Displaying {{ total }} {{ total | pluralize(resource) }}
             </h4>
         </sui-container>
         <form class="search-form ui form">
@@ -52,10 +52,8 @@ export default Vue.component('SearchForm', {
         facetsEndpoint: String,
     },
     computed: {
-        ...mapState([
-            'route',
-            'totalResults',
-        ]),
+        ...mapState('results', ['total']),
+        ...mapState(['route']),
         ...mapGetters([
             'activeFacetChoices',
             'activeRangeFacets',
@@ -65,7 +63,6 @@ export default Vue.component('SearchForm', {
     methods: {
         ...mapActions([
             'addFacets',
-            'updateResults',
             'clearFacets',
             'toggleFacetChoice',
             'clearRangeFacet',
