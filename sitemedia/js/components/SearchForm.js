@@ -1,4 +1,3 @@
-import isEmpty from 'lodash/isEmpty'
 import { mapGetters, mapActions, mapState, mapMutations } from 'vuex'
 
 export default Vue.component('SearchForm', {
@@ -6,7 +5,7 @@ export default Vue.component('SearchForm', {
     <div class="books-search">
         <sui-container textAlign="center" text>
             <h4 is="sui-header" class="results-count">
-            Displaying {{ totalResults }} {{ totalResults | pluralize(resource) }}
+            Displaying {{ total }} {{ total | pluralize(resource) }}
             </h4>
         </sui-container>
         <form class="search-form ui form">
@@ -41,8 +40,9 @@ export default Vue.component('SearchForm', {
                     @click="clearFacets">
                     Clear All</label>
             </sui-segment>
-            <sui-segment inverted>
+            <sui-segment inverted class="result-controls">
                 <slot name="sort"></slot>
+                <slot name="pagination"></slot>
             </sui-segment>
         </form>
     </div>`,
@@ -52,10 +52,8 @@ export default Vue.component('SearchForm', {
         facetsEndpoint: String,
     },
     computed: {
-        ...mapState([
-            'route',
-            'totalResults',
-        ]),
+        ...mapState('results', ['total']),
+        ...mapState(['route']),
         ...mapGetters([
             'activeFacetChoices',
             'activeRangeFacets',
@@ -65,7 +63,6 @@ export default Vue.component('SearchForm', {
     methods: {
         ...mapActions([
             'addFacets',
-            'updateResults',
             'clearFacets',
             'toggleFacetChoice',
             'clearRangeFacet',
@@ -73,17 +70,18 @@ export default Vue.component('SearchForm', {
             'updateURL',
         ]),
         ...mapMutations([
-            'changeSort',
+            'results/sort',
+            'results/setEndpoint',
             'setFacetsEndpoint',
-            'setResultsEndpoint',
         ]),
     },
     created() {
         this.setFacetsEndpoint(this.facetsEndpoint) // set endpoints
-        this.setResultsEndpoint(this.resultsEndpoint)
+        this['results/setEndpoint'](this.resultsEndpoint)
         let initialState = {
             ...this.route.query,
             sort: this.route.query.sort || 'author_asc', // default if none selected
+            page: this.route.query.page || 1 // default if none selected
         }
         this.addFacets(initialState).then(() => this.setFormState(initialState)) // initialize form
     }

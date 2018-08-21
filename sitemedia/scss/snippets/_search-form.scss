@@ -115,10 +115,14 @@
         }
     }
 
-    .search-sort,
-    .pagination {
+    .search-sort {
+        margin-right: 1rem;
+    }
+
+    .result-controls {
         display: flex;
         align-items: center;
+        justify-content: space-between;
 
         label { // "sort by", "display", "results"
             margin-right: 1rem;

@@ -42,7 +42,8 @@
                 </sui-grid>
             </sui-tab-pane>
         </sui-tab>
-        <search-sort slot="sort"/>
+        <search-sort slot="sort"></search-sort>
+        <pagination slot="pagination"></pagination>
     </search-form>
     <search-results></search-results>
     <noscript>
@@ -53,6 +54,7 @@
         <div class="ui center aligned text container">
             <h4 class="results-count ui header">Showing {{ paginator.count|intcomma }} book{{ paginator.count|pluralize }}</h4>
         </div>
+        {% include 'snippets/pagination.html' %}
         {% include 'books/snippets/book_list_results.html' %}
     </noscript>
 </div>

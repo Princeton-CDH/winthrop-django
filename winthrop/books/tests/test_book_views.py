@@ -254,13 +254,13 @@ class TestBookViews(TestCase):
         assert len(response.context['object_list']) == books.count()
 
         # should include pagination data for vue.js search form to consume
-        self.assertContains(response, '<pre class="results-data')
-        self.assertContains(response, 'total: %d' % books.count())
-        self.assertContains(response, 'resultsPerPage: %d' % \
+        self.assertContains(response, '<pre id="results-data')
+        self.assertContains(response, '\"total\": %d' % books.count())
+        self.assertContains(response, '\"resultsPerPage\": %d' % \
             response.context['page_obj'].paginator.per_page)
-        self.assertContains(response, 'pages: %d' % \
+        self.assertContains(response, '\"pages\": %d' % \
             response.context['page_obj'].paginator.num_pages)
-        self.assertContains(response, 'current: %d' % \
+        self.assertContains(response, '\"current\": %d' % \
             response.context['page_obj'].number)
 
     @pytest.mark.usefixtures("solr")

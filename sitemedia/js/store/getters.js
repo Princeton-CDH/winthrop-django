@@ -74,8 +74,9 @@ export default {
         return {
             ...getters.activeFacets,
             ...getters.activeRangeFacetValues,
-            ...(state.activeSort && { 'sort': state.activeSort }), // we only add this property if it's defined
-            ...(state.keywordQuery && { 'query': state.keywordQuery }), // same here
+            ...(state.keywordQuery && { 'query': state.keywordQuery }), // only add this if it's defined
+            sort: state.results.activeSort,
+            page: state.pages.current,
         }
     },
 
@@ -93,22 +94,6 @@ export default {
     facetsPath: (state, getters) => formState => {
         if (formState) return `${state.facetsEndpoint}?${querystring.stringify(formState)}`
         else return `${state.facetsEndpoint}?${querystring.stringify(getters.formState)}`
-    },
-
-    /**
-     * Returns a function that will create a URL to pass to fetch()
-     * that will return HTML result data from Django.
-     * 
-     * Resulting function takes an optional argument that allows it to
-     * generate a URL for any form state; default is the current state.
-     *
-     * @param {Object} state application state
-     * @param {Object} getters other getter functions
-     * @returns {Function} URL function
-     */
-    resultsPath: (state, getters) => formState => {
-        if (formState) return `${state.resultsEndpoint}?${querystring.stringify(formState)}`
-        else return `${state.resultsEndpoint}?${querystring.stringify(getters.formState)}`
     },
 
     /**
