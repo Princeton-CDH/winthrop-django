@@ -8,8 +8,11 @@
         margin-top: - $nav-height;
 
         .ui.header {
-            color: $toupe;
             padding-top: $nav-height;
         }
+    }
+
+    .ui.header {
+        color: $toupe;
     }
 }
