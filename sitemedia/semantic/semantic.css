@@ -37121,8 +37121,8 @@ body.pushable > .pusher {
 
 .ui.visible.overlay.sidebar ~ .fixed,
 .ui.visible.overlay.sidebar ~ .pusher {
-  -webkit-transform: none !important;
-  transform: none !important;
+  /* -webkit-transform: none !important; */
+  /* transform: none !important; */
 }
 
 /*--------------
