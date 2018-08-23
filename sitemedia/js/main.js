@@ -1,4 +1,3 @@
-import 'babel-polyfill'
 import { fromEvent } from 'rxjs'
 import 'rxjs/add/operator/pluck'
 import 'rxjs/add/operator/distinctUntilChanged'
