@@ -28,6 +28,7 @@
 
     .manicule {
         width: 63px;
+        max-height: 100px; // iOS sizing fix
     }
 
     nav.menu {
@@ -51,6 +52,7 @@
 
     .project-logo {
         width: 200px;
+        max-height: 120px; // iOS sizing fix
         margin-bottom: 1rem;
 
         @media (min-width: $tablet) {
@@ -76,8 +78,9 @@
         margin: 2rem;
         justify-content: space-between;
 
-        .tiny.image {
+        .tiny.image { // CDH logo
             margin-right: 1rem;
+            margin-left: 0; // iOS spacing fix
         }
 
         @media (min-width: $tablet) {
