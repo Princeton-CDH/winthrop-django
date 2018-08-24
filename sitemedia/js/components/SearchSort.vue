@@ -1,7 +1,4 @@
-import { mapState, mapActions } from 'vuex'
-
-export default Vue.component('SearchSort', {
-    template: `
+<template>
     <div class="search-sort">
         <label>Sort By</label>
         <sui-dropdown
@@ -11,7 +8,12 @@ export default Vue.component('SearchSort', {
             selection
         />
     </div>
-    `,
+</template>
+
+<script>
+import { mapState, mapActions } from 'vuex'
+
+export default {
     computed: {
         ...mapState([
             'activeSort',
@@ -48,4 +50,5 @@ export default Vue.component('SearchSort', {
             'changeSort'
         ]),
     },
-})
+}
+</script>

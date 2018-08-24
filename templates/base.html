@@ -1,4 +1,5 @@
-{% load static compress %}
+{% load static %}
+{% load render_bundle from webpack_loader %}
 {# {% load static compress pages_tags mezzanine_tags keyword_tags %} #}
 
 {% comment %}
@@ -47,22 +48,23 @@ by default; use page_rdf_type to override with a webpage subclass.
     <!-- styles -->
     <link rel="stylesheet" type="text/css" href="{% static 'semantic/semantic.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/test-banner.css' %}">
-    {% compress css %}
-    <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/site.scss' %}">
-    {% block css %}{% endblock %} {# add any additional scss here #}
-    {% endcompress %}
+    {% block css %}
+        {# add any additional css here #}
+    {% endblock %}
 
     <!-- scripts -->
-    <script
-      src="https://code.jquery.com/jquery-3.1.1.min.js"
-      integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-      crossorigin="anonymous"></script>
+    {% if debug %}
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.3.1/dist/semantic.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
-    {% compress js %}
-    <script src="{% static 'js/main.js' %}" type="module"></script>
-    {% block js %}{% endblock %} {# add any additional javascript here #}
-    {% endcompress %}
+    {% else %}
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.3.1/dist/semantic.min.js"></script>
+    {% endif %}
+    {% block js %}
+        {% render_bundle 'vendors~main' %}
+        {% render_bundle 'main' %}
+        {# add any additional js here #}
+    {% endblock %}
 
     <!-- extra metadata -->
     {% block head_extras %}{% endblock %}

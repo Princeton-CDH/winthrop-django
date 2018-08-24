@@ -1,11 +1,4 @@
-import debounce from 'lodash/debounce'
-import { mapActions, mapGetters } from 'vuex'
-
-import SearchFacet from './SearchFacet'
-
-export default Vue.component('RangeFacet', {
-    extends: SearchFacet, // inherit default facet settings
-    template: `
+<template>
     <sui-grid-column :width="width" class="field">
         <label :for="label">{{ label }}</label>
         <div class="range-facet">
@@ -18,7 +11,16 @@ export default Vue.component('RangeFacet', {
             </div>
         </div>
     </sui-grid-column>
-    `,
+</template>
+
+<script>
+import debounce from 'lodash/debounce'
+import { mapActions, mapGetters } from 'vuex'
+
+import SearchFacet from './SearchFacet'
+
+export default {
+    extends: SearchFacet, // inherit default facet settings
     computed: {
         ...mapGetters([
            'rangeFacetMinMax', 
@@ -56,4 +58,5 @@ export default Vue.component('RangeFacet', {
             this.editRangeFacetMax({ name: this.name, maxVal: val })
         }, 1000),
     },
-})
+}
+</script>

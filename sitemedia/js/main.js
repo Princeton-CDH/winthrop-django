@@ -1,7 +1,5 @@
 import { fromEvent } from 'rxjs'
-import 'rxjs/add/operator/pluck'
-import 'rxjs/add/operator/distinctUntilChanged'
-import 'rxjs/add/operator/debounceTime'
+import { pluck, distinctUntilChanged, debounceTime } from 'rxjs/operators'
 
 $(() => {
     var $ribbon = $('.ribbon');
@@ -26,9 +24,11 @@ $(() => {
 
     /* observables */
     window.queryStream = fromEvent($query, 'input')
-        .pluck('target', 'value')
-        .debounceTime(500)
-        .distinctUntilChanged()
+        .pipe(
+            pluck('target', 'value'),
+            debounceTime(500),
+            distinctUntilChanged()
+        )
     
     /* bindings */
     $mobileNav

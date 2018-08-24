@@ -61,28 +61,18 @@ MEDIA_URL = STATIC_URL + "media/"
 # Example: "/home/media/media.lawrence.com/media/"
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, *MEDIA_URL.strip("/").split("/"))
 
-# Compressor
-# https://django-compressor.readthedocs.io/en/latest/
-
-COMPRESS_PRECOMPILERS = (
-    ('text/x-scss', 'compressor_toolkit.precompilers.SCSSCompiler'),
-    ('module', 'compressor_toolkit.precompilers.ES6Compiler')
-)
-
-# Compressor-toolkit
-# https://github.com/kottenator/django-compressor-toolkit
-
-COMPRESS_ES6_COMPILER_CMD = '''
-    export NODE_PATH="{paths}" && \
-    {browserify_bin} "{infile}" -o "{outfile}" \
-    -t [ "{node_modules}/babelify" --presets [ "{node_modules}/@babel/preset-env" ] ]
-'''
+# Django webpack loader
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'CACHE': not DEBUG,
+        'BUNDLE_DIR_NAME': 'bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    }
+}
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    # other finders..
-    'compressor.finders.CompressorFinder',
 )
 
 # Application definition
@@ -105,6 +95,7 @@ INSTALLED_APPS = [
     'pucas',
     'djiffy',
     'annotator_store',
+    'webpack_loader',
     # local apps
     'winthrop.common',
     'winthrop.places',

@@ -3,9 +3,7 @@ import mutations from './mutations'
 import actions from './actions'
 import getters from './getters'
 
-Vue.use(Vuex)
-
-const state = {
+export const state = {
 	facets: [],
 	facetChoices: [],
 	totalResults: 0,

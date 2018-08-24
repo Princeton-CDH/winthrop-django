@@ -1,6 +1,7 @@
+<script>
 import { mapActions, mapState } from 'vuex'
 
-export default Vue.component('SearchFacet', {
+export default {
     computed: {
         ...mapState([
             'facetChoices', // note these are from all facets together
@@ -25,4 +26,5 @@ export default Vue.component('SearchFacet', {
             'toggleFacetChoice',
         ])
     },
-})
+}
+</script>

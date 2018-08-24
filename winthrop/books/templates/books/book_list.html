@@ -1,12 +1,15 @@
 {% extends "base.html" %}
 {% load static humanize winthrop_tags %}
+{% load render_bundle from webpack_loader %}
 
 {% block page-subtitle %}Books | {% endblock %}
 
 {% block page-context-id %}book-list{% endblock %}
 
 {% block js %}
-<script src="{% static 'js/search.js' %}" type="module"></script>
+    {{ block.super }}
+    {% render_bundle 'vendors~search' %}
+    {% render_bundle 'search' %}
 {% endblock %}
 
 {% block page_header %}

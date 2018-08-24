@@ -1,8 +1,4 @@
-import isEmpty from 'lodash/isEmpty'
-import { mapGetters, mapActions, mapState, mapMutations } from 'vuex'
-
-export default Vue.component('SearchForm', {
-    template: `
+<template>
     <div class="books-search">
         <sui-container textAlign="center" text>
             <h4 is="sui-header" class="results-count">
@@ -35,17 +31,21 @@ export default Vue.component('SearchForm', {
                         <sui-icon name="delete" @click="toggleFacetChoice(choice)" />
                     </sui-label>
                 </div>
-                <label
-                    class="clear-all"
-                    v-if="activeFacetChoices.length > 0 || activeRangeFacets.length > 0"
-                    @click="clearFacets">
-                    Clear All</label>
+                <label class="clear-all" v-if="activeFacetChoices.length > 0 || activeRangeFacets.length > 0" @click="clearFacets">
+                    Clear All
+                </label>
             </sui-segment>
             <sui-segment inverted>
                 <slot name="sort"></slot>
             </sui-segment>
         </form>
-    </div>`,
+    </div>
+</template>
+
+<script>
+import { mapGetters, mapActions, mapState, mapMutations } from 'vuex'
+
+export default {
     props: {
         resource: String,
         resultsEndpoint: String,
@@ -87,4 +87,5 @@ export default Vue.component('SearchForm', {
         }
         this.addFacets(initialState).then(() => this.setFormState(initialState)) // initialize form
     }
-})
+}
+</script>

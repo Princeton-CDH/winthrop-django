@@ -1,8 +1,4 @@
-import SearchFacet from './SearchFacet'
-
-export default Vue.component('TextFacet', {
-    extends: SearchFacet, // inherit default facet settings
-    template: `
+<template>
     <sui-grid-column :width="width" class="field">
         <label :for="label">{{ label }}</label>
         <sui-input v-if="search" iconPosition="left" icon="search" placeholder="Search or select" v-model="filter" />
@@ -39,7 +35,13 @@ export default Vue.component('TextFacet', {
             </div>
         </div>
     </sui-grid-column>
-    `,
+</template>
+
+<script>
+import SearchFacet from './SearchFacet'
+
+export default {
+    extends: SearchFacet, // inherit default facet settings
     props: {
         search: Boolean, // whether to include the rolodex and search-within-facet box
     },
@@ -101,4 +103,5 @@ export default Vue.component('TextFacet', {
             return `${name}-choice-${index}`
         },
     },
-})
+}
+</script>

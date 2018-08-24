@@ -1,3 +1,5 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
 import SemanticUIVue from 'semantic-ui-vue'
 import VueRouter from 'vue-router'
 import Vue2Filters from 'vue2-filters'
@@ -13,12 +15,13 @@ import RangeFacet from './components/RangeFacet'
 import SearchSort from './components/SearchSort'
 import SearchResults from './components/SearchResults'
 
-const unsync = sync(store, router)
+Vue.use(Vuex) // for state management
+Vue.use(VueRouter) // for altering querystring programmatically
+Vue.use(SemanticUIVue) // for tabs and dropdown behavior
+Vue.use(Vue2Filters) // for "pluralize" filter for total results
 
 $(() => {
-    Vue.use(VueRouter) // for altering querystring programmatically
-    Vue.use(SemanticUIVue) // for tabs and dropdown behavior
-    Vue.use(Vue2Filters) // for "pluralize" filter for total results
+    const unsync = sync(store, router)
     
     const searchInstance = new Vue({
         el: 'main',
