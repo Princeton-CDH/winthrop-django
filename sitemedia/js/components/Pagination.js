@@ -2,16 +2,14 @@ import { mapState, mapGetters } from 'vuex'
 
 export default Vue.component('Pagination', {
     template: `
-    <div class="pagination">
-        <div class="page-controls">
-            <a rel="prev" is="sui-button" icon="chevron left" @click="previous" :disabled="current < 2"></a>
-            <a is="sui-button" @click="go(1)" v-if="current > 3">1</a>
-            <sui-icon name="ellipsis horizontal" v-if="current > 4 && total > 6"/>
-            <a is="sui-button" v-for="page in displayRange" @click="go(page)" :active="current === page">{{ page }}</a>
-            <sui-icon name="ellipsis horizontal" v-if="current < total - 3 && total > 6"/>
-            <a is="sui-button" @click="go(total)" v-if="current < total - 2">{{ total }}</a>
-            <a rel="next" is="sui-button" icon="chevron right" @click="next" :disabled="current > total - 1"></a>
-        </div>
+    <div class="page-controls ui pagination menu">
+        <a class="icon" rel="prev" is="sui-menu-item" icon="chevron left" @click="previous" :disabled="current < 2"></a>
+        <a is="sui-menu-item" @click="go(1)" v-if="current > 3">1</a>
+        <sui-menu-item class="icon" v-if="current > 4 && total > 6" disabled>...</sui-menu-item>
+        <a is="sui-menu-item" v-for="page in displayRange" @click="go(page)" :active="current === page">{{ page }}</a>
+        <sui-menu-item class="icon" v-if="current < total - 3 && total > 6" disabled>...</sui-menu-item>
+        <a is="sui-menu-item" @click="go(total)" v-if="current < total - 2">{{ total }}</a>
+        <a class="icon" rel="next" is="sui-menu-item" icon="chevron right" @click="next" :disabled="current > total - 1"></a>
     </div>
     `,
     computed: {
