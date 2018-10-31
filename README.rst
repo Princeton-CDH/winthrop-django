@@ -9,20 +9,20 @@ project.
 
 Python 3.5 / Django 1.10
 
-.. image:: https://travis-ci.org/Princeton-CDH/winthrop-django.svg?branch=master
+.. image:: https://travis-ci.org/Princeton-CDH/winthrop-django.svg?branch=develop
     :target: https://travis-ci.org/Princeton-CDH/winthrop-django
     :alt: Build status
 
-.. image:: https://codecov.io/gh/Princeton-CDH/winthrop-django/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/Princeton-CDH/winthrop-django/branch/master
+.. image:: https://codecov.io/gh/Princeton-CDH/winthrop-django/branch/develop/graph/badge.svg
+    :target: https://codecov.io/gh/Princeton-CDH/winthrop-django/branch/develop
     :alt: Code coverage
 
-.. image:: https://landscape.io/github/Princeton-CDH/winthrop-django/master/landscape.svg?style=flat
-    :target: https://landscape.io/github/Princeton-CDH/winthrop-django/master
+.. image:: https://landscape.io/github/Princeton-CDH/winthrop-django/develop/landscape.svg?style=flat
+    :target: https://landscape.io/github/Princeton-CDH/winthrop-django/develop
     :alt: Code Health
 
-.. image:: https://landscape.io/github/Princeton-CDH/winthrop-django/master/landscape.svg?style=flat
-    :target: https://requires.io/github/Princeton-CDH/winthrop-django/requirements/?branch=master
+.. image:: https://landscape.io/github/Princeton-CDH/winthrop-django/develop/landscape.svg?style=flat
+    :target: https://requires.io/github/Princeton-CDH/winthrop-django/requirements/?branch=develop
     :alt: Requirements Status
 
 This repo uses `git-flow <https://github.com/nvie/gitflow>`_ conventions; **master**

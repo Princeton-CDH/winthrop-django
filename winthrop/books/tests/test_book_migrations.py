@@ -61,8 +61,8 @@ class TestMigrations(TransactionTestCase):
 class TestBookAddSlugs(TestMigrations):
 
     app = 'books'
-    migrate_from = '0011_add_book_digital_edition_remove_is_digitized'
-    migrate_to = '0014_make_book_slugs_unique'
+    migrate_from = '0012_plum_to_figgy'
+    migrate_to = '0015_make_book_slugs_unique'
     serialized_rollback = True
 
     def setUpBeforeMigration(self, apps):
@@ -100,8 +100,8 @@ class TestBookAddSlugs(TestMigrations):
 class TestMigratePlumToFiggy(TestMigrations):
 
     app = 'books'
-    migrate_from = '0014_make_book_slugs_unique'
-    migrate_to = '0015_plum_to_figgy'
+    migrate_from = '0011_add_book_digital_edition_remove_is_digitized'
+    migrate_to = '0012_plum_to_figgy'
     serialized_rollback = True
 
     # loads a book with the old plum manifest and related canvas with
@@ -109,7 +109,7 @@ class TestMigratePlumToFiggy(TestMigrations):
     fixtures = ['test_plum_figgy']
 
     @patch('djiffy.models.requests')
-    @patch('winthrop.books.migrations.0015_plum_to_figgy.requests')
+    @patch('winthrop.books.migrations.0012_plum_to_figgy.requests')
     def setUp(self, mockrequests, mockdjiffyrequests):
         # By mocking out requests in the two places where it appears, the
         # fixture provides mocked manifest data and constructs. The uri

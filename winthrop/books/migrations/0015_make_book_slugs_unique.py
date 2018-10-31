@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('people', '0007_set_from_to_person_for_easy_templating'),
-        ('books', '0013_generate_book_slugs'),
+        ('books', '0014_generate_book_slugs'),
     ]
 
     operations = [

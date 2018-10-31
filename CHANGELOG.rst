@@ -3,6 +3,11 @@
 CHANGELOG
 =========
 
+0.7.1 Plum-to-figgy migration
+-----------------------------
+* Migrate manifest and canvas URIs from plum to figgy
+
+
 0.7 Annotation interface improvements
 -------------------------------------
 * As an annotation admin, I want an easy way to associate footnotes with annotations so that I can document known references and other details.
