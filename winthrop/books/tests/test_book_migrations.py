@@ -6,7 +6,6 @@ from unittest.mock import Mock, patch
 from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
 from django.test import TransactionTestCase
-from django.utils.text import slugify
 import pytest
 import requests
 
