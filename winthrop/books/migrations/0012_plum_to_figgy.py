@@ -125,7 +125,7 @@ def migrate_plum_to_figgy(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('books', '0014_make_book_slugs_unique'),
+        ('books', '0011_add_book_digital_edition_remove_is_digitized'),
     ]
 
     operations = [
