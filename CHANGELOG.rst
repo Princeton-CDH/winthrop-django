@@ -3,9 +3,9 @@
 CHANGELOG
 =========
 
-0.7.1 Plum-to-figgy migration
+0.7.1 PUL IIF Migration
 -----------------------------
-* Migrate manifest and canvas URIs from plum to figgy
+* Migrate manifest and canvas URIs from plum to figgy (new IIIF data curation service)
 
 
 0.7 Annotation interface improvements
