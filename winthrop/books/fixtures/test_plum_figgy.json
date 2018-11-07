@@ -1,0 +1,1082 @@
+[
+  {
+      "model": "djiffy.manifest",
+      "pk": 15,
+      "fields": {
+          "label": "A needefull, new, and necessarie treatise of chyrurgerie : briefly comprehending the generall and particuler curation of vlcers, drawen foorth of sundrie worthy wryters, but especially of Antonius Calmeteus Vergesatus, and Ioannes Tagaltius, by Iohn Banister ... Hereunto is anexed certaine experiments of mine ovvne inuention, truely tried, and daily of me practised",
+          "short_id": "p08614n81f",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest",
+          "metadata": "{\"Creator\":[\"Banister, John, 1533-1610\"],\"Published/Created\":[\"Imprinted at London : By Thomas Marshe, Anno. 1575.\"],\"Subject\":[\"Medicine\\u2014Early works to 1800\"],\"Language\":[\"English\"],\"Local identifier\":[\"Win 111\"],\"Format\":[\"Book\"],\"Extent\":[\"1 online resource ([24], 138 leaves.)\"],\"Call number\":[\"Electronic Resource\"],\"Author\":[\"Banister, John, 1533-1610\"],\"Collection\":[\"Winthrop\"]}",
+          "created": "2017-06-22",
+          "last_modified": "2017-06-22",
+          "extra_data": "{\"memberOf\":[{\"@id\":\"https://plum.princeton.edu/collections/p4j03fz143\",\"title\":\"Winthrop\"}],\"author\":\"Banister, John, 1533-1610\",\"title\":{\"@value\":\"A needefull, new, and necessarie treatise of chyrurgerie : briefly comprehending the generall and particuler curation of vlcers, drawen foorth of sundrie worthy wryters, but especially of Antonius Calmeteus Vergesatus, and Ioannes Tagaltius, by Iohn Banister ... Hereunto is anexed certaine experiments of mine ovvne inuention, truely tried, and daily of me practised\",\"@language\":\"eng\"},\"date\":\"1575\",\"identifier\":[\"ark:/88435/3197xp93q\"],\"creator\":\"Banister, John, 1533-1610\",\"language\":\"eng\",\"publisher\":\"Imprinted at London : By Thomas Marshe, Anno. 1575.\",\"extent\":\"1 online resource ([24], 138 leaves.)\",\"description\":[\"Winthrop Project\",\"Win 111\"],\"format\":\"Book\",\"call_number\":\"Electronic Resource\",\"@context\":\"https://bibdata.princeton.edu/context.json\",\"created\":\"1575-01-01T00:00:00Z\",\"@id\":\"https://plum.princeton.edu/concern/scanned_resources/p08614n81f\",\"title_sort\":\"needefull, new, and necessarie treatise of chyrurgerie : briefly comprehending the generall and particuler curation of vlcers, drawen foorth of sundrie worthy wryters, but especially of Antonius Calmeteus Vergesatus, and Ioannes Tagaltius, by Iohn Banister ... Hereunto is anexed certaine experiments of mine ovvne inuention, truely tried, and daily of me practised.\",\"edm_rights\":[\"http://rightsstatements.org/vocab/NKC/1.0/\"],\"subject\":\"Medicine\\u2014Early works to 1800\",\"type\":\"Early works to 1800\"}"
+      }
+  },
+  {
+      "model": "djiffy.canvas",
+      "pk": 2871,
+      "fields": {
+          "label": "00000008.tif",
+          "short_id": "p8336k384p",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/p8336k384p",
+          "iiif_image_id": "https://libimages1.princeton.edu/loris/plum_prod/p8%2F33%2F6k%2F38%2F4p-intermediate_file.jp2",
+          "manifest": 15,
+          "thumbnail": false,
+          "order": 7,
+          "extra_data": "{}"
+      }
+  },
+  {
+      "model": "djiffy.canvas",
+      "pk": 2874,
+      "fields": {
+          "label": "00000011.tif",
+          "short_id": "psx61gm92d",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/psx61gm92d",
+          "iiif_image_id": "https://libimages1.princeton.edu/loris/plum_prod/ps%2Fx6%2F1g%2Fm9%2F2d-intermediate_file.jp2",
+          "manifest": 15,
+          "thumbnail": false,
+          "order": 10,
+          "extra_data": "{}"
+      }
+  },
+  {
+      "model": "djiffy.canvas",
+      "pk": 2870,
+      "fields": {
+          "label": "00000007.tif",
+          "short_id": "p2r36wz60b",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/p2r36wz60b",
+          "iiif_image_id": "https://libimages1.princeton.edu/loris/plum_prod/p2%2Fr3%2F6w%2Fz6%2F0b-intermediate_file.jp2",
+          "manifest": 15,
+          "thumbnail": false,
+          "order": 6,
+          "extra_data": "{}"
+      }
+  },
+  {
+      "model": "djiffy.canvas",
+      "pk": 2872,
+      "fields": {
+          "label": "00000009.tif",
+          "short_id": "ppr76h338g",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/ppr76h338g",
+          "iiif_image_id": "https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2",
+          "manifest": 15,
+          "thumbnail": false,
+          "order": 8,
+          "extra_data": "{}"
+      }
+  },
+  {
+      "model": "djiffy.canvas",
+      "pk": 2873,
+      "fields": {
+          "label": "00000010.tif",
+          "short_id": "pv405v911m",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/pv405v911m",
+          "iiif_image_id": "https://libimages1.princeton.edu/loris/plum_prod/pv%2F40%2F5v%2F91%2F1m-intermediate_file.jp2",
+          "manifest": 15,
+          "thumbnail": false,
+          "order": 9,
+          "extra_data": "{}"
+      }
+  },
+  {
+      "model": "auth.user",
+      "fields": {
+          "password": "pbkdf2_sha256$36000$PJhA16G9g8my$n0yPMIpYb+Rn6pViMWucKTYa29tgBdJiEQYur+s0ccs=",
+          "last_login": "2017-12-08T19:56:43Z",
+          "is_superuser": true,
+          "username": "sjweinreich",
+          "first_name": "Spencer",
+          "last_name": "Weinreich",
+          "email": "sjw2@princeton.edu",
+          "is_staff": true,
+          "is_active": true,
+          "date_joined": "2017-09-29T19:02:59Z",
+          "groups": [
+              [
+                  "Data Editors"
+              ]
+          ],
+          "user_permissions": []
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "f54afa45-0509-40a2-b947-a6ac60f7b0f2",
+      "fields": {
+          "created": "2017-12-08T20:06:53Z",
+          "updated": "2017-12-08T20:06:53Z",
+          "text": "Generall and particular",
+          "quote": "",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/p2r36wz60b",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"ranges\":[],\"permissions\":{},\"image_selection\":{\"y\":\"3.00%\",\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/p2%2Fr3%2F6w%2Fz6%2F0b-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"w\":\"60.81%\",\"h\":\"4.40%\",\"x\":\"23.33%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/p2%2Fr3%2F6w%2Fz6%2F0b-intermediate_file.jp2/full/!1000,1000/0/default.jpg\"}}",
+          "notes": "",
+          "canvas": 2870,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              10
+          ],
+          "languages": [
+              3
+          ],
+          "anchor_languages": []
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "f3b98ad3-403b-457b-8381-5667e832c9b8",
+      "fields": {
+          "created": "2017-12-08T21:07:19Z",
+          "updated": "2017-12-08T21:07:19Z",
+          "text": "",
+          "quote": "amende and diuert the abundaunce of humors, & take away these corruption is thus",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/psx61gm92d",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"image_selection\":{\"h\":\"8.60%\",\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/ps%2Fx6%2F1g%2Fm9%2F2d-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"w\":\"63.49%\",\"x\":\"7.96%\",\"y\":\"13.30%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/ps%2Fx6%2F1g%2Fm9%2F2d-intermediate_file.jp2/full/!1000,1000/0/default.jpg\"},\"permissions\":{},\"ranges\":[]}",
+          "notes": "",
+          "canvas": 2874,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              3
+          ],
+          "languages": [],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "e1262b7e-eb3d-4221-a2ae-f17ab846e6da",
+      "fields": {
+          "created": "2017-12-08T20:20:37Z",
+          "updated": "2017-12-08T20:20:37Z",
+          "text": "# to drie ye moyste",
+          "quote": "Of the thinne excrement, the vlcer is made moiste, and of the grosser, filthie",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/p2r36wz60b",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"permissions\":{},\"image_selection\":{\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/p2%2Fr3%2F6w%2Fz6%2F0b-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"x\":\"70.92%\",\"y\":\"31.00%\",\"w\":\"19.60%\",\"h\":\"9.90%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/p2%2Fr3%2F6w%2Fz6%2F0b-intermediate_file.jp2/full/!1000,1000/0/default.jpg\"},\"ranges\":[]}",
+          "notes": "",
+          "canvas": 2870,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              10
+          ],
+          "languages": [
+              3
+          ],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "dd0d70ba-b09e-4d91-88a0-d387d991703d",
+      "fields": {
+          "created": "2017-12-08T20:33:22Z",
+          "updated": "2017-12-08T20:33:30Z",
+          "text": "",
+          "quote": "if it smell evill",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/p2r36wz60b",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"image_selection\":{\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/p2%2Fr3%2F6w%2Fz6%2F0b-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"x\":\"33.44%\",\"h\":\"3.10%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/p2%2Fr3%2F6w%2Fz6%2F0b-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"y\":\"74.50%\",\"w\":\"24.42%\"},\"ranges\":[],\"permissions\":{}}",
+          "notes": "",
+          "canvas": 2870,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              3
+          ],
+          "languages": [],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "d1b311c7-d26c-4e33-9f61-9b97f88e02fa",
+      "fields": {
+          "created": "2017-12-08T21:00:47Z",
+          "updated": "2017-12-08T21:01:01Z",
+          "text": "",
+          "quote": "the first and second intention, both by amending, emptying, diuerting and preuenting that same flowing, wherewith the bodie of the affected, doth abounde, and flowe in the vlcered",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/pv405v911m",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"image_selection\":{\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/pv%2F40%2F5v%2F91%2F1m-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"x\":\"31.02%\",\"h\":\"13.80%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/pv%2F40%2F5v%2F91%2F1m-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"w\":\"65.98%\",\"y\":\"70.90%\"},\"ranges\":[],\"permissions\":{}}",
+          "notes": "",
+          "canvas": 2873,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              3
+          ],
+          "languages": [],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "cffb5ed8-29e9-48b4-803c-c416292dca6c",
+      "fields": {
+          "created": "2017-12-08T20:54:04Z",
+          "updated": "2017-12-08T20:54:04Z",
+          "text": "",
+          "quote": "co[n]tained in Ulcers, there are two thing[s]",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/pv405v911m",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"ranges\":[],\"permissions\":{},\"image_selection\":{\"y\":\"11.60%\",\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/pv%2F40%2F5v%2F91%2F1m-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"w\":\"60.79%\",\"h\":\"3.60%\",\"x\":\"31.65%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/pv%2F40%2F5v%2F91%2F1m-intermediate_file.jp2/full/!1000,1000/0/default.jpg\"}}",
+          "notes": "",
+          "canvas": 2873,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              3
+          ],
+          "languages": [],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "c85b2ace-745e-4ed5-9b6d-314e93aaf512",
+      "fields": {
+          "created": "2017-12-08T20:22:47Z",
+          "updated": "2017-12-08T20:22:47Z",
+          "text": "",
+          "quote": "to drie that which is moist, and to mundifie the filthie,",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/p2r36wz60b",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"image_selection\":{\"h\":\"5.70%\",\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/p2%2Fr3%2F6w%2Fz6%2F0b-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"w\":\"62.21%\",\"x\":\"7.93%\",\"y\":\"41.30%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/p2%2Fr3%2F6w%2Fz6%2F0b-intermediate_file.jp2/full/!1000,1000/0/default.jpg\"},\"permissions\":{},\"ranges\":[]}",
+          "notes": "",
+          "canvas": 2870,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              3
+          ],
+          "languages": [
+              3
+          ],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "c34ff891-322d-45f8-9079-96cab19e924a",
+      "fields": {
+          "created": "2017-12-08T20:52:25Z",
+          "updated": "2017-12-08T20:52:25Z",
+          "text": "",
+          "quote": "In tollendis disposi",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/ppr76h338g",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"image_selection\":{\"h\":\"5.50%\",\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"w\":\"14.73%\",\"x\":\"69.46%\",\"y\":\"82.70%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\"},\"permissions\":{},\"ranges\":[]}",
+          "notes": "",
+          "canvas": 2872,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "On removing dispositions",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              3
+          ],
+          "languages": [],
+          "anchor_languages": [
+              1
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "c1a5d051-175c-49e4-8cf5-9e52afb74871",
+      "fields": {
+          "created": "2017-12-08T20:48:11Z",
+          "updated": "2017-12-08T20:48:11Z",
+          "text": "not",
+          "quote": "part,",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/ppr76h338g",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"image_selection\":{\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"x\":\"70.39%\",\"y\":\"40.10%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"h\":\"5.80%\",\"w\":\"17.98%\"},\"permissions\":{},\"ranges\":[]}",
+          "notes": "",
+          "canvas": 2872,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              10
+          ],
+          "languages": [
+              3
+          ],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "c09c97ba-b24f-4e4c-8106-79dcfe426a01",
+      "fields": {
+          "created": "2017-12-08T20:39:31Z",
+          "updated": "2017-12-08T20:39:31Z",
+          "text": "",
+          "quote": "That Sanies is euill which is muche in quantitie, ouer thinne, yellow, pale, or black, glewy, or of euill sauour",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/p8336k384p",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"permissions\":{},\"image_selection\":{\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/p8%2F33%2F6k%2F38%2F4p-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"x\":\"29.50%\",\"y\":\"17.50%\",\"w\":\"61.99%\",\"h\":\"12.10%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/p8%2F33%2F6k%2F38%2F4p-intermediate_file.jp2/full/!1000,1000/0/default.jpg\"},\"ranges\":[]}",
+          "notes": "",
+          "canvas": 2871,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              3
+          ],
+          "languages": [],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "b8e257ec-b475-44b5-a049-1e24c279f1cf",
+      "fields": {
+          "created": "2017-12-08T20:30:46Z",
+          "updated": "2017-12-08T20:30:47Z",
+          "text": "#",
+          "quote": "savour. And that is evill (sayeth Celsus) w[hic]he is thinne, watrishe (especially if it [illeg] from the beginning)",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/p2r36wz60b",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"permissions\":{},\"image_selection\":{\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/p2%2Fr3%2F6w%2Fz6%2F0b-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"x\":\"70.45%\",\"y\":\"67.30%\",\"w\":\"9.95%\",\"h\":\"3.90%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/p2%2Fr3%2F6w%2Fz6%2F0b-intermediate_file.jp2/full/!1000,1000/0/default.jpg\"},\"ranges\":[]}",
+          "notes": "",
+          "canvas": 2870,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              10
+          ],
+          "languages": [],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "b560a0f3-ecc2-4a53-aa05-b635ceed9d94",
+      "fields": {
+          "created": "2017-12-08T20:17:16Z",
+          "updated": "2017-12-08T20:17:16Z",
+          "text": "",
+          "quote": "Of the thinne excrement, the vlcer is made moiste, and of the grosser, filthie",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/p2r36wz60b",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"ranges\":[],\"permissions\":{},\"image_selection\":{\"y\":\"29.80%\",\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/p2%2Fr3%2F6w%2Fz6%2F0b-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"w\":\"60.81%\",\"h\":\"8.70%\",\"x\":\"9.18%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/p2%2Fr3%2F6w%2Fz6%2F0b-intermediate_file.jp2/full/!1000,1000/0/default.jpg\"}}",
+          "notes": "",
+          "canvas": 2870,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              3
+          ],
+          "languages": [],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "ab59ad87-6bd2-4a71-8d4c-2192eabc90b7",
+      "fields": {
+          "created": "2017-12-08T21:08:08Z",
+          "updated": "2017-12-08T21:08:08Z",
+          "text": "",
+          "quote": "Phlebotomie",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/psx61gm92d",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"ranges\":[],\"permissions\":{},\"image_selection\":{\"y\":\"18.70%\",\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/ps%2Fx6%2F1g%2Fm9%2F2d-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"w\":\"21.37%\",\"h\":\"3.50%\",\"x\":\"48.21%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/ps%2Fx6%2F1g%2Fm9%2F2d-intermediate_file.jp2/full/!1000,1000/0/default.jpg\"}}",
+          "notes": "",
+          "canvas": 2874,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              3
+          ],
+          "languages": [],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "a9edfd1b-7118-4206-bc52-d51d1ae9d370",
+      "fields": {
+          "created": "2017-12-08T21:01:31Z",
+          "updated": "2017-12-08T21:01:31Z",
+          "text": "",
+          "quote": "",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/pv405v911m",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"image_selection\":{\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/pv%2F40%2F5v%2F91%2F1m-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"x\":\"22.99%\",\"y\":\"84.70%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/pv%2F40%2F5v%2F91%2F1m-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"h\":\"10.50%\",\"w\":\"60.94%\"},\"permissions\":{},\"ranges\":[]}",
+          "notes": "",
+          "canvas": 2873,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [],
+          "tags": [
+              4,
+              15
+          ],
+          "languages": [
+              3
+          ],
+          "anchor_languages": []
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "9521c2fc-c545-4489-9d93-b41df133746f",
+      "fields": {
+          "created": "2017-12-08T20:50:06Z",
+          "updated": "2017-12-08T20:50:06Z",
+          "text": "",
+          "quote": "And when thou hast cured the intemperature, afterwarde thou shalt easely heale the affecte. So must we first helpe the tumors called Varices,",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/ppr76h338g",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"image_selection\":{\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"x\":\"7.75%\",\"y\":\"55.70%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"h\":\"13.30%\",\"w\":\"64.19%\"},\"permissions\":{},\"ranges\":[]}",
+          "notes": "",
+          "canvas": 2872,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              3
+          ],
+          "languages": [],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "8d60664f-e617-4c9f-a54c-aad9159dd61e",
+      "fields": {
+          "created": "2017-12-08T20:43:54Z",
+          "updated": "2017-12-08T20:43:54Z",
+          "text": "#",
+          "quote": "This onely is their difference, this nedeth less: and the other (through the great humidity) requireth greater desiccation",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/ppr76h338g",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"permissions\":{},\"image_selection\":{\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"x\":\"72.71%\",\"y\":\"22.30%\",\"w\":\"7.29%\",\"h\":\"3.80%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\"},\"ranges\":[]}",
+          "notes": "",
+          "canvas": 2872,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              10
+          ],
+          "languages": [],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "6fba3303-a1d9-41f9-b538-67cdcdbd5d26",
+      "fields": {
+          "created": "2017-12-08T21:10:45Z",
+          "updated": "2017-12-08T21:10:45Z",
+          "text": "} //",
+          "quote": "amende and diuert the abundaunce of humors, & take away these corruption is thus. viz. by Phlebotomie",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/psx61gm92d",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"image_selection\":{\"h\":\"8.50%\",\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/ps%2Fx6%2F1g%2Fm9%2F2d-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"w\":\"14.51%\",\"x\":\"71.29%\",\"y\":\"12.70%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/ps%2Fx6%2F1g%2Fm9%2F2d-intermediate_file.jp2/full/!1000,1000/0/default.jpg\"},\"permissions\":{},\"ranges\":[]}",
+          "notes": "",
+          "canvas": 2874,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              10
+          ],
+          "languages": [],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "547b59fd-4032-42ea-b929-a71fe3680c2e",
+      "fields": {
+          "created": "2017-12-08T20:41:09Z",
+          "updated": "2017-12-08T20:41:09Z",
+          "text": "",
+          "quote": "drying: this indication also is common to woundes,",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/ppr76h338g",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"ranges\":[],\"permissions\":{},\"image_selection\":{\"y\":\"10.90%\",\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"w\":\"63.41%\",\"h\":\"6.10%\",\"x\":\"7.75%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\"}}",
+          "notes": "",
+          "canvas": 2872,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              3
+          ],
+          "languages": [],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "4e2ede1f-b50f-44a2-9966-fb793d700b17",
+      "fields": {
+          "created": "2017-12-08T20:51:11Z",
+          "updated": "2017-12-08T20:51:11Z",
+          "text": "",
+          "quote": "taking away the dispositions",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/ppr76h338g",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"permissions\":{},\"image_selection\":{\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"x\":\"25.74%\",\"y\":\"82.50%\",\"w\":\"45.89%\",\"h\":\"4.70%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\"},\"ranges\":[]}",
+          "notes": "",
+          "canvas": 2872,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              3
+          ],
+          "languages": [],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "45ffd87a-d835-4966-a20e-6eeae5f45ced",
+      "fields": {
+          "created": "2017-12-08T20:28:18Z",
+          "updated": "2017-12-08T20:28:38Z",
+          "text": "# to mu[n]dif[illeg] fylthy",
+          "quote": "to drie that which is moist, and to mundifie the filthie,",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/p2r36wz60b",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"image_selection\":{\"h\":\"10.20%\",\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/p2%2Fr3%2F6w%2Fz6%2F0b-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"w\":\"21.46%\",\"x\":\"68.74%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/p2%2Fr3%2F6w%2Fz6%2F0b-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"y\":\"41.20%\"},\"permissions\":{},\"ranges\":[]}",
+          "notes": "",
+          "canvas": 2870,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              10
+          ],
+          "languages": [
+              3
+          ],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "35569857-b799-497f-af10-205387cd6a74",
+      "fields": {
+          "created": "2017-12-08T20:32:06Z",
+          "updated": "2017-12-08T20:32:06Z",
+          "text": "a.L.M.",
+          "quote": "",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/p2r36wz60b",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"ranges\":[],\"permissions\":{},\"image_selection\":{\"y\":\"85.50%\",\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/p2%2Fr3%2F6w%2Fz6%2F0b-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"w\":\"11.35%\",\"h\":\"3.30%\",\"x\":\"29.39%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/p2%2Fr3%2F6w%2Fz6%2F0b-intermediate_file.jp2/full/!1000,1000/0/default.jpg\"}}",
+          "notes": "",
+          "canvas": 2870,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [],
+          "tags": [
+              10
+          ],
+          "languages": [],
+          "anchor_languages": []
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "28277223-5bf7-49b1-a903-71ae61f79a40",
+      "fields": {
+          "created": "2017-12-08T20:36:16Z",
+          "updated": "2017-12-08T20:36:41Z",
+          "text": "[three vertical lines]",
+          "quote": "",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/p2r36wz60b",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"image_selection\":{\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/p2%2Fr3%2F6w%2Fz6%2F0b-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"x\":\"10.58%\",\"h\":\"3.30%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/p2%2Fr3%2F6w%2Fz6%2F0b-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"y\":\"7.40%\",\"w\":\"5.91%\"},\"ranges\":[],\"permissions\":{}}",
+          "notes": "",
+          "canvas": 2870,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [],
+          "tags": [
+              15
+          ],
+          "languages": [],
+          "anchor_languages": []
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "236d1316-4b4e-407a-ac3b-37d22855d1fd",
+      "fields": {
+          "created": "2017-12-08T20:42:07Z",
+          "updated": "2017-12-08T20:42:07Z",
+          "text": "#",
+          "quote": "drying: this indication also is common to woundes,",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/ppr76h338g",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"ranges\":[],\"permissions\":{},\"image_selection\":{\"y\":\"10.40%\",\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"w\":\"6.67%\",\"h\":\"3.30%\",\"x\":\"71.94%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\"}}",
+          "notes": "",
+          "canvas": 2872,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              10
+          ],
+          "languages": [],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "2004f236-197f-40c1-9d85-b8408fea7d69",
+      "fields": {
+          "created": "2017-12-08T20:43:32Z",
+          "updated": "2017-12-08T20:43:32Z",
+          "text": "",
+          "quote": "This onely is their difference, this nedeth lesse: and the other (through the great humidity) requireth greater desiccation",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/ppr76h338g",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"image_selection\":{\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"x\":\"8.37%\",\"y\":\"16.50%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"h\":\"11.50%\",\"w\":\"62.48%\"},\"permissions\":{},\"ranges\":[]}",
+          "notes": "",
+          "canvas": 2872,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              3
+          ],
+          "languages": [],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "1dd3b083-6c20-4cf4-b6a6-4412d8684cec",
+      "fields": {
+          "created": "2017-12-08T20:45:33Z",
+          "updated": "2017-12-08T20:45:33Z",
+          "text": "",
+          "quote": "part,",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/ppr76h338g",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"permissions\":{},\"image_selection\":{\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"x\":\"58.45%\",\"y\":\"41.40%\",\"w\":\"12.40%\",\"h\":\"4.00%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\"},\"ranges\":[]}",
+          "notes": "",
+          "canvas": 2872,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              3
+          ],
+          "languages": [],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "1b151665-eea2-4fc4-9e1b-f441cd70afa4",
+      "fields": {
+          "created": "2017-12-08T20:30:18Z",
+          "updated": "2017-12-08T20:30:18Z",
+          "text": "",
+          "quote": "savour. And that is evill (sayeth Celsus) w[hic]he is thinne, watrishe (especially if it [illeg] from the beginning)",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/p2r36wz60b",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"image_selection\":{\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/p2%2Fr3%2F6w%2Fz6%2F0b-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"x\":\"7.62%\",\"y\":\"62.40%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/p2%2Fr3%2F6w%2Fz6%2F0b-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"h\":\"9.90%\",\"w\":\"62.21%\"},\"permissions\":{},\"ranges\":[]}",
+          "notes": "",
+          "canvas": 2870,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              3
+          ],
+          "languages": [],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "12341162-14dd-4bba-9270-c910b7c70aff",
+      "fields": {
+          "created": "2017-12-08T20:44:46Z",
+          "updated": "2017-12-08T20:44:46Z",
+          "text": "",
+          "quote": "first to cure the affect, & lastly the Ulcer.",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/ppr76h338g",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"ranges\":[],\"permissions\":{},\"image_selection\":{\"y\":\"32.50%\",\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"w\":\"64.34%\",\"h\":\"4.30%\",\"x\":\"8.06%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\"}}",
+          "notes": "",
+          "canvas": 2872,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              3
+          ],
+          "languages": [],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "109b91d4-9c84-4f4c-9fcd-b8564884d4e5",
+      "fields": {
+          "created": "2017-12-08T20:50:36Z",
+          "updated": "2017-12-08T20:50:36Z",
+          "text": "",
+          "quote": "then to cure the",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/ppr76h338g",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"image_selection\":{\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"x\":\"28.37%\",\"y\":\"69.10%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/pp%2Fr7%2F6h%2F33%2F8g-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"h\":\"3.20%\",\"w\":\"33.02%\"},\"permissions\":{},\"ranges\":[]}",
+          "notes": "",
+          "canvas": 2872,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              3
+          ],
+          "languages": [],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+  {
+      "model": "annotation.annotation",
+      "pk": "0e3841fb-e004-49ad-8bd7-61f959dcdcce",
+      "fields": {
+          "created": "2017-12-08T20:57:05Z",
+          "updated": "2017-12-08T20:57:05Z",
+          "text": "",
+          "quote": "Fourthly, those accidentes being corrected, doth teache and instruct vs to cure them after the maner of hollowe wou[n]ds.",
+          "uri": "https://plum.princeton.edu/concern/scanned_resources/p08614n81f/manifest/canvas/pv405v911m",
+          "user": [
+              "sjweinreich"
+          ],
+          "extra_data": "{\"image_selection\":{\"h\":\"9.20%\",\"uri\":\"https://libimages1.princeton.edu/loris/plum_prod/pv%2F40%2F5v%2F91%2F1m-intermediate_file.jp2/full/!1000,1000/0/default.jpg\",\"w\":\"63.31%\",\"x\":\"32.28%\",\"y\":\"62.40%\",\"src\":\"https://libimages1.princeton.edu/loris/plum_prod/pv%2F40%2F5v%2F91%2F1m-intermediate_file.jp2/full/!1000,1000/0/default.jpg\"},\"permissions\":{},\"ranges\":[]}",
+          "notes": "",
+          "canvas": 2873,
+          "author": null,
+          "text_translation": "",
+          "anchor_translation": "",
+          "subjects": [
+              13
+          ],
+          "tags": [
+              3
+          ],
+          "languages": [],
+          "anchor_languages": [
+              3
+          ]
+      }
+  },
+{
+    "model": "places.place",
+    "pk": 3,
+    "fields": {
+        "name": "New York City",
+        "notes": "",
+        "geonames_id": "http://sws.geonames.org/5128581/",
+        "latitude": 40.71427,
+        "longitude": -74.00597
+    }
+},
+{
+    "model": "places.place",
+    "pk": 7,
+    "fields": {
+        "name": "London",
+        "notes": "",
+        "geonames_id": "http://sws.geonames.org/2643743/",
+        "latitude": 51.50853,
+        "longitude": -0.12574
+    }
+},
+{
+    "model": "books.publisher",
+    "pk": 23,
+    "fields": {
+        "name": "Thomas Marsh",
+        "notes": ""
+    }
+},
+{
+    "model": "people.person",
+    "pk": 24,
+    "fields": {
+        "notes": "",
+        "start_year": 1630,
+        "end_year": 1679,
+        "authorized_name": "Banister, John",
+        "viaf_id": "https://viaf.org/viaf/103214110/",
+        "sort_name": "",
+        "family_group": ""
+    }
+},
+{
+    "model": "books.creatortype",
+    "pk": 1,
+    "fields": {
+        "name": "Author",
+        "notes": ""
+    }
+},
+{
+    "model": "books.owninginstitution",
+    "pk": 1,
+    "fields": {
+        "name": "New York Society Library",
+        "notes": "",
+        "short_name": "NYSL",
+        "contact_info": "53 East 79th Street \r\nNew York, NY 10075 \r\n212.288.6900\r\nhttps://www.nysoclib.org/",
+        "place": 3
+    }
+},
+{
+    "model": "books.book",
+    "pk": 25,
+    "fields": {
+        "notes": "Annotations in an unknown hand.\n\nReproduction Recommendation: FULL.",
+        "title": "A needefull, new, and necessarie treatise of chyrurgerie: briefly comprehending the generall and particuler curation of ulcers, drawen foorth of sundrie worthy wryters, but especially of Antonius Calmeteus Vergesatus, and Ioannes Tagaltius [...]   hereunto is anexed certaine experiments of mine ovvne inuention, truely tried, and daily of me practised",
+        "short_title": "A needefull, new, and necessarie treatise of chyrurgerie",
+        "original_pub_info": "Imprinted at London : by Thomas Marshe, Anno. 1575.",
+        "publisher": 23,
+        "pub_place": 7,
+        "pub_year": 1575,
+        "is_extant": true,
+        "is_annotated": true,
+        "red_catalog_number": "",
+        "ink_catalog_number": "",
+        "pencil_catalog_number": "",
+        "dimensions": "",
+        "digital_edition": 15
+    }
+},
+{
+    "model": "books.creator",
+    "pk": 26,
+    "fields": {
+        "notes": "",
+        "creator_type": 1,
+        "person": 24,
+        "book": 25
+    }
+},
+{
+    "model": "books.catalogue",
+    "pk": 25,
+    "fields": {
+        "notes": "Library copy from the Winthrop Collection.  Recently rebound.  Imperfect, lacking the title page and all before signature B, and all after leaf 120.  T.p. supplied by reproduction from Huntington Library copy.  Scattered annotations in ink in a contemporary hand.",
+        "start_year": null,
+        "end_year": null,
+        "institution": 1,
+        "book": 25,
+        "is_current": true,
+        "call_number": "Win 111",
+        "is_sammelband": false,
+        "bound_order": null
+    }
+}
+]
