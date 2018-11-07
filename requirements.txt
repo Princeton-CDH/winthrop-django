@@ -7,7 +7,7 @@ django-compressor-toolkit
 requests
 rdflib
 pucas
-piffle
+piffle>=0.3
 djiffy
 annotator_store
 cached_property
