@@ -3,6 +3,13 @@ winthrop-django
 
 .. sphinx-start-marker-do-not-remove
 
+This work is no longer in active development and has been archived.
+
+A web archive of in-progress work at the time development stopped is
+available in the **test-site-archive** folder with instructions for playback.
+
+----------------------
+
 Django web application for `The Winthrop Family on the
 Page <https://cdh.princeton.edu/projects/the-winthrop-family-on-the-page/>`__
 project.
